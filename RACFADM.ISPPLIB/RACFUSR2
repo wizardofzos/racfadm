@@ -1,0 +1,35 @@
+)ATTR DEFAULT(%+_)
+  01 TYPE(OUTPUT) INTENS(LOW) SKIP(ON) COLOR(&CLRUSER)
+  02 TYPE(OUTPUT) INTENS(LOW) SKIP(ON) COLOR(&CLRNAME)
+  03 TYPE(OUTPUT) INTENS(LOW) SKIP(ON) COLOR(&CLRDEFG)
+  04 TYPE(OUTPUT) INTENS(LOW) SKIP(ON) COLOR(&CLRDATE)
+  05 TYPE(OUTPUT) INTENS(LOW) SKIP(ON) COLOR(&CLROWNE)
+  06 TYPE(OUTPUT) INTENS(LOW) SKIP(ON) COLOR(&CLRREVO)
+  07 TYPE(OUTPUT) INTENS(LOW) SKIP(ON) COLOR(&CLRATTR)
+  08 TYPE(OUTPUT) INTENS(LOW) SKIP(ON) COLOR(&CLRTSOU)
+   $ TYPE(OUTPUT) INTENS(LOW) SKIP(ON) COLOR(TURQ)     JUST(LEFT)
+   ^ TYPE(OUTPUT) INTENS(LOW) SKIP(ON) COLOR(RED)      JUST(LEFT)
+   _ TYPE(INPUT)  INTENS(LOW) CAPS(ON) JUST(LEFT)      HILITE(USCORE)
+   + TYPE(TEXT)   INTENS(LOW) SKIP(ON) COLOR(GREEN)
+)BODY EXPAND(\\)
++\-\(%RACFADM - User Profiles+)\-\
+%Command ===>_ZCMD                                              +Scroll==>_SAMT+
+%
++CLASS:  %USER +FILTER: $RFILTER
++SELECT: %S+Show,%L+List,%C+Chg,%A+Add,%R+Remove,%RS+Reset,%RV+Revoke
+%
+%S          Userid   Name                 Group    Logon    Owner    Rev Att TSO
+%-------------------------------------------------------------------------------
+)MODEL CLEAR(OPTA)
+_Z ^Z      Z       Z                   Z       œZ       	Z       †Z  Z  —Z
+)INIT
+  .ZVARS   = '(OPTA ACTION USER NAME DEFGRP DATELGN OWNER REVOKED +
+               ATTR2 TSOUSER)'
+  .AUTOSEL = NO
+  .HELP    = #RACUSR2
+  &ZCMD    = ' '
+  IF (&SAMT = ' ')
+      &SAMT = &ZSCED
+)PROC
+  VER (&OPTA,LIST,S,s,SE,se,L,l,C,c,A,a,R,r,RS,rs,RV,rv,XR,xr)
+)END

@@ -1,0 +1,27 @@
+)ATTR DEFAULT(%+_)
+  _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT) HILITE(USCORE)
+  ! TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(TURQ)
+  + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
+)BODY EXPAND(\\)
+%Tutorial+\-\(%RACFADM - User Profiles+)\-\%Tutorial
+%Command ===>_ZCMD                                                             +
+%
++Primary Commands
+%  SORT argument
++    Sort the table by a particular column, ex.%S NAME+or%SORT NAME
+%  LOCATE argument
++    Locate text in the sorted column, ex.%L S2341+or%LOCATE T2334
+%  RESET
++    Sort the table by 1st column, ex.%R+or%RESET+
++
++Line Commands
+%  S !Show   +List of groups connected to the user
+%  L !List   +Issue LISTUSER RACF command
+%  C !Change +Change user attributes
+%  A !Add    +Define a new user
+%  R !Remove +Remove user from RACF
+%  RS!Reset  +Resume user and initialize the password like the userID
+%  RV!Revoke +Revoke the user
+)PROC
+  &ZUP     = #RACUSR2
+)END

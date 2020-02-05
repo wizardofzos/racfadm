@@ -1,0 +1,226 @@
+/*%NOCOMMENT====================* REXX *==============================*/
+/*  PURPOSE:  RACFADM - Search classes                                */
+/*--------------------------------------------------------------------*/
+/* FLG  YYMMDD  USERID   DESCRIPTION                                  */
+/* ---  ------  -------  -------------------------------------------- */
+/* @A2  200120  RACFA    Standardized/reduced lines of code           */
+/* @A1  200120  RACFA    Added comment box above procedures           */
+/* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
+/*====================================================================*/
+  Trace o
+  Arg user
+  selection=0  /* something selected */
+  address ISPEXEC "VGET (ZSCREEN) ASIS"
+  address TSO "PROFILE MSGID"
+  address TSO "PROFILE PREF("USERID()")"
+  rlv= SYSVAR('SYSLRACF')
+
+  seconds=time('S')
+  tblb= 'TB'ZSCREEN||SECONDS  /* table name unique */
+  address ISPEXEC "TBCREATE" tblb,
+                  "KEYS(CLASS PROFILE) REPLACE NOWRITE"
+  call Select_class
+  if selection then rc=display_table_permit()
+  address ISPEXEC "TBEND" tblb
+EXIT
+/*--------------------------------------------------------------------*/
+/*  Get permits                                                       */
+/*--------------------------------------------------------------------*/
+Get_permits:
+  class=arg(1)
+  user =arg(2)
+  x= OUTTRAP('VAR.')
+  address TSO "SEARCH CLASS("class") USER("user")"
+  x= OUTTRAP('OFF')
+  Do i= 1 to var.0   /* Scan output */
+     profile=subword(var.i,1,1)
+     if profile<>'ICH31005I' then do
+        n1=i;n2=var.0
+        address ISPEXEC "control display lock"
+        address ISPEXEC "display msg(RACF012)"
+        address ISPEXEC "TBMOD" tblb
+     end
+  end /* end_do i=1     */
+RETURN 0
+/*--------------------------------------------------------------------*/
+/*  Display permit table                                              */
+/*--------------------------------------------------------------------*/
+Display_table_permit:
+ opta= ' '
+ address ISPEXEC "TBSORT" tblb,
+                 "FIELDS(CLASS,C,A,PROFILE,C,A)"
+ address ISPEXEC "TBTOP" tblb
+ address ISPEXEC "TBDISPL" tblb "PANEL(RACFSRCH)"
+ reta= rc
+ do while (rc < 8)  /* tablea */
+    address ISPEXEC "CONTROL DISPLAY SAVE"
+    xtdtop= ztdtop
+    opta= translate(opta) /* upper case */
+    Select
+       when (subword(ZCMD,1,1)= 'LOCATE' |,
+             subword(ZCMD,1,1)= 'L') &,
+             (subword(ZCMD,2,1)='CLASS' |,
+              subword(ZCMD,2,1)='C') then do
+              locvar='CLASS'
+              profile=' '
+              locval=subword(ZCMD,3,1)
+       end
+       when (subword(ZCMD,1,1)= 'LOCATE' |,
+             subword(ZCMD,1,1)= 'L') &,
+             (subword(ZCMD,2,1)='PROFILE' |,
+              subword(ZCMD,2,1)='P') then do
+              locvar='PROFILE'
+              locval=subword(ZCMD,3,1)
+       end
+       otherwise locvar=''
+    End
+    Select
+       when opta= 'S' then x= RACFAUTH(class profile user)
+       otherwise nop
+    End
+    Do while (reta = 4)   /* process multi selection */
+       address ISPEXEC "CONTROL DISPLAY RESTORE"
+       address ISPEXEC "TBDISPL" tblb
+       reta= rc
+       address ISPEXEC "CONTROL DISPLAY SAVE"
+       opta= translate(opta) /* upper case */
+       Select
+          when opta= 'S' then x=RACFAUTH(class profile user)
+          otherwise nop
+       End
+    end
+    opta= ' '
+    address ISPEXEC "TBSORT" tblb,
+                    "FIELDS(CLASS,C,A,PROFILE,C,A)"
+    if locvar<>'' then do
+       interpret locvar'='locval
+       ADDRESS ISPEXEC "TBTOP" tblb
+       ADDRESS ISPEXEC "TBSARG" tblb "NEXT",
+                       "NAMECOND(CLASS,GE,PROFILE,GE)"
+       ADDRESS ISPEXEC "TBSCAN" tblb
+    end
+    else do
+       ADDRESS ISPEXEC "TBTOP" tblb
+       ADDRESS ISPEXEC "TBSKIP" tblb "NUMBER("XTDTOP")"
+    end
+    ADDRESS ISPEXEC "CONTROL DISPLAY RESTORE"
+    ADDRESS ISPEXEC "TBDISPL" tblb "PANEL(RACFSRCH)"
+    reta= rc
+ end  /* Do while (reta < 8) */
+RETURN 0
+/*--------------------------------------------------------------------*/
+/*                                                                    */
+/*--------------------------------------------------------------------*/
+Select_class:
+  seconds=time('S')
+  tbla= 'TA'ZSCREEN||SECONDS  /* make table name unique */
+  address ISPEXEC "TBCREATE" TBLA "KEYS(CLASS)",
+                  "NAMES(ACTION) REPLACE NOWRITE"
+  call get_act_class
+  rc=display_table()
+  address ISPEXEC "TBEND" tbla
+RETURN
+/*--------------------------------------------------------------------*/
+/*  Display profile permits                                           */
+/*--------------------------------------------------------------------*/
+Get_act_class:
+  Scan='OFF'
+  x= OUTTRAP('var.')
+  address TSO "SETROPTS LIST"
+  x= OUTTRAP('OFF')
+  Do i= 1 to var.0          /* Scan output */
+     temp= var.i
+     if rlv > '1081' then   /* RACF 1.9 add blank */
+        temp= ' 'temp
+     Select
+        when substr(temp,2,16)= 'ACTIVE CLASSES =' then do
+             scan='ON'
+             record=substr(temp,18,80)
+             nwords=words(record)
+             do t=1 to nwords
+                class=subword(record,t,1)
+                if class<>'USER',
+                 & class<>'DATASET',
+                 & class<>'GROUP' then
+                   address ISPEXEC "TBMOD" tbla
+             end
+        end
+        when substr(temp,2,25)=,
+             'GENERIC PROFILE CLASSES =' then leave
+        otherwise
+             if scan='ON' then do
+                  record=var.i
+                  nwords=words(record)
+                  do t=1 to nwords
+                     class=subword(record,t,1)
+                     if class<>'USER',
+                      & class<>'DATASET',
+                      & class<>'GROUP' then
+                        address ISPEXEC "TBMOD" tbla
+                  end
+             end
+     End    /* end_select */
+  end  /* end_scan output */
+RETURN
+/*--------------------------------------------------------------------*/
+/*                                                                    */
+/*--------------------------------------------------------------------*/
+DISPLAY_TABLE:
+  opta= ' '
+  address ISPEXEC "TBSORT" tbla "FIELDS(CLASS)"
+  address ISPEXEC "TBTOP" tbla
+  address ISPEXEC "TBDISPL" tbla "PANEL(RACFSRCH)"
+  reta= rc
+  Do while ^selection & (reta < 8)
+     action=''
+     address ISPEXEC "CONTROL DISPLAY SAVE"
+     Select
+        when subword(ZCMD,1,1)= 'LOCATE' |,
+             subword(ZCMD,1,1)= 'L' then
+             lclass=subword(ZCMD,2,1)
+        otherwise lclass=''
+     End
+     xtdtop= ztdtop
+     opta= translate(opta) /* upper case */
+     select
+        when opta= 'S' then do
+             rc= get_permits(class,user) /*get permits*/
+             selection=1
+        end
+        otherwise nop
+     End
+     Do while (reta = 4)   /* process multi selection */
+        address ISPEXEC "CONTROL DISPLAY RESTORE"
+        address ISPEXEC "TBDISPL" tbla
+        reta= rc
+        address ISPEXEC "CONTROL DISPLAY SAVE"
+        opta= translate(opta) /* upper case */
+        Select
+           when opta= 'S' then
+                rc= get_permits(class,user) /*get permits*/
+           otherwise nop
+        End
+     end
+     opta= ' '
+     address ISPEXEC "TBSORT" tbla "FIELDS(CLASS)"
+     address ISPEXEC "TBTOP" tbla
+     if lclass<>'' then do
+        class=lclass
+        ADDRESS ISPEXEC "TBSARG" TBLA "NEXT",
+                        "NAMECOND(CLASS,GE)"
+        ADDRESS ISPEXEC "TBSCAN" TBLA "NOREAD"
+     end
+     else address ISPEXEC "TBSKIP" tbla "NUMBER("XTDTOP")"
+     address ISPEXEC "CONTROL DISPLAY RESTORE"
+     if ^selection then do
+        address ISPEXEC "TBDISPL" tbla "PANEL(RACFSRCH)"
+        reta= rc
+     end
+  end  /* Do while (reta < 8) */
+RETURN 0
+/*--------------------------------------------------------------------*/
+/*                                                                    */
+/*--------------------------------------------------------------------*/
+Error:
+  say 'Error RACFCLSS at line 'sigl
+EXIT

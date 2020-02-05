@@ -1,0 +1,26 @@
+)ATTR DEFAULT(%+_)
+  # TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(GREEN)
+  $ TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(TURQ)
+  _ TYPE(INPUT)  INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  + TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(GREEN)
+)BODY EXPAND(\\)
++\-\(%RACFADM - RACF Administration+)\-\
+%Command ===>_ZCMD                                              +Scroll==>_SAMT+
+%
++USER:   $USER    +
++SELECT: %S+Show
+%
+%S   Class      Profile
+%-------------------------------------------------------------------------------
+)MODEL CLEAR(OPTA)
+_Z+ $Z         #Z                                                              +
+)INIT
+  .ZVARS   = '(OPTA CLASS PROFILE)'
+  .AUTOSEL = NO
+  .HELP    = #RACSRCH
+  IF (&SAMT = ' ')
+      &SAMT = &ZSCED
+  &ZCMD = ' '
+)PROC
+  VER (&OPTA,LIST,S,s)
+)END

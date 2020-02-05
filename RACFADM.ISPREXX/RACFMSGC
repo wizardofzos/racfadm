@@ -1,0 +1,33 @@
+/*%NOCOMMENT====================* REXX *==============================*/
+/*  PURPOSE:  RACFADM - Confirm panel                                 */
+/*--------------------------------------------------------------------*/
+/* FLG  YYMMDD  USERID   DESCRIPTION                                  */
+/* ---  ------  -------  -------------------------------------------- */
+/* @A1  200119  RACFA    Standardized/reduced lines of code           */
+/* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
+/*====================================================================*/
+  Trace o
+  Arg message
+  Signal off error
+  address ISPEXEC "VGET (ZSCREEN) ASIS"
+  address ISPEXEC "VGET (ERASHOW) ASIS"
+  address ISPEXEC "VGET (ERATRACE) ASIS"
+  address TSO "PROFILE MSGID"
+
+  answer= 'NO'
+  zwinttl= 'CONFIRM REQUEST'
+  address 'ISPEXEC'
+  Do until ckey='PF03' | ckey='ENTER'
+     'CONTROL NOCMD'
+     'ADDPOP'
+     'DISPLAY PANEL(RACFMSG1)'
+     'REMPOP'
+  End
+  Select
+     when ckey='PF03'  then answer='NO'
+     when ckey='ENTER' then answer='YES'
+     otherwise nop
+  End
+  zwinttl= ' '
+
+RETURN answer

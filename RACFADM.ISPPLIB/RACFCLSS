@@ -1,0 +1,24 @@
+)ATTR DEFAULT(%+_)
+  $ TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(TURQ)
+  _ TYPE(INPUT)  INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  + TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(GREEN)
+)BODY EXPAND(\\)
++\-\(%RACFADM - RACF Administration+)\-\
+%Command ===>_ZCMD                                              +Scroll==>_SAMT+
+%
++SELECT: %S+Show
+%
+%S   Class
+%-------------------------------------------------------------------------------
+)MODEL CLEAR(OPTA)
+_Z+ $Z       +
+)INIT
+  .ZVARS   = '(OPTA CLASS)'
+  .AUTOSEL = NO
+  .HELP    = #RACCLS2
+  &ZCMD    = ' '
+  IF (&SAMT = ' ')
+      &SAMT = &ZSCED
+)PROC
+  VER (&OPTA,LIST,S,s)
+)END

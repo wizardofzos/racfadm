@@ -1,0 +1,22 @@
+)ATTR DEFAULT(%+_)
+  $ TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(TURQ)  SKIP(ON)
+  _ TYPE(INPUT)  INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  + TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(GREEN)
+)BODY EXPAND(\\)
++\-\(%RACFADM - User Profiles+)\-\
+%Command ===>_ZCMD                                              +Scroll==>_SAMT+
+%
+%
+%Message
+%---------------------------------------------------------------------- --------
+)MODEL
+$Z                                                                             +
+)INIT
+  .ZVARS   = '(MSG)'
+  .AUTOSEL = NO
+  .HELP    = #RACMENU
+  &ZCMD    = ' '
+  IF (&SAMT = ' ')
+      &SAMT = &ZSCED
+)PROC
+)END

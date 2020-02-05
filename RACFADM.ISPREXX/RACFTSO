@@ -1,0 +1,136 @@
+/*%NOCOMMENT====================* REXX *==============================*/
+/*  PURPOSE:  RACFADM - Create TSO alias                              */
+/*--------------------------------------------------------------------*/
+/* FLG  YYMMDD  USERID   DESCRIPTION                                  */
+/* ---  ------  -------  -------------------------------------------- */
+/* @A3  200119  RACFA    Standardized/reduced lines of code           */
+/* @A2  200119  RACFA    Added comment box above procedures           */
+/* @A1  200118  RACFA    Fixed NOPREF issue with users TSO PROFILE    */
+/* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
+/*====================================================================*/
+  Trace o
+  signal off error
+  era_cmd=arg(1)
+  user=arg(2)
+  tsoproc=arg(3)
+  tsoacct=arg(4)
+  defgrp=arg(5)
+  owner =arg(6)
+  joblib=arg(7)
+  address ISPEXEC "VGET (ERASHOW ERATRACE ERAISPP) ASIS"
+  address ISPEXEC "VGET (ERACTLG ERAUNIT ERAULIB",
+                  "ERAUVOL ERAMCAT) ASIS"
+
+  "PROF NOPREF"
+  signal on error
+  x= OUTTRAP('trash.')
+  interpret 'signal ' era_cmd
+
+ADDD:
+CHGD:
+  /*- Add userid dataset profile                    -*/
+  "ADDSD  ('"user".**') UACC(READ) OWNER("owner")"
+/*-------------------------------------------------------------------*/
+/*- Authorize sys1.brodcast update for alias creation -              */
+/*    "PERMIT 'SYS1.BRODCAST' GEN ACC(UPDATE) ID("USERID()")"        */
+/*- Authorize volume allocation for TSO libraries                    */
+/*    "PERMIT $ALLOC."erauvol" CLASS(USRDASD)"                       */
+/*                  "ACC(UPDATE) ID("USERID()")"                     */
+/*    "SETROPTS RACLIST(USRDASD) REFRESH"                            */
+/*- Authorize MASTER catalog for alias creation                      */
+/*    "PERMIT '"eramcat"' GEN ACC(ALTER) ID("USERID()")"             */
+/*-------------------------------------------------------------------*/
+
+  /*- Authorize Library allocation                -*/
+  "PERMIT '"user".**' GEN ACC(ALTER) ID("USERID()")"
+  "SETROPTS REFRESH GENERIC(DATASET)"
+  address TSO "PROFILE MSGID"
+
+  /*- Define user alias for datasets -*/
+  signal off error
+  "DEL '"user"' ALIAS PURGE"
+  signal on error
+  "DEF ALIAS (NAME("user") RELATE("eractlg"))"
+
+  /*- Allocate ISPF profile          -*/
+  signal off error
+/*-------------------------------------------------------------------*/
+/* "ALLOC FILE(DD1) DATASET('"user"."eraispp"') ",                   */
+/*   "UNIT("eraunit") VOLUME("erauvol") NEW SPACE(1,1) TRACKS ",     */
+/*   "BLKSIZE(6400) LRECL(80) RECFM(F B) CATALOG DIR(15)"            */
+/*-------------------------------------------------------------------*/
+  "ALLOC FILE(DD1) DATASET('"user"."eraispp"') ",
+         "NEW SPACE(1,1) TRACKS ",
+         "BLKSIZE(6400) LRECL(80) RECFM(F B) CATALOG DIR(15)"
+  "FREE FILE(DD1)"
+
+  /*- Allocate joblib library        -*/
+  if joblib='YES' then do
+    "ALLOC FILE(DD2) DATASET('"user"."eraulib"') ",
+         "NEW SPACE(1,1) TRACKS ",
+         "BLKSIZE(6400) LRECL(80) RECFM(F B) CATALOG DIR(15)"
+    "FREE FILE(DD2)"
+  end
+
+  signal on error
+  /*- Authorize logon and account to default group  -*/
+  "PE "tsoacct" CLASS(ACCTNUM) ACC(READ) ID("defgrp")"
+  "PE "tsoproc" CLASS(TSOPROC) ACC(READ) ID("defgrp")"
+  "SETROPTS RACLIST(ACCTNUM) REFRESH"
+  "SETROPTS RACLIST(TSOPROC) REFRESH"
+
+  call Delete_Admin_permits
+  address TSO "PROFILE PREF("USERID()")"                      /* @A1 */
+RETURN RC
+/*--------------------------------------------------------------------*/
+/*                                                                    */
+/*--------------------------------------------------------------------*/
+DELD:
+  /*- Del userid dataset profile                    -*/
+  signal off error
+  "DELDSD  ('"user".**')"
+  "DELETE '"user"."eraulib"'"
+  "DELETE '"user"."eraispp"'"
+  "DELETE ("user") ALIAS"
+  signal on error
+RETURN RC
+/*--------------------------------------------------------------------*/
+/*                                                                    */
+/*--------------------------------------------------------------------*/
+Display_msg:
+  trash_msg= trash.0
+  address ISPEXEC "VGET (ZSCREEN) ASIS"
+  tblmsg= 'RCFER'ZSCREEN /* make table unique */
+  address ISPEXEC "TBCREATE" tblmsg "KEYS(MSG)",
+                  "REPLACE NOWRITE"
+  do trash_count=1 to trash_msg
+     msg= trash.trash_count
+     address ISPEXEC "TBMOD" tblmsg
+  end
+  address ISPEXEC "TBTOP" tblmsg
+  address ISPEXEC "TBDISPL" tblmsg "PANEL(RACFTSO)"
+  address ISPEXEC "TBEND" tblmsg
+RETURN
+/*--------------------------------------------------------------------*/
+/*                                                                    */
+/*--------------------------------------------------------------------*/
+Error:
+  call Display_msg
+  /*- Delete userid dataset profile                    -*/
+  "DELDSD  ('"user".**')"
+  call Delete_Admin_permits
+RETURN 8
+/*--------------------------------------------------------------------*/
+/*                                                                    */
+/*--------------------------------------------------------------------*/
+Delete_admin_permits:
+  /*- Delete temporary autorizations for RACF administrator -*/
+  "PERMIT '"user".**'     GEN DELETE ID("USERID()")"
+/*-------------------------------------------------------------------*/
+/*  "PERMIT 'SYS1.BRODCAST' GEN DELETE ID("USERID()")"               */
+/*  "PERMIT '"eramcat"'     GEN DELETE ID("USERID()")"               */
+/*  "PERMIT $ALLOC."erauvol" CLASS(USRDASD) DELETE ID("USERID()")"   */
+/*  "SETROPTS RACLIST(USRDASD) REFRESH"                              */
+/*-------------------------------------------------------------------*/
+  "SETROPTS REFRESH GENERIC(DATASET)"
+RETURN

@@ -1,0 +1,44 @@
+)ATTR DEFAULT(%+_)
+  $ TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(TURQ)
+  _ TYPE(INPUT)  INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  { TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(BLUE)
+  + TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(GREEN)
+)BODY EXPAND(\\)
++\-\(%RACFADM - User Profiles+)\-\
+%Command ===>_ZCMD                                              +Scroll==>_SAMT+
+%
++Add RACF%USER+profile: %ADDUSER+command
++
++PROFILE   %===>_USER    { (Enter%NEW{name)
++
++OWNER     %===>_OWNER   { (Owner of profile)
++SUPGROUP  %===>_DEFGRP  { (Default group)
++NAME      %===>_NAME                                      { (Last, first name)
++ATTRIBUTES%===>_ATTR
++
++
+%                Installation Data (no quotes)
+%                --------------------------------------------------------------
++DATA      %===>_DATA
++
++
++
++
++
++
++\ \Press%ENTER+to process or%END+to exit\ \
+)INIT
+  .CURSOR = USER
+  .HELP   = #RACMENU
+  &OLDUSR = &USER
+  &FROM   = &USER
+  IF (&USER = NONE)
+      &USER = &RFILTER
+)PROC
+  IF (&OLDUSR = &USER)
+      &USER = ' '
+  VER (&USER,NB)
+  VER (&OWNER,NB,NAME)
+  VER (&DEFGRP,NB,NAME)
+  VER (&NAME,NB)
+)END

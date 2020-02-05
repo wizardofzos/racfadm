@@ -1,0 +1,85 @@
+)ATTR DEFAULT(%+_)
+  $ TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(TURQ)
+  _ TYPE(INPUT)  INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  { TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(BLUE)
+  + TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(GREEN)
+  @ AREA(SCRL)   EXTEND(ON)
+)BODY EXPAND(\\)
++\-\(%RACFADM - RACF Parameters+)\-\
+%Command ===>_ZCMD
++
++System parameters: %Access Control CVT (CVTRAC)
++
++Current status of RACF parameters
+@area1                                                                         @
+@                                                                              @
+@                                                                              @
+@                                                                              @
+@                                                                              @
+@                                                                              @
+@                                                                              @
+@                                                                              @
+@                                                                              @
+@                                                                              @
+@                                                                              @
+@                                                                              @
+@                                                                              @
+@                                                                              @
+@                                                                              @
+@                                                                              @
+@                                                                              @
+)AREA AREA1
+{\-\
++ RACF version{.....................$RCVTGRNM+
++ RACF data base{...................$RCVTGDSN
+{\-\
++ JES early verify{.................$RCVTJCHK+
++ JES batch all{....................$RCVTJALL+
++ JES Xbm all{......................$RCVTJXAL+
++ JES NJE userid{...................$RCVTJSYS+
++ JES undefined userid{.............$RCVTJUND+
++ Password interval{................$RCVTPINV+
++ Password history{.................$RCVTPHIS+
++ Password attempts{................$RCVTPRVK+
++ Password warning{.................$RCVTPWRN+
++ Password rules{...................$RCVTRULS+
++ Password minimum length{..........$RCVTELEN+
++ Password maximum length{..........$RCVTSLEN+
++ Userid inactive{..................$RCVTPINA+
++ Dataset protection{...............$RCVTSADS+
++ Erase on scratch{.................$RCVTSEOS+
++ Catalogued datasets only{.........$RCVTSCAT+
++ Audit special{....................$RCVTSAUS+
++ Audit operations{.................$RCVTSAUO+
++ Audit appl{.......................$RCVTSAPL+
++ List groups access checking{......$RCVTSGRC+
++ Enhanced generic naming{..........$RCVTSEGN+
++ Multi factor authentication{......$RCVTSMFA+
++ Generic owner{....................$RCVTSGNO+
++ When program{.....................$RCVTSWHE+
++ Protect all{......................$RCVTSPRA+
++ Multi level{......................$RCVTSMLA+
++ Multi level quiet{................$RCVTSMLQ+
++ Multi level stable{...............$RCVTSMLS+
++ Multi level secure{...............$RCVTSMLT+
++ Security level control{...........$RCVTSSLC+
++ Security label audit{.............$RCVTSSLA+
++ Retention period{.................$RCVTSRPE+
++ LU session interval{..............$RCVTSLUI+
++ Single level prefix{..............$RCVTQUAL+
++ Dasd volume protection{...........$RCVTDVPR+
++ Duplicate datasets{...............$RCVTNDUP+
++ Model GDG{........................$RCVTMGDG+
++ Model groups{.....................$RCVTMGRP+
++ Model users{......................$RCVTMUSR+
++ UADS volume{......................$RCVTUVOL+
++ UADS datasets{....................$RCVTUADS                     +
++ Terminal authority{...............$RCVTTAUT+
++ Terminal UACC{....................$RCVTTUAC+
++ Tape volume protection{...........$RCVTTVPR+
++ Tape dataset protection{..........$RCVTTDPR+
++ Initialize Statistics{............$RCVTNLS +
+)INIT
+  .HELP   = #RACMENU
+)PROC
+)END

@@ -1,0 +1,59 @@
+)ATTR DEFAULT(%+_)
+  ! TYPE(INPUT) INTENS(LOW) PAD(' ')
+  _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT)   HILITE(USCORE)
+  { TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(BLUE)
+  } TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(RED)
+  + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
+)BODY EXPAND(\\)
++\-\(%RACFADM - Settings+)\-\
+%Command ===>_ZCMD                                                             +
+%
++Change one of the following and press%ENTER.
++
++  RACF Commands{......_Z  {                   Show RACF commands (YES/NO)
++  REXX Trace{........._Z  {                   Start REXX trace   (YES/NO)
+}*+Master Catalog{....._Z                    { z/OS Master Catalog
+}*+TSO User Catalog{..._Z                    { z/OS Alias catalog
+}*+TSO ISPPROF{........_Z                    { TSO ISPF profile
+}*+TSO JOBLIB{........._Z                    { TSO programmer library
+}*+TSO JOBLIB Volume{.._Z      {               TSO programmer library volume
+}*+TSO Alloc Unit{....._Z       {              z/OS Allocation unit
+}*+TSO A/S Size{......._Z   {                  z/OS Address space size
++  Administrator{......_Z                   {  Full Administrator Userid
++  Confirm Panel{......_Z  {                   Confirm command request (YES/NO)
++  Common Group{......._Z      {               Connect new users to this group
++  Default filter{....._Z                    { Default search filter for panels
++
++
++ }(*)+= TSO users only
+)INIT
+  VGET (ERASHOW ERATRACE ERACTLG ERAUNIT) PROFILE
+  VGET (ERAASIZ ERAULIB  ERAUVOL ERAMCAT) PROFILE
+  VGET (ERAADMN ERACONF  ERACGRP ERAISPP) PROFILE
+  VGET (ERAFLTR) PROFILE
+  IF (&ERASHOW  = &Z)
+      &ERASHOW  = 'NO'
+  IF (&ERATRACE = &Z)
+      &ERATRACE = 'NO'
+  IF (&ERACONF  = &Z)
+      &ERACONF  = 'YES'
+  .ZVARS = '(ERASHOW ERATRACE ERAMCAT ERACTLG ERAISPP ERAULIB +
+             ERAUVOL ERAUNIT  ERAASIZ ERAADMN ERACONF ERACGRP +
+             ERAFLTR)'
+  .HELP = #RACPRM1
+)PROC
+  VER  (&ERASHOW,NB,LIST,NO,YES)
+  VER  (&ERATRACE,NB,LIST,NO,YES)
+  IF (&ERACTLG NE ' ')
+     VER (&ERAUNIT,NB)
+     VER (&ERAASIZ,NB)
+     VER (&ERAULIB,NB)
+     VER (&ERAUVOL,NB)
+     VER (&ERAMCAT,NB)
+     VER (&ERAISPP,NB)
+  VER  (&ERACONF,NB,LIST,NO,YES)
+  VPUT (ERASHOW ERATRACE ERACTLG ERAUNIT) PROFILE
+  VPUT (ERAASIZ ERAULIB  ERAUVOL ERAMCAT) PROFILE
+  VPUT (ERAADMN ERACONF  ERACGRP ERAISPP) PROFILE
+  VPUT (ERAFLTR) PROFILE
+)END
