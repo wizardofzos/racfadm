@@ -167,7 +167,7 @@ Profl:
             fld_sort = 'USER,C,A'                             /* @A5 */
             xtdtop   = 1                                      /* @AS */
        END                                                    /* @AS */
-       WHEN ABBREV("SORT",ZCMD,1) = 1 THEN DO                 /* @A5 */
+       WHEN ABBREV("SORT",ZCMD,1) = 1 THEN DO                 /* @AT */
             xtdtop   = 1                                      /* @AT */
             if seq = 'A' | seq = 'D' then                     /* @AU */
                nop                                            /* @AU */

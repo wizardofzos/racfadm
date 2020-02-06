@@ -3,8 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
-/* @AH  200207  RACFA    Fix color of sort col, when F3, diff. id     */
-/* @AG  200207  RACFA    Fix SORT, place at top of table              */
+/* @AG  200207  RACFA    Fix color of sort col, when F3, diff. id     */
 /* @AF  200207  RACFA    Fix SORT, place at top of table              */
 /* @AE  200207  RACFA    Fix RESET, was not placing at top of table   */
 /* @AD  200207  RACFA    Fix LOCATE, not working when sort descending */
@@ -113,9 +112,9 @@ Profl:
   end
   /* profiles table display section */
   opta= ' '
-  sort='';fld_sort='GROUP';dfl_sort='GROUP,C,A'               /* @AH */
+  sort='';fld_sort='GROUP';dfl_sort='GROUP,C,A'               /* @AG */
   CLRGROU = "WHITE"; CLRDATA = "TURQ"    /* Col. colors */    /* @A4 */
-  address ISPEXEC "TBSORT" tbla "FIELDS("dfl_sort")"          /* @AH */
+  address ISPEXEC "TBSORT" tbla "FIELDS("dfl_sort")"          /* @AG */
   address ISPEXEC "TBTOP" tbla
   address ISPEXEC "TBDISPL" tbla "PANEL(RACFGRP8)"
   reta= rc
@@ -131,10 +130,10 @@ Profl:
         END                                                   /* @AE */
         WHEN ABBREV("SORT",ZCMD,1) = 1 THEN DO                /* @AF */
              xtdtop   = 1                                     /* @AE */
-             if seq = 'A' | seq = 'D' then                    /* @AG */
-                nop                                           /* @AG */
-             else                                             /* @AG */
-                seq = 'A'                                     /* @AG */
+             if seq = 'A' | seq = 'D' then                    /* @AF */
+                nop                                           /* @AF */
+             else                                             /* @AF */
+                seq = 'A'                                     /* @AF */
              SELECT                                           /* @A3 */
                 when PARM= 'RESET'   then                     /* @A3 */
                      fld_sort= ''                             /* @AC */

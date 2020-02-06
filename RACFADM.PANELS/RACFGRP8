@@ -4,6 +4,7 @@
    $ TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(TURQ)
    _ TYPE(INPUT)  INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
    + TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(GREEN)
+   ~ TYPE(PS)
 )BODY EXPAND(\\)
 +\-\(%RACFADM - Group Profiles+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
@@ -11,7 +12,7 @@
 +CLASS:  %GROUP +FILTER: $RFILTER
 +SELECT: %S+Show,%L+List,%C+Change,%A+Add,%R+Remove
 %
-%S   Group      Description
+%S  ~Group     ~Description
 %-------------------------------------------------------------------------------
 )MODEL CLEAR(OPTA)
 _Z+ Z         Z
@@ -24,4 +25,7 @@ _Z+ Z         Z
       &SAMT = &ZSCED
 )PROC
   VER (&OPTA,LIST,S,s,L,l,C,c,A,a,R,r)
+)PNTS
+  FIELD(ZPS00001) VAR(ZCMD) VAL('SORT GROUP')
+  FIELD(ZPS00002) VAR(ZCMD) VAL('SORT DESC')
 )END
