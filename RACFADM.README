@@ -14,7 +14,7 @@ Written in customizable Rexx, RACFADM includes an exec to automate creation
 of aliases or data sets when creating a new TSO user and can browse all RACF
 system options from a single, scrollable display.
 
-To begin using execute the RACFADM member found in the ISPREXX library.
+To begin using execute the RACFADM member found in the EXEC library.
 
 *---------------------------------------------------------------------*
 *                            Contributors                             *
