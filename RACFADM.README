@@ -1,3 +1,6 @@
+*---------------------------------------------------------------------*
+*                            Introduction                             *
+*---------------------------------------------------------------------*
 RACF Administration (RACFADM) makes many security tasks simple.  It lists
 user, group, data set, and general resource profiles by means of a
 user-friendly, menu-driven interface; it provides interactive modification
@@ -12,3 +15,13 @@ of aliases or data sets when creating a new TSO user and can browse all RACF
 system options from a single, scrollable display.
 
 To begin using execute the RACFADM member found in the ISPREXX library.
+
+*---------------------------------------------------------------------*
+*                            Contributors                             *
+*---------------------------------------------------------------------*
+
+  Nico Rizzuto (Creator)       http://www.rizzuto.it
+  Lionel B. Dyck               http://www.lbdsoftware.com/
+  Bruce Koss
+  John Kalinich
+  Bill Smith
