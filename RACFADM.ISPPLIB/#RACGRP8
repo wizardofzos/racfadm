@@ -7,8 +7,9 @@
 %Command ===>_ZCMD                                                             +
 %
 +Primary Commands
-%  SORT argument
-+    Sort the table by a particular column, ex.%S DESC+or%SORT DESC+
+%  SORT argument A/D
++    Sort the table by a particular column, in ascending or descending
++    sequence, ex.%S DESC+or%SORT DESC D
 %  LOCATE argument
 +    Locate text in the sorted column, ex.%L SSAPP+or%LOCATE SSAPP+
 %  RESET

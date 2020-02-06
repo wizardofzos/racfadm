@@ -3,6 +3,12 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AH  200207  RACFA    Fix color of sort col, when F3, diff. id     */
+/* @AG  200207  RACFA    Fix SORT, place at top of table              */
+/* @AF  200207  RACFA    Fix SORT, place at top of table              */
+/* @AE  200207  RACFA    Fix RESET, was not placing at top of table   */
+/* @AD  200207  RACFA    Fix LOCATE, not working when sort descending */
+/* @AC  200206  TRIDJK   Allow A/D in SORT command                    */
 /* @AB  200123  RACFA    Retrieve default filter, Option 0 - Settings */
 /* @AA  200122  RACFA    Del TBTOP placed in by change @A3            */
 /* @A9  200122  TRIDJK   Test/del MFA option from 'LU userid' command */
@@ -19,7 +25,6 @@
   trace o
   Rclass='GROUP'
   lparm=''                               /* Locate parm */    /* @A3 */
-  CLRGROU = "WHITE"; CLRDATA = "TURQ"    /* Col. colors */    /* @A4 */
   Arg Rfilter
   If (Rfilter = '') Then Do                                   /* @AB */
      address ISPEXEC "VGET (ERAFLTR) ASIS"                    /* @AB */
@@ -108,26 +113,38 @@ Profl:
   end
   /* profiles table display section */
   opta= ' '
-  sort='';fld_sort='GROUP';dfl_sort='GROUP'                  /* @A3 */
-  address ISPEXEC "TBSORT" tbla "FIELDS("dfl_sort")"         /* @A3 */
+  sort='';fld_sort='GROUP';dfl_sort='GROUP,C,A'               /* @AH */
+  CLRGROU = "WHITE"; CLRDATA = "TURQ"    /* Col. colors */    /* @A4 */
+  address ISPEXEC "TBSORT" tbla "FIELDS("dfl_sort")"          /* @AH */
   address ISPEXEC "TBTOP" tbla
   address ISPEXEC "TBDISPL" tbla "PANEL(RACFGRP8)"
   reta= rc
   do while (reta < 8)   /* tablea panel */
      address ISPEXEC "CONTROL DISPLAY SAVE"
      xtdtop= ztdtop
-     PARSE VAR ZCMD ZCMD PARM                                 /* @A3 */
+     PARSE VAR ZCMD ZCMD PARM seq                             /* @AC */
      lparm=""                                                 /* @A3 */
      Select
-        WHEN ABBREV("RESET",ZCMD,1) = 1 THEN                  /* @A3 */
+        WHEN ABBREV("RESET",ZCMD,1) = 1 THEN DO               /* @AE */
              fld_sort = 'GROUP,C,A'                           /* @A3 */
-        WHEN ABBREV("SORT",ZCMD,1) = 1 THEN                   /* @A3 */
+             xtdtop   = 1                                     /* @AE */
+        END                                                   /* @AE */
+        WHEN ABBREV("SORT",ZCMD,1) = 1 THEN DO                /* @AF */
+             xtdtop   = 1                                     /* @AE */
+             if seq = 'A' | seq = 'D' then                    /* @AG */
+                nop                                           /* @AG */
+             else                                             /* @AG */
+                seq = 'A'                                     /* @AG */
              SELECT                                           /* @A3 */
-                when PARM= 'RESET' then fld_sort= ''          /* @A3 */
-                when PARM= 'GROUP' then fld_sort= 'GROUP,C,A' /* @A3 */
-                when PARM= 'DESC'  then fld_sort= 'DATA,C,A'  /* @A3 */
+                when PARM= 'RESET'   then                     /* @A3 */
+                     fld_sort= ''                             /* @AC */
+                when PARM= 'GROUP'   then                     /* @A3 */
+                     fld_sort= 'GROUP,C,'seq                  /* @AC */
+                when PARM= 'DESC'    then                     /* @A3 */
+                     fld_sort= 'DATA,C,'seq                   /* @AC */
                 otherwise NOP                                 /* @A3 */
              END                                              /* @A3 */
+        END                                                   /* @AF */
         WHEN ABBREV("LOCATE",ZCMD,1) = 1 THEN lparm = parm    /* @A3 */
         otherwise lparm=''
      End  /* Select */
@@ -173,8 +190,13 @@ Profl:
         ASTERICK = "*"                                        /* @A3 */
         INTERPRET LOCARG" = lparm||ASTERICK"                  /* @A3 */
         address ISPEXEC "TBTOP" tbla                          /* @A3 */
+        PARSE VAR FLD_SORT . "," . "," SEQ                    /* @AD */
+        IF (SEQ = "D") THEN                                   /* @AD */
+           CONDLIST = "LE"                                    /* @AD */
+        ELSE                                                  /* @AD */
+           CONDLIST = "GE"                                    /* @AD */
         ADDRESS ISPEXEC "TBSCAN "tbla,                        /* @A3 */
-                "ARGLIST("LOCARG") CONDLIST(GE)"              /* @A3 */
+                "ARGLIST("LOCARG") CONDLIST("CONDLIST")"      /* @AD */
      end
      else address ISPEXEC "TBSKIP" tbla "NUMBER("XTDTOP")"
      opta= ' '

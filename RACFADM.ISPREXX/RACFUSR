@@ -3,6 +3,10 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AU  200207  RACFA    Fix color of sort col, when F3, diff. id     */
+/* @AT  200207  RACFA    Fix SORT, place at top of table              */
+/* @AS  200207  RACFA    Fix RESET, was not placing at top of table   */
+/* @AR  200207  RACFA    Fix LOCATE, not working when sort descending */
 /* @AQ  200205  TRIDJK   Allow A/D in SORT command                    */
 /* @AP  200131  TRIDJK   Simulate irr* permanent user profiles        */
 /* @AO  200131  TRIDJK   Fixed logon date for digital certicate logons*/
@@ -40,10 +44,6 @@
   Call Digital_Certs                                          /* @AP */
   Rclass= 'USER'
   lparm=''                                /* Locate parm */   /* @A5 */
-  CLRUSER = "WHITE"; CLRNAME = "TURQ"     /* Col. colors */   /* @AA */
-  CLRDEFG = "TURQ";  CLRDATE = "TURQ"                         /* @AA */
-  CLROWNE = "TURQ";  CLRREVO = "TURQ"                         /* @AA */
-  CLRATTR = "TURQ";  CLRTSOU = "TURQ"                         /* @AA */
   address ISPEXEC "VGET (ZSCREEN) ASIS"
   address ISPEXEC "VGET (ERASHOW) ASIS"
   address ISPEXEC "VGET (ERATRACE) ASIS"
@@ -148,54 +148,62 @@ Profl:
   end
   /* profiles table display section */
   opta= ' '
-  sort='';fld_sort='';dfl_sort='USER'
+  sort='';fld_sort='';dfl_sort='USER,C,A'                     /* @AU */
+  CLRUSER = "WHITE"; CLRNAME = "TURQ"     /* Col. colors */   /* @AU */
+  CLRDEFG = "TURQ";  CLRDATE = "TURQ"                         /* @AU */
+  CLROWNE = "TURQ";  CLRREVO = "TURQ"                         /* @AU */
+  CLRATTR = "TURQ";  CLRTSOU = "TURQ"                         /* @AU */
   address ISPEXEC "TBSORT" tbla "FIELDS("dfl_sort")"
   address ISPEXEC "TBTOP" tbla
   address ISPEXEC "TBDISPL" tbla "PANEL("user_list_pnl")"
   reta= rc
   do while (reta < 8)   /* tablea panel */
      address ISPEXEC "CONTROL DISPLAY SAVE"
-     PARSE VAR ZCMD ZCMD PARM seq                             /* @AQ */
+     PARSE VAR ZCMD ZCMD PARM SEQ                             /* @AQ */
      lparm=""                                                 /* @A7 */
-     if zcmd = 'SORT' then                                    /* @AQ */
-       if parm <> '' then                                     /* @AQ */
-         if seq = 'A' | seq = 'D' then nop                    /* @AQ */
-         else                                                 /* @AQ */
-           seq = 'A'                                          /* @AQ */
+     xtdtop= ztdtop                                           /* @AS */
      Select
-       WHEN ABBREV("RESET",ZCMD,1) = 1 THEN                   /* @A5 */
-         fld_sort = 'USER,C,A'                                /* @A5 */
-       WHEN ABBREV("SORT",ZCMD,1) = 1 THEN                    /* @A5 */
-         SELECT                                               /* @A5 */
-            when PARM= 'RESET'   then                         /* @A5 */
-              fld_sort= ''                                    /* @AQ */
-            when PARM= 'SURNAME' then                         /* @A5 */
-              fld_sort= 'NAME,C,'seq                          /* @AQ */
-            when PARM= 'NAME'    then                         /* @A5 */
-              fld_sort= 'NAME,C,'seq                          /* @AQ */
-            when PARM= 'LOGON'   then                         /* @A5 */
-              fld_sort= 'DATELGN,C,'seq                       /* @AQ */
-            when PARM= 'GROUP'   then                         /* @A5 */
-              fld_sort= 'DEFGRP,C,'seq                        /* @AQ */
-            when PARM= 'REV'     then                         /* @A5 */
-              fld_sort= 'REVOKED,C,'seq                       /* @AQ */
-            when PARM= 'USERID'  then                         /* @A5 */
-              fld_sort= 'USER,C,'seq                          /* @AQ */
-            when PARM= 'OWNER'   then                         /* @A5 */
-              fld_sort= 'OWNER,C,'seq                         /* @AQ */
-            when PARM= 'ATTR'    then                         /* @A5 */
-              fld_sort= 'ATTR,C,'seq                          /* @AQ */
-            when PARM= 'ATT'     then                         /* @A5 */
-              fld_sort= 'ATTR,C,'seq                          /* @AQ */
-            when PARM= 'TSO'     then                         /* @A5 */
-              fld_sort= 'TSOUSER,C,'seq                       /* @AQ */
-            otherwise NOP                                     /* @A5 */
-         END                                                  /* @A5 */
-       WHEN ABBREV("LOCATE",ZCMD,1) = 1 THEN lparm = parm     /* @A5 */
+       WHEN ABBREV("RESET",ZCMD,1) = 1 THEN DO                /* @AS */
+            fld_sort = 'USER,C,A'                             /* @A5 */
+            xtdtop   = 1                                      /* @AS */
+       END                                                    /* @AS */
+       WHEN ABBREV("SORT",ZCMD,1) = 1 THEN DO                 /* @A5 */
+            xtdtop   = 1                                      /* @AT */
+            if seq = 'A' | seq = 'D' then                     /* @AU */
+               nop                                            /* @AU */
+            else                                              /* @AU */
+               seq = 'A'                                      /* @AU */
+            SELECT                                            /* @A5 */
+               when PARM= 'RESET'   then                      /* @A5 */
+                    fld_sort= ''                              /* @AQ */
+               when PARM= 'SURNAME' then                      /* @A5 */
+                    fld_sort= 'NAME,C,'seq                    /* @AQ */
+               when PARM= 'NAME'    then                      /* @A5 */
+                    fld_sort= 'NAME,C,'seq                    /* @AQ */
+               when PARM= 'LOGON'   then                      /* @A5 */
+                    fld_sort= 'DATELGN,C,'seq                 /* @AQ */
+               when PARM= 'GROUP'   then                      /* @A5 */
+                    fld_sort= 'DEFGRP,C,'seq                  /* @AQ */
+               when PARM= 'REV'     then                      /* @A5 */
+                    fld_sort= 'REVOKED,C,'seq                 /* @AQ */
+               when PARM= 'USERID'  then                      /* @A5 */
+                    fld_sort= 'USER,C,'seq                    /* @AQ */
+               when PARM= 'OWNER'   then                      /* @A5 */
+                    fld_sort= 'OWNER,C,'seq                   /* @AQ */
+               when PARM= 'ATTR'    then                      /* @A5 */
+                    fld_sort= 'ATTR,C,'seq                    /* @AQ */
+               when PARM= 'ATT'     then                      /* @A5 */
+                    fld_sort= 'ATTR,C,'seq                    /* @AQ */
+               when PARM= 'TSO'     then                      /* @A5 */
+                    fld_sort= 'TSOUSER,C,'seq                 /* @AQ */
+               otherwise NOP                                  /* @A5 */
+            END                                               /* @A5 */
+       END                                                    /* @AT */
+       WHEN ABBREV("LOCATE",ZCMD,1) = 1 THEN                  /* @A5 */
+            lparm = parm                                      /* @A5 */
        otherwise lparm=''
      End /* Select */
      ZCMD = "";PARM = ""                                      /* @A5 */
-     xtdtop= ztdtop
      opta= translate(opta) /* upper case */
      Select
         when opta= 'A' then call Addd
@@ -251,8 +259,13 @@ Profl:
      if lparm<>'' then do
         ASTERICK = "*"                                        /* @A5 */
         INTERPRET LOCARG" = lparm||ASTERICK"                  /* @A8 */
+        PARSE VAR FLD_SORT . "," . "," SEQ                    /* @AR */
+        IF (SEQ = "D") THEN                                   /* @AR */
+           CONDLIST = "LE"                                    /* @AR */
+        ELSE                                                  /* @AR */
+           CONDLIST = "GE"                                    /* @AR */
         ADDRESS ISPEXEC "TBSCAN "tbla,                        /* @A5 */
-                "ARGLIST("LOCARG") CONDLIST(GE)"              /* @A8 */
+                "ARGLIST("LOCARG") CONDLIST("CONDLIST")"      /* @AR */
      end
      else address ISPEXEC "TBSKIP" tbla "NUMBER("XTDTOP")"
      address ISPEXEC "CONTROL DISPLAY RESTORE"
@@ -673,7 +686,7 @@ GETD:
      datelgn='UNKNOWN'                                        /* @AN */
   if (datelgn = " ") | (datelgn = 'UNKNOWN') then             /* @AO */
      nop                                                      /* @AO */
-  else do                                                     /* @XX */
+  else do                                                     /* @AR */
      datelgn = SUBSTR(datelgn,1,2)SUBSTR(datelgn,4,3)         /* @AN */
      datelgn = DATE('O',datelgn,'J')                          /* @AN */
   end                                                         /* @AN */

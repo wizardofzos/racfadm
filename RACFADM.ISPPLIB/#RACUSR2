@@ -8,8 +8,8 @@
 %
 +Primary Commands
 %  SORT argument A/D
-+    Sort the table by a particular column, in ascending or descending sequence
-+    ex.%S LOGON+or%SORT LOGON D
++    Sort the table by a particular column, in ascending or descending
++    sequence, ex.%S LOGON+or%SORT LOGON D
 %  LOCATE argument
 +    Locate text in the sorted column, ex.%L S2341+or%LOCATE T2334
 %  RESET
