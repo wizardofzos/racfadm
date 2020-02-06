@@ -4,22 +4,23 @@
   _ TYPE(INPUT)  INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
   + TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(GREEN)
 )BODY EXPAND(\\)
-+\-\(%RACFADM - General Resource+)\-\
++\-\(%RACFADM - Dataset Profiles+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
 %
-+SELECT: %S+Show,%R+Refresh
++FILTER: $RFILTER
++SELECT: %S+Show,%L+List,%C+Change,%A+Add,%R+Remove
 %
-%S   Class
+%S   Profile Name                            Type
 %-------------------------------------------------------------------------------
 )MODEL CLEAR(OPTA)
-_Z+ $Z        #Z                +
+_Z+ $Z                                      #Z
 )INIT
-  .ZVARS   = '(OPTA CLASS ACTION)'
+  .ZVARS   = '(OPTA DATASET TYPE)'
   .AUTOSEL = NO
-  .HELP    = #RACCLSR
+  .HELP    = #RACDSN2
   &ZCMD    = ' '
   IF (&SAMT = ' ')
       &SAMT = &ZSCED
 )PROC
-  VER (&OPTA,LIST,S,s,R,r)
+  VER (&OPTA,LIST,S,s,L,l,C,c,A,a,R,r)
 )END

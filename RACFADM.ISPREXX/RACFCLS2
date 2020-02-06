@@ -1,0 +1,80 @@
+)ATTR DEFAULT(%+_)
+  _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT)   HILITE(USCORE)
+  + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
+)BODY EXPAND(\\)
++\-\(%RACFADM - General Resource+)\-\
+%OPTION  ===>_ZCMD                                                             +
++
+%  CICS                   TRANSACTION       TRANSACTION       RACF MENU
+%  ENVIRONMENT            GROUP PROFILES    PROFILES          SECURITY CODES
++  -----------------      --------------    -----------       ------------
+%  WINTERTHUR+Prod+   % 1+GESETRN       % 2+TESETRN       % 3+SESETST
+%            +Test+   % 4+GOTWTRN       % 5+TOTWTRN       % 6+SOTWTST
+%  VENETA    +Prod+   % 7+GVENTRN       % 8+TVENTRN       % 9+SVENTST
+%            +Oscar+  %10+GVEVTRN       %11+TVEVTRN       %12+SVEVTST
+%            +Test+   %13+GOTVTRN       %14+TOTVTRN       %15+SOTVTST
+%  SAPA      +Prod+   %16+GSAPTRN       %17+TSAPTRN       %18+SSAPTST
+%            +Test+   %19+GOTSTRN       %20+TOTSTRN       %21+SOTSTST
+%  INTER.LE  +Prod+   %22+GINTTRN       %23+TINTTRN       %24+SINTTST
+%            +Test+   %25+GOTITRN       %26+TOTITRN       %27+SOTITST
+%  GW DANNI  +Prod+   %28+G044TRN       %29+T044TRN       %30+S044TST
+%            +User+   %31+G043TRN       %32+T043TRN       %33+S043TST
+%            +Test+   %34+G042TRN       %35+T042TRN       %36+S042TST
+%  GW LIFE   +Prod+   %37+G047TRN       %38+T047TRN       %39+S047TST
+%            +Test+   %43+G045TRN       %44+T045TRN       %45+S045TST
+%  GW DANNI 2+Prod+   %46+G049TRN       %47+T049TRN       %48+S049TST
+)INIT
+  .HELP   = #RACMENU
+)PROC
+  &ZSEL = TRANS(TRUNC(&ZCMD,'.')
+    1,'CMD(RACGCLS  GESETRN CICS*  RW20*  AR*)'
+    2,'CMD(RACGCLS  TESETRN CEM+  VI++   OC*  ST*)'
+    3,'CMD(RACGCLS  SESETST $$*  VITA*  OC011+  STAG*)'
+    4,'CMD(RACGCLS  GOTWTRN CICS*  RW20*  AR*)'
+    5,'CMD(RACGCLS  TOTWTRN CEM+  VI++   OC*  ST*)'
+    6,'CMD(RACGCLS  SOTWTST $$*  VITA*  OC011+  STAG*)'
+    7,'CMD(RACGCLS  GVENTRN CICS*  RW20*  AR*)'
+    8,'CMD(RACGCLS  TVENTRN CEM+  VI++   OC*  ST*)'
+    9,'CMD(RACGCLS  SVENTST $$*  VITA*  OC011+  STAG*)'
+   10,'CMD(RACGCLS  GVEVTRN CICS*  RW20*  AR*)'
+   11,'CMD(RACGCLS  TVEVTRN CEM+  VI++   OC*  ST*)'
+   12,'CMD(RACGCLS  SVEVTST $$*  VITA*  OC011+  STAG*)'
+   13,'CMD(RACGCLS  GOTVTRN CICS*  RW20*  AR*)'
+   14,'CMD(RACGCLS  TOTVTRN CEM+  VI++   OC*  ST*)'
+   15,'CMD(RACGCLS  SOTVTST $$*  VITA*  OC011+  STAG*)'
+   16,'CMD(RACGCLS  GSAPTRN CICS*  RW20*  AR*)'
+   17,'CMD(RACGCLS  TSAPTRN CEM+  VI++   OC*  ST*)'
+   18,'CMD(RACGCLS  SSAPTST $$*  VITA*  OC011+  STAG*)'
+   19,'CMD(RACGCLS  GOTSTRN CICS*  RW20*  AR*)'
+   20,'CMD(RACGCLS  TOTSTRN CEM+  VI++   OC*  ST*)'
+   21,'CMD(RACGCLS  SOTSTST $$*  VITA*  OC011+  STAG*)'
+   22,'CMD(RACGCLS  GINTTRN CICS*  RW20*  AR*)'
+   23,'CMD(RACGCLS  TINTTRN CEM+  VI++   OC*  ST*)'
+   24,'CMD(RACGCLS  SINTTST $$*  VITA*  OC011+  STAG*)'
+   25,'CMD(RACGCLS  GOTITRN CICS*  RW20*  AR*)'
+   26,'CMD(RACGCLS  TOTITRN CEM+  VI++   OC*  ST*)'
+   27,'CMD(RACGCLS  SOTITST $$*  VITA*  OC011+  STAG*)'
+   28,'CMD(RACGCLS  G044TRN CICS*  RW20*  AR*)'
+   29,'CMD(RACGCLS  T044TRN CEM+  VI++   OC*  ST*)'
+   30,'CMD(RACGCLS  S044TST $$*  VITA*  OC011+  STAG*)'
+   31,'CMD(RACGCLS  G043TRN CICS*  RW20*  AR*)'
+   32,'CMD(RACGCLS  T043TRN CEM+  VI++   OC*  ST*)'
+   33,'CMD(RACGCLS  S043TST $$*  VITA*  OC011+  STAG*)'
+   34,'CMD(RACGCLS  G042TRN CICS*  RW20*  AR*)'
+   35,'CMD(RACGCLS  T042TRN CEM+  VI++   OC*  ST*)'
+   36,'CMD(RACGCLS  S042TST $$*  VITA*  OC011+  STAG*)'
+   37,'CMD(RACGCLS  G047TRN CICS*  RW20*  AR*)'
+   38,'CMD(RACGCLS  T047TRN CEM+  VI++   OC*  ST*)'
+   39,'CMD(RACGCLS  S047TST $$*  VITA*  OC011+  STAG*)'
+   40,'CMD(RACGCLS  G046TRN CICS*  RW20*  AR*)'
+   41,'CMD(RACGCLS  T046TRN CEM+  VI++   OC*  ST*)'
+   42,'CMD(RACGCLS  S046TST $$*  VITA*  OC011+  STAG*)'
+   43,'CMD(RACGCLS  G045TRN CICS*  RW20*  AR*)'
+   44,'CMD(RACGCLS  T045TRN CEM+  VI++   OC*  ST*)'
+   45,'CMD(RACGCLS  S045TST $$*  VITA*  OC011+  STAG*)'
+   46,'CMD(RACGCLS  G049TRN CICS*  RW20*  AR*)'
+   47,'CMD(RACGCLS  T049TRN CEM+  VI++   OC*  ST*)'
+   48,'CMD(RACGCLS  S049TST $$*  VITA*  OC011+  STAG*)'
+    ' ',' '
+    *,'?')
+)END

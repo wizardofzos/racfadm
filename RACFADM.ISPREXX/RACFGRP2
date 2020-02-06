@@ -1,0 +1,43 @@
+)ATTR DEFAULT(%+_)
+  _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT)   HILITE(USCORE)
+  { TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(BLUE)
+  + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
+)BODY EXPAND(\\)
++\-\(%RACFADM - Group Profiles+)\-\
+%Command ===>_ZCMD                                              +Scroll==>_SAMT+
+%
++Add RACF%GROUP+profile: %ADDGROUP+command
++
++PROFILE %===>_GROUP   { (Enter%NEW{name)
++
++OWNER   %===>_OWNER   { (Owner of profile)
++SUPGROUP%===>_SUPGRP  { (Superior group)
++
++
+%              Installation Data: (no quotes)
+%              ----------------------------------------------------------------
++DATA    %===>_DATA
++
++
++
++
++
++
++
++
++\ \Press%ENTER+to process or%END+to exit\ \
+)INIT
+  .CURSOR = GROUP
+  .HELP   = #RACMENU
+  &OLDGRP = &GROUP
+  &FROM   = &GROUP
+  IF (&GROUP = NONE)
+      &GROUP = &RFILTER
+)PROC
+  IF (&OLDGRP = &GROUP)
+      &GROUP = ' '
+  VER (&GROUP,NB)
+  VER (&OWNER,NB,NAME)
+  VER (&SUPGRP,NB,NAME)
+  VER (&DATA,NB)
+)END

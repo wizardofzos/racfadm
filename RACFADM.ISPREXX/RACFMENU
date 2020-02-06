@@ -1,0 +1,32 @@
+)ATTR DEFAULT(%+_)
+  _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT)   HILITE(USCORE)
+  ! TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(TURQ)
+  + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
+)BODY EXPAND(\\)
++\-\(%RACFADM - RACF Administration+)\-\
+%Option ===>_ZCMD                                                              +
+%
++Select one of the following and press%ENTER.+
++
+% 0! Settings+  Customize options
+% 1! User    +  User Profiles
+% 2! Group   +  Group Profiles
+% 3! Dataset +  Dataset Profiles
+% 4! General +  General Resource _CLASS   +
+% 5! RACFprms+  RACF Parameters
++
+)INIT
+  .CURSOR = ZCMD
+  .HELP   = #RACMENU
+)PROC
+  &ZSEL=TRANS(TRUNC(&ZCMD,'.')
+      0,'CMD(%RACFPRMU)'
+      1,'CMD(%RACFUSR)'
+      2,'CMD(%RACFGRP)'
+      3,'CMD(%RACFDSN)'
+      4,'CMD(%RACFCLSR &CLASS)'
+      5,'CMD(%RACFPRMJ)'
+      6,'CMD(%RACAUTH)'     /* Analyze ACL for General Resources */
+    ' ',' '
+      *,'?')
+)END

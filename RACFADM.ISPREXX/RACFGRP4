@@ -1,0 +1,38 @@
+)ATTR DEFAULT(%+_)
+  $ TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(TURQ)
+  _ TYPE(INPUT)  INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  { TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(BLUE)
+  + TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(GREEN)
+)BODY EXPAND(\\)
++\-\(%RACFADM - Group Profiles+)\-\
+%Command ===>_ZCMD                                              +Scroll==>_SAMT+
+%
++Alt RACF%GROUP+profile: %ALTGROUP+command
++
++PROFILE %===>$GROUP   { (Group name)
++
++OWNER   %===>_OWNER   { (Owner of profile)
++SUPGROUP%===>_SUPGRP  { (Superior group)
++
++
+%              Installation Data: (no quotes)
+%              ----------------------------------------------------------------
++DATA    %===>_DATA
++
++
++
++
++
++
++
++
++\ \Press%ENTER+to process or%END+to exit\ \
+)INIT
+  .CURSOR = OWNER
+  .HELP   = #RACMENU
+)PROC
+  VER (&GROUP,NB)
+  VER (&OWNER,NB,NAME)
+  VER (&SUPGRP,NB,NAME)
+  VER (&DATA,NB)
+)END

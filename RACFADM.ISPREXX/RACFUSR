@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AQ  200205  TRIDJK   Allow A/D in SORT command                    */
+/* @AP  200131  TRIDJK   Simulate irr* permanent user profiles        */
 /* @AO  200131  TRIDJK   Fixed logon date for digital certicate logons*/
 /* @AN  200126  TRIDJK   Chged yy.jjj to yy/mm/dd                     */
 /* @AM  200123  RACFA    Retrieve default filter, Option 0 - Settings */
@@ -35,6 +37,7 @@
      address ISPEXEC "VGET (ERAFLTR) ASIS"                    /* @AM */
      Rfilter = ERAFLTR                                        /* @AM */
   end                                                         /* @AM */
+  Call Digital_Certs                                          /* @AP */
   Rclass= 'USER'
   lparm=''                                /* Locate parm */   /* @A5 */
   CLRUSER = "WHITE"; CLRNAME = "TURQ"     /* Col. colors */   /* @AA */
@@ -152,24 +155,40 @@ Profl:
   reta= rc
   do while (reta < 8)   /* tablea panel */
      address ISPEXEC "CONTROL DISPLAY SAVE"
-     PARSE VAR ZCMD ZCMD PARM                                 /* @A5 */
+     PARSE VAR ZCMD ZCMD PARM seq                             /* @AQ */
      lparm=""                                                 /* @A7 */
+     if zcmd = 'SORT' then                                    /* @AQ */
+       if parm <> '' then                                     /* @AQ */
+         if seq = 'A' | seq = 'D' then nop                    /* @AQ */
+         else                                                 /* @AQ */
+           seq = 'A'                                          /* @AQ */
      Select
        WHEN ABBREV("RESET",ZCMD,1) = 1 THEN                   /* @A5 */
          fld_sort = 'USER,C,A'                                /* @A5 */
        WHEN ABBREV("SORT",ZCMD,1) = 1 THEN                    /* @A5 */
          SELECT                                               /* @A5 */
-            when PARM= 'RESET'   then fld_sort= ''            /* @A5 */
-            when PARM= 'SURNAME' then fld_sort= 'NAME,C,A'    /* @A5 */
-            when PARM= 'NAME'    then fld_sort= 'NAME,C,A'    /* @A5 */
-            when PARM= 'LOGON'   then fld_sort= 'DATELGN,C,A' /* @A5 */
-            when PARM= 'GROUP'   then fld_sort= 'DEFGRP,C,A'  /* @A5 */
-            when PARM= 'REV'     then fld_sort= 'REVOKED,C,A' /* @A5 */
-            when PARM= 'USERID'  then fld_sort= 'USER,C,A'    /* @A5 */
-            when PARM= 'OWNER'   then fld_sort= 'OWNER,C,A'   /* @A5 */
-            when PARM= 'ATTR'    then fld_sort= 'ATTR,C,A'    /* @A5 */
-            when PARM= 'ATT'     then fld_sort= 'ATTR,C,A'    /* @A5 */
-            when PARM= 'TSO'     then fld_sort= 'TSOUSER,C,A' /* @A5 */
+            when PARM= 'RESET'   then                         /* @A5 */
+              fld_sort= ''                                    /* @AQ */
+            when PARM= 'SURNAME' then                         /* @A5 */
+              fld_sort= 'NAME,C,'seq                          /* @AQ */
+            when PARM= 'NAME'    then                         /* @A5 */
+              fld_sort= 'NAME,C,'seq                          /* @AQ */
+            when PARM= 'LOGON'   then                         /* @A5 */
+              fld_sort= 'DATELGN,C,'seq                       /* @AQ */
+            when PARM= 'GROUP'   then                         /* @A5 */
+              fld_sort= 'DEFGRP,C,'seq                        /* @AQ */
+            when PARM= 'REV'     then                         /* @A5 */
+              fld_sort= 'REVOKED,C,'seq                       /* @AQ */
+            when PARM= 'USERID'  then                         /* @A5 */
+              fld_sort= 'USER,C,'seq                          /* @AQ */
+            when PARM= 'OWNER'   then                         /* @A5 */
+              fld_sort= 'OWNER,C,'seq                         /* @AQ */
+            when PARM= 'ATTR'    then                         /* @A5 */
+              fld_sort= 'ATTR,C,'seq                          /* @AQ */
+            when PARM= 'ATT'     then                         /* @A5 */
+              fld_sort= 'ATTR,C,'seq                          /* @AQ */
+            when PARM= 'TSO'     then                         /* @A5 */
+              fld_sort= 'TSOUSER,C,'seq                       /* @AQ */
             otherwise NOP                                     /* @A5 */
          END                                                  /* @A5 */
        WHEN ABBREV("LOCATE",ZCMD,1) = 1 THEN lparm = parm     /* @A5 */
@@ -341,6 +360,27 @@ LISD:
   X        = OUTTRAP("WFREC.")                                /* @A2 */
   ADDRESS TSO "LU "USER WFLUPRM                               /* @A2 */
   X        = OUTTRAP("OFF")                                   /* @A2 */
+  if user = 'irrcerta' then do                                /* @AP */
+    wfrec. = ''                                               /* @AP */
+    wfrec.0 = 3                                               /* @AP */
+    wfrec.1 = irrcerta.1                                      /* @AP */
+    wfrec.2 = irrcerta.3                                      /* @AP */
+    wfrec.3 = irrcerta.6                                      /* @AP */
+    end                                                       /* @AP */
+  if user = 'irrmulti' then do                                /* @AP */
+    wfrec. = ''                                               /* @AP */
+    wfrec.0 = 3                                               /* @AP */
+    wfrec.1 = irrmulti.1                                      /* @AP */
+    wfrec.2 = irrmulti.3                                      /* @AP */
+    wfrec.3 = irrmulti.6                                      /* @AP */
+    end                                                       /* @AP */
+  if user = 'irrsitec' then do                                /* @AP */
+    wfrec. = ''                                               /* @AP */
+    wfrec.0 = 3                                               /* @AP */
+    wfrec.1 = irrsitec.1                                      /* @AP */
+    wfrec.2 = irrsitec.3                                      /* @AP */
+    wfrec.3 = irrsitec.6                                      /* @AP */
+    end                                                       /* @AP */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A2 */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A2 */
               "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @A2 */
@@ -588,6 +628,22 @@ GETD:
   x= OUTTRAP('OFF')
   getd_max=details.0
 
+  if user = 'irrcerta' then do                                /* @AP */
+    details.1 = irrcerta.1                                    /* @AP */
+    details.3 = irrcerta.3                                    /* @AP */
+    details.6 = irrcerta.6                                    /* @AP */
+    end                                                       /* @AP */
+  if user = 'irrmulti' then do                                /* @AP */
+    details.1 = irrmulti.1                                    /* @AP */
+    details.3 = irrmulti.3                                    /* @AP */
+    details.6 = irrmulti.6                                    /* @AP */
+    end                                                       /* @AP */
+  if user = 'irrsitec' then do                                /* @AP */
+    details.1 = irrsitec.1                                    /* @AP */
+    details.3 = irrsitec.3                                    /* @AP */
+    details.6 = irrsitec.6                                    /* @AP */
+    end                                                       /* @AP */
+
   parse var details.1 ,
   'USER=' x 'NAME=' name 'OWNER=' owner 'CREATED=' datecre
 
@@ -615,8 +671,8 @@ GETD:
   end                                                         /* @AI */
   if datelgn='UNKNOW' then                                    /* @AN */
      datelgn='UNKNOWN'                                        /* @AN */
-  if (datelgn = " ") | (datelgn = 'UNKNOWN') then             /* @XX */
-     nop                                                      /* @XX */
+  if (datelgn = " ") | (datelgn = 'UNKNOWN') then             /* @AO */
+     nop                                                      /* @AO */
   else do                                                     /* @XX */
      datelgn = SUBSTR(datelgn,1,2)SUBSTR(datelgn,4,3)         /* @AN */
      datelgn = DATE('O',datelgn,'J')                          /* @AN */
@@ -738,3 +794,26 @@ RETURN
 Xrefd:                                                        /* @AL */
   Call RACFXREF user                                          /* @AL */
 RETURN                                                        /* @AL */
+/*--------------------------------------------------------------------*/
+/*  Simulate digital certificate user profiles                        */
+/*--------------------------------------------------------------------*/
+Digital_Certs:                                                /* @AP */
+  irrcerta.  = ''
+  irrmulti.  = ''
+  irrsitec.  = ''
+
+  irrcerta.1 = 'USER=irrcerta  NAME=CERTAUTH Anchor',         /* @AP */
+               'OWNER=irrcerta  CREATED=99.195'               /* @AP */
+  irrcerta.3 = ' ATTRIBUTES=REVOKED'                          /* @AP */
+  irrcerta.6 = ' LAST-ACCESS=UNKNOWN'                         /* @AP */
+
+  irrmulti.1 = 'USER=irrmulti  NAME=Criteria Anchor',         /* @AP */
+               'OWNER=irrmulti  CREATED=99.195'               /* @AP */
+  irrmulti.3 = ' ATTRIBUTES=REVOKED'                          /* @AP */
+  irrmulti.6 = ' LAST-ACCESS=UNKNOWN'                         /* @AP */
+
+  irrsitec.1 = 'USER=irrsitec  NAME=SITE Anchor',             /* @AP */
+               'OWNER=irrsitec  CREATED=99.195'               /* @AP */
+  irrsitec.3 = ' ATTRIBUTES=REVOKED'                          /* @AP */
+  irrsitec.6 = ' LAST-ACCESS=UNKNOWN'                         /* @AP */
+  return                                                      /* @AP */

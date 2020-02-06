@@ -1,0 +1,17 @@
+)ATTR DEFAULT(%+_)
+  _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT) HILITE(USCORE)
+  ! TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(TURQ)
+  + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
+)BODY EXPAND(\\)
+%Tutorial+\-\(%RACFADM - General Resource+)\-\%Tutorial
+%Command ===>_ZCMD                                                             +
+%
++Line Commands
+%  S !Show   +List of permits defined for this profile
+%  L !List   +Issue RLIST RACF command
+%  C !Change +Change profile attributes
+%  A !Add    +Add profile to RACF
+%  R !Remove +Remove profile from RACF
+)PROC
+  &ZUP     = #RACGCL9
+)END

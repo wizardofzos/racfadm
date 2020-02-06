@@ -7,19 +7,21 @@
 +\-\(%RACFADM - General Resource+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
 %
-+SELECT: %S+Show,%R+Refresh
++CLASS:  $RCLASS
++FILTER: $RFILTER
++SELECT: %S+Show,%L+list,%C+Change,%A+Add,%R+Remove
 %
-%S   Class
+%S   Profile Name                            Description
 %-------------------------------------------------------------------------------
 )MODEL CLEAR(OPTA)
-_Z+ $Z        #Z                +
+_Z+ $Z                                      #Z
 )INIT
-  .ZVARS   = '(OPTA CLASS ACTION)'
+  .ZVARS   = '(OPTA PROFILE DATA)'
   .AUTOSEL = NO
-  .HELP    = #RACCLSR
+  .HELP    = #RACCLS9
   &ZCMD    = ' '
   IF (&SAMT = ' ')
       &SAMT = &ZSCED
 )PROC
-  VER (&OPTA,LIST,S,s,R,r)
+  VER (&OPTA,LIST,S,s,L,l,C,c,A,a,R,r)
 )END

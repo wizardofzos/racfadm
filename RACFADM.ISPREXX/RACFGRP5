@@ -1,0 +1,34 @@
+)ATTR DEFAULT(%+_)
+  $ TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(TURQ)
+  # TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(GREEN)
+  _ TYPE(INPUT)  INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  { TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(BLUE)
+  + TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(GREEN)
+)BODY EXPAND(\\)
++\-\(%RACFADM - Group Profiles+)\-\
+%Command ===>_ZCMD                                              +Scroll==>_SAMT+
+%
++PROFILE:$GROUP                                          +$TYPE
++SUPGRP: $SUPGRP  { (Superior group)
++OWNER:  $OWNER   { (Owner of profile)
++                                                                  +
++DATA:   %Description
++        %----------------------------------------------------------------
++        $DATA
++                                                                  +
++SELECT: %S+Show,%L+List,%C+Change,%A+Add,%R+Remove
++
+%S   Userid     Access
+%-------------------------------------------------------------------------------
+)MODEL
+_Z+ $Z         #Z
+)INIT
+  .ZVARS   ='(OPTB ID ACC)'
+  .AUTOSEL = NO
+  .HELP    = #RACMENU
+  IF (&SAMT = ' ')
+      &SAMT = &ZSCED
+  &ZCMD = ' '
+)PROC
+  VER (&OPTB,LIST,S,s,L,l,C,c,A,a,R,r)
+)END

@@ -1,0 +1,18 @@
+)ATTR DEFAULT(%+_)
+  _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT) HILITE(USCORE)
+  ! TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(TURQ)
+  + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
+)BODY EXPAND(\\)
+%Tutorial+\-\(%RACFADM - General Resource+)\-\%Tutorial
+%Command ===>_ZCMD                                                             +
+%
++Primary Commands
+%  LOCATE argument
++    Issue this command from the command line to locate a given class
++    or move as near as possible to it. (Ex.%L BMC% or%LOCATE BMC)
++
++Line Commands
+%  S !Select +Select one or more classes to search from the list
+)PROC
+  &ZUP     = #RACSET2
+)END

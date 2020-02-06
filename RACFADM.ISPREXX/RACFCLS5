@@ -2,24 +2,32 @@
   $ TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(TURQ)
   # TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(GREEN)
   _ TYPE(INPUT)  INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  { TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(BLUE)
   + TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(GREEN)
 )BODY EXPAND(\\)
 +\-\(%RACFADM - General Resource+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
 %
-+SELECT: %S+Show,%R+Refresh
-%
-%S   Class
++PROFILE:_PROFILE                                         +$TYPE
++CLASS:  _RCLASS   +
++UACC:   $UACC    { (Default access)     %OWNER: $OWNER   { (Owner of profile)
++WARNING:$WARN    { (YES/NO)             %AUDIT: $AUDIT
++DATA:   $DATA
++                                           +
++SELECT: %S+Show,%L+List,%C+Change,%A+Add,%R+Remove
++
+%S   Group/ID     Access
 %-------------------------------------------------------------------------------
-)MODEL CLEAR(OPTA)
-_Z+ $Z        #Z                +
+)MODEL
+_Z+ $Z           #Z
 )INIT
-  .ZVARS   = '(OPTA CLASS ACTION)'
+  .ZVARS   = '(OPTB ID ACC)'
+  .CURSOR  = OPTB
+  .HELP    = #RACMENU
   .AUTOSEL = NO
-  .HELP    = #RACCLSR
   &ZCMD    = ' '
   IF (&SAMT = ' ')
       &SAMT = &ZSCED
 )PROC
-  VER (&OPTA,LIST,S,s,R,r)
+  VER (&OPTB,LIST,S,s,L,l,C,c,A,a,R,r)
 )END
