@@ -11,6 +11,7 @@
    ^ TYPE(OUTPUT) INTENS(LOW) SKIP(ON) COLOR(RED)      JUST(LEFT)
    _ TYPE(INPUT)  INTENS(LOW) CAPS(ON) JUST(LEFT)      HILITE(USCORE)
    + TYPE(TEXT)   INTENS(LOW) SKIP(ON) COLOR(GREEN)
+   ~ TYPE(PS)
 )BODY EXPAND(\\)
 +\-\(%RACFADM - User Profiles+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
@@ -18,7 +19,7 @@
 +CLASS:  %USER +FILTER: $RFILTER
 +SELECT: %S+Show,%L+List,%C+Chg,%A+Add,%R+Remove,%RS+Reset,%RV+Revoke
 %
-%S          Userid   Name                 Group    Logon    Owner    Rev Att TSO
+%S         ~Userid  ~Name                ~Group   ~Logon   ~Owner   ~Rev~Att~TSO
 %-------------------------------------------------------------------------------
 )MODEL CLEAR(OPTA)
 _Z ^Z      Z       Z                   Z       œZ       	Z       †Z  Z  —Z
@@ -32,4 +33,13 @@ _Z ^Z      Z       Z                   Z       œZ       	Z       †Z  Z  —Z
       &SAMT = &ZSCED
 )PROC
   VER (&OPTA,LIST,S,s,SE,se,L,l,C,c,A,a,R,r,RS,rs,RV,rv,XR,xr)
+)PNTS
+FIELD(ZPS00001) VAR(ZCMD) VAL('SORT USERID')
+FIELD(ZPS00002) VAR(ZCMD) VAL('SORT NAME')
+FIELD(ZPS00003) VAR(ZCMD) VAL('SORT GROUP')
+FIELD(ZPS00004) VAR(ZCMD) VAL('SORT LOGON D')
+FIELD(ZPS00005) VAR(ZCMD) VAL('SORT OWNER')
+FIELD(ZPS00006) VAR(ZCMD) VAL('SORT REV D')
+FIELD(ZPS00007) VAR(ZCMD) VAL('SORT ATT D')
+FIELD(ZPS00008) VAR(ZCMD) VAL('SORT TSO D')
 )END
