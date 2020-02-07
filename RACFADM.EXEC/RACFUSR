@@ -73,7 +73,7 @@ EXIT
 /*--------------------------------------------------------------------*/
 /*  Show all profiles for a filter                                    */
 /*--------------------------------------------------------------------*/
-Profl:
+PROFL:
   action = ''
   seconds = TIME('S')
   tbla= 'TA'ZSCREEN||SECONDS  /* table name unique */
@@ -137,7 +137,7 @@ Profl:
      address ISPEXEC "control display lock"
      address ISPEXEC "display msg(RACF014)"
      /*---------------------------------------------*/
-     /* get further info                           -*/
+     /* Get further info                           -*/
      /*---------------------------------------------*/
      call GETD
      address ISPEXEC "TBMOD" tbla
@@ -276,7 +276,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  Add new profile                                                   */
 /*--------------------------------------------------------------------*/
-Addd:
+ADDD:
   action='*Added'                                             /* @A4 */
   new='NO'
   if (USER= 'NONE') then
@@ -323,7 +323,7 @@ Addd:
   END
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Resume-Reset UserID                                               */
+/*  Resume/reset userid                                               */
 /*--------------------------------------------------------------------*/
 RESD:
   action='*Reset'                                             /* @A4 */
@@ -340,7 +340,7 @@ RESD:
   end
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Revoke UserID                                                     */
+/*  Revoke userid                                                     */
 /*--------------------------------------------------------------------*/
 REVD:
   action="*Revoke"                                            /* @A4 */
@@ -357,7 +357,7 @@ REVD:
   end
 RETURN
 /*--------------------------------------------------------------------*/
-/*  List UserID                                                       */
+/*  List userid                                                       */
 /*--------------------------------------------------------------------*/
 LISD:
   action='*Listed'                                            /* @A4 */
@@ -411,16 +411,16 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  Get Multi Factor Authentication (MFA) option from RCVT            */
 /*--------------------------------------------------------------------*/
-get_setropts_options:                                         /* @AJ */
+GET_SETROPTS_OPTIONS:                                         /* @AJ */
   cvt     = c2x(storage(10,4))      /* cvt address        */  /* @AJ */
   cvtrac$ = d2x((x2d(cvt))+992)     /* cvt+3E0 = cvtrac $ */  /* @AJ */
   cvtrac  = c2x(storage(cvtrac$,4)) /* cvtrac=access cntl */  /* @AJ */
   rc= setbool(rcvtsmfa,633,'02','NO','YES') /* mfa        */  /* @AJ */
-return                                                        /* @AJ */
+RETURN                                                        /* @AJ */
 /*--------------------------------------------------------------------*/
-/*  Set Boolean value for mask                                        */
+/*  Set boolean value for mask                                        */
 /*--------------------------------------------------------------------*/
-setbool:
+SETBOOL:
   variable = arg(1)                                           /* @AJ */
   offset   = arg(2)                                           /* @AJ */
   value    = arg(3)                                           /* @AJ */
@@ -516,7 +516,7 @@ CHGD:
   End
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Delete Profile                                                    */
+/*  Delete profile                                                    */
 /*--------------------------------------------------------------------*/
 DELD:
   ACTION="*Delete"                                            /* @A4 */
@@ -621,7 +621,7 @@ DISD:
   end  /* Do until */
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Get usr info to initialize add or change option                   */
+/*  Get user info to initialize add or change option                  */
 /*--------------------------------------------------------------------*/
 GETD:
   owner= ' '
@@ -715,7 +715,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  Change permit option                                              */
 /*--------------------------------------------------------------------*/
-Chgp:
+CHGP:
   If id= 'NONE' then
      return
   Address ISPEXEC "DISPLAY PANEL(RACFUSR7)"
@@ -731,7 +731,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  Add permit option                                                 */
 /*--------------------------------------------------------------------*/
-Addp:
+ADDP:
   new= 'NO'
   if id= 'NONE' then
      new= 'YES'
@@ -779,7 +779,7 @@ DELP:
   end
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Exec Command                                                      */
+/*  Exec command                                                      */
 /*--------------------------------------------------------------------*/
 EXCMD:
   signal off error
@@ -802,15 +802,15 @@ EXCMD:
      msg_var= 1 to msg.0
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Xref Command                                                      */
+/*  Xref command                                                      */
 /*--------------------------------------------------------------------*/
-Xrefd:                                                        /* @AL */
+XREFD:                                                        /* @AL */
   Call RACFXREF user                                          /* @AL */
 RETURN                                                        /* @AL */
 /*--------------------------------------------------------------------*/
 /*  Simulate digital certificate user profiles                        */
 /*--------------------------------------------------------------------*/
-Digital_Certs:                                                /* @AP */
+DIGITAL_CERTS:                                                /* @AP */
   irrcerta.  = ''
   irrmulti.  = ''
   irrsitec.  = ''
@@ -829,4 +829,4 @@ Digital_Certs:                                                /* @AP */
                'OWNER=irrsitec  CREATED=99.195'               /* @AP */
   irrsitec.3 = ' ATTRIBUTES=REVOKED'                          /* @AP */
   irrsitec.6 = ' LAST-ACCESS=UNKNOWN'                         /* @AP */
-  return                                                      /* @AP */
+RETURN                                                        /* @AP */

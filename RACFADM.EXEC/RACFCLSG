@@ -51,7 +51,7 @@ RETURN 0
 /*--------------------------------------------------------------------*/
 /*  Show all profiles for a filter                                    */
 /*--------------------------------------------------------------------*/
-Profl:
+PROFL:
   seconds=TIME('S')
   tbla= 'TA'ZSCREEN||SECONDS  /* table unique */
   address ISPEXEC "TBCREATE" tbla "KEYS(PROFILE TYPE)",
@@ -170,7 +170,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  Add new profile                                                   */
 /*--------------------------------------------------------------------*/
-Addd:
+ADDD:
   new='NO'
   if profile= 'NONE' then
      new='YES'
@@ -529,7 +529,7 @@ DISD:
  end  /* Do until */
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Get dsd info to initialize add or change option                   */
+/*  Get RLIST info                                                    */
 /*--------------------------------------------------------------------*/
 GETD:
   flags= 'OFF'
@@ -592,11 +592,11 @@ GETD:
      if s > 0 then
         succ= substr(audit,s+8,7)
   end
-Return
+RETURN
 /*--------------------------------------------------------------------*/
 /*  Change permit option                                              */
 /*--------------------------------------------------------------------*/
-Chgp:
+CHGP:
   If id= 'NONE' then
      return
   Address ISPEXEC "DISPLAY PANEL(RACFCLS6)"
@@ -615,9 +615,9 @@ Chgp:
      Call Emsg 'ERR03'  /* Permit failed */
 RETURN
 /*--------------------------------------------------------------------*/
-/*  ERA - Nested Call                                                 */
+/*  Display userid                                                    */
 /*--------------------------------------------------------------------*/
-Disp:
+DISP:
   x= msg('OFF')
   x= OUTTRAP('trash.')
   address TSO "LU "id
@@ -626,11 +626,11 @@ Disp:
   x= msg('ON')
   if ret_code=0 then call RACFUSR id
   else call RACFGRP id
-Return
+RETURN
 /*--------------------------------------------------------------------*/
 /*  Add permit option                                                 */
 /*--------------------------------------------------------------------*/
-Addp:
+ADDP:
   new= 'NO'
   if id= 'NONE' then
      new= 'YES'
@@ -663,9 +663,9 @@ Addp:
      else
         call Emsg 'ERR05'  /* Permit Failed */
   end
-Return
+RETURN
 /*--------------------------------------------------------------------*/
-/*  Delete Permit option                                              */
+/*  Delete permit option                                              */
 /*--------------------------------------------------------------------*/
 DELP:
   if id= 'NONE' then
@@ -684,9 +684,9 @@ DELP:
   end
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Error message Proc                                                */
+/*  Error message                                                     */
 /*--------------------------------------------------------------------*/
-Emsg:
+EMSG:
   Arg code
   rcflmsg= 'Reissue display to verify results of command'
   Select
@@ -719,7 +719,7 @@ Emsg:
   address ISPEXEC "SETMSG MSG(RACF011)"
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Confirm Delete                                                    */
+/*  Confirm delete                                                    */
 /*--------------------------------------------------------------------*/
 CONFIRM_REQUEST:
   signal off error
@@ -743,7 +743,7 @@ CONFIRM_REQUEST:
   zwinttl= ' '
 RETURN answer
 /*--------------------------------------------------------------------*/
-/*  Exec Command                                                      */
+/*  Exec command                                                      */
 /*--------------------------------------------------------------------*/
 EXCMD:
   signal off error
@@ -766,7 +766,7 @@ EXCMD:
      msg_var= 1 to msg.0
 RETURN
 /*--------------------------------------------------------------------*/
-/*  RLIST                                                             */
+/*  List class                                                        */
 /*--------------------------------------------------------------------*/
 LISD:                                                         /* @A1 */
   WFDD     = "ERA"RANDOM(0,99999)                             /* @A1 */
@@ -797,16 +797,16 @@ RETURN                                                        /* @A1 */
 /*--------------------------------------------------------------------*/
 /*  Get Multi Factor Authentication (MFA) option from RCVT            */
 /*--------------------------------------------------------------------*/
-get_setropts_options:                                         /* @A6 */
+GET_SETROPTS_OPTIONS:                                         /* @A6 */
   cvt     = c2x(storage(10,4))      /* cvt address        */  /* @A6 */
   cvtrac$ = d2x((x2d(cvt))+992)     /* cvt+3E0 = cvtrac $ */  /* @A6 */
   cvtrac  = c2x(storage(cvtrac$,4)) /* cvtrac=access cntl */  /* @A6 */
   rc= setbool(rcvtsmfa,633,'02','NO','YES') /* mfa        */  /* @A6 */
-return                                                        /* @A6 */
+RETURN                                                        /* @A6 */
 /*--------------------------------------------------------------------*/
-/*  Set Boolean value for mask                                        */
+/*  Set boolean value for mask                                        */
 /*--------------------------------------------------------------------*/
-setbool:
+SETBOOL:
   variable = arg(1)                                           /* @A6 */
   offset   = arg(2)                                           /* @A6 */
   value    = arg(3)                                           /* @A6 */

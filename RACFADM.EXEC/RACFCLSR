@@ -36,7 +36,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  Display profile permits                                           */
 /*--------------------------------------------------------------------*/
-Get_act_class:
+GET_ACT_CLASS:
   Scan='OFF'
   x= OUTTRAP('var.')
   address TSO "SETROPTS LIST"
@@ -76,9 +76,9 @@ Get_act_class:
   end /* do i */
 RETURN
 /*--------------------------------------------------------------------*/
-/*  profiles table display section                                    */
+/*  Profiles table display section                                    */
 /*--------------------------------------------------------------------*/
-Display_table:
+DISPLAY_TABLE:
   opta= ' '
   address ISPEXEC "TBSORT" tbla "FIELDS(CLASS)"
   address ISPEXEC "TBTOP" tbla
@@ -144,7 +144,7 @@ REFRESH:
   end
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Exec Command                                                      */
+/*  Exec command                                                      */
 /*--------------------------------------------------------------------*/
 EXCMD:
   signal off error

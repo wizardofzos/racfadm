@@ -1,15 +1,21 @@
-$DIR     Directory
-$CONTRIB Contributors
-$INSTALL REXX to install recieve/install XMIT files
-RACFADM  Dynamically allocate and invoke software
-RACFAUTH Analyse profile ACL
-RACFCLSG Extract generic class profiles
-RACFCLSR Get active classes
-RACFCLSS Search classes
-RACFDSN  Extract dataset profiles
-RACFGRP  Extract group profiles
-RACFMSGC Display confirm panel
-RACFMSGS Issue error message
-RACFPRMJ List RACF Options
-RACFTSO  Create TSO alias
-RACFUSR  Extract user profiles
+*---------------------------------------------------------------------*
+*                       RACFADM - REXX Programs                       *
+*---------------------------------------------------------------------*
+
+  Member                           Description
+ --------  -----------------------------------------------------------
+ $DIR      Directory
+ RACFADM   Dynamically allocate and invoke software
+ RACFAUTH  Analyse profile ACL
+ RACFCLSG  Extract generic class profiles
+ RACFCLSR  Get active classes
+ RACFCLSS  Search classes
+ RACFDSN   Display dataset profiles
+ RACFGRP   Display group profiles
+ RACFMSGC  Display confirm panel
+ RACFMSGS  Issue error message
+ RACFPRMJ  Display RACF parameters
+ RACFPRMU  Display user parameters
+ RACFTSO   Create TSO alias
+ RACFUSR   Display userid profiles
+ RACFXREF  RACF cross reference report

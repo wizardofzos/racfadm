@@ -30,11 +30,11 @@
         ret_code=rc
      end
   end
-Return 0
+RETURN 0
 /*--------------------------------------------------------------------*/
 /*  Display profile permits                                           */
 /*--------------------------------------------------------------------*/
-Analyse:
+ANALYSE:
   seconds=time('S')
   tbla= 'TB'ZSCREEN||SECONDS  /* make table name unique */
   address ISPEXEC "TBCREATE" TBLA "KEYS(ID)",
@@ -56,7 +56,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  Get profile permits                                               */
 /*--------------------------------------------------------------------*/
-Get_prof_acl:
+GET_PROF_ACL:
   flags= 'OFF'
   audit= ' '
   owner= ' '
@@ -123,11 +123,11 @@ Get_prof_acl:
         i= i + 1         /* skip */
      end
   end  /* Loop scan output */
-Return
+RETURN
 /*--------------------------------------------------------------------*/
-/*  Display profile permits                                           */
+/*  Get user group                                                    */
 /*--------------------------------------------------------------------*/
-Get_user_group:
+GET_USER_GROUP:
   If USER= 'NONE' then
      return
   flags= 'OFF'
@@ -144,11 +144,11 @@ Get_user_group:
         grp.grp_ix= id acc  /* store acl        */
      End
   End
- return
+RETURN
 /*--------------------------------------------------------------------*/
-/*  Error message Proc                                                */
+/*  Error message                                                     */
 /*--------------------------------------------------------------------*/
-Emsg:
+EMSG:
   Arg code
   rcflmsg= 'Reissue display to verify results of command'
   Select
@@ -179,7 +179,7 @@ Emsg:
   address ISPEXEC "SETMSG MSG(RACF011)"
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Exec Command                                                      */
+/*  Exec command                                                      */
 /*--------------------------------------------------------------------*/
 EXCMD:
   signal off error

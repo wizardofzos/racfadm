@@ -1,5 +1,5 @@
 /*%NOCOMMENT====================* REXX *==============================*/
-/*  PURPOSE:  ERA - LIBDEF/ALTLIB/Invoke software                     */
+/*  PURPOSE:  RACFADM - LIBDEF/ALTLIB/Invoke software                 */
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
@@ -17,7 +17,7 @@ exit 0
 /*--------------------------------------------------------------------*/
 /*  Obtain dataset names and LIBDEF/ALTLIB them                       */
 /*--------------------------------------------------------------------*/
-Setup:
+SETUP:
   parse source src
   parse value src with TSO Type Name DDName DSName NameO Env Addr Token
   cmd = name
@@ -43,4 +43,4 @@ Setup:
   Address TSO 'Altlib Act app(Exec) Dataset('exec')'
   'Libdef ISPMLIB dataset id('msgs') Stack'
   'Libdef ISPPLIB dataset id('panels') Stack'
-return
+RETURN

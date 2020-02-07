@@ -28,9 +28,9 @@
 
 RETURN 0000                                 /* exit                   */
 /*--------------------------------------------------------------------*/
-/*                                                                    */
+/*  Get initial RCVT values                                           */
 /*--------------------------------------------------------------------*/
-Get_initial_rcvt_values:
+GET_INITIAL_RCVT_VALUES:
   rc = Setchar(rcvtgdsn,56,44)              /* racf dsn               */
   rcvtuvol ='None';rcvtuads='None'
   rc = Setchar(rcvtuads,100,44)             /* uads dsn               */
@@ -53,7 +53,7 @@ Get_initial_rcvt_values:
   rc= Setbool(rcvtgoff,153,'80','No','Yes')          /* RVARY INACTIVE*/
 RETURN
 /*--------------------------------------------------------------------*/
-/*  RACF JES2 Options                                                 */
+/*  RACF JES2 parameters                                              */
 /*--------------------------------------------------------------------*/
 RACF_JES2_OPTIONS:
   rc= Setbool(rcvtjchk,150,'02','NO','YES') /* jes2_early_verify      */
@@ -65,7 +65,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  RACF RVARY passwords                                              */
 /*--------------------------------------------------------------------*/
-Racf_rvary_passwords:
+RACF_RVARY_PASSWORDS:
   rcvtrwpw$ = d2x((x2d(cvtrac))+440)        /* rcvtrwpw     $         */
   rcvtrwpw  = c2x(storage(rcvtrwpw$,8))     /* rcvtrwpw               */
   rcvtrnpw$ = d2x((x2d(cvtrac))+448)        /* rcvtrwpw     $         */
@@ -77,7 +77,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  RACF password options                                             */
 /*--------------------------------------------------------------------*/
-Racf_password_options:
+RACF_PASSWORD_OPTIONS:
   rc = Setvalue(rcvtpinv,155,1)             /* password expires       */
   rc = Setvalue(rcvtphis,240,1)             /* password historical    */
   rc = Setvalue(rcvtprvk,241,1)             /* password revoked att.  */
@@ -87,7 +87,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  RACF Setropt options                                              */
 /*--------------------------------------------------------------------*/
-Racf_setropt_options:
+RACF_SETROPT_OPTIONS:
   rc= Setbool(rcvtsegn,53,'01','NO','YES')  /* egn                    */
   rc= Setbool(rcvtsmfa,633,'02','NO','YES') /* mfa               @A2  */
   rc= Setbool(rcvtsads,53,'02','YES','NO')  /* adsp                   */
@@ -117,7 +117,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  Set variable in a Yes/No                                          */
 /*--------------------------------------------------------------------*/
-Setbool:
+SETBOOL:
   variable = arg(1)
   offset   = arg(2)
   value    = arg(3)
@@ -130,9 +130,9 @@ Setbool:
   interpret  "if (x= '"value"'x) then "variable"="status2
 RETURN 0000
 /*--------------------------------------------------------------------*/
-/*                                                                    */
+/*  Set value                                                         */
 /*--------------------------------------------------------------------*/
-Setvalue:
+SETVALUE:
   variable = arg(1)
   offset   = arg(2)
   length   = arg(3)
@@ -141,9 +141,9 @@ Setvalue:
   interpret  cmd
 RETURN 0000
 /*--------------------------------------------------------------------*/
-/*                                                                    */
+/*  Set character                                                     */
 /*--------------------------------------------------------------------*/
-Setchar:
+SETCHAR:
   variable = arg(1)
   offset   = arg(2)
   length   = arg(3)
@@ -154,14 +154,14 @@ RETURN 0000
 /*--------------------------------------------------------------------*/
 /*  RACF DASD options                                                 */
 /*--------------------------------------------------------------------*/
-Racf_dasd_options:
+RACF_DASD_OPTIONS:
   rc= Setbool(rcvtdvpr,150,'40','NO','YES') /* dasd vol protection    */
   rc= Setbool(rcvtndup,153,'10','NO','YES') /* no duplicate datasets  */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  RACF model options                                                */
 /*--------------------------------------------------------------------*/
-Racf_model_options:
+RACF_MODEL_OPTIONS:
   rc= Setbool(rcvtmgdg,324,'80','NO','YES') /* model gdg              */
   rc= Setbool(rcvtmusr,324,'40','NO','YES') /* model user             */
   rc= Setbool(rcvtmgrp,324,'20','NO','YES') /* model group            */
@@ -169,14 +169,14 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  RACF terminal options                                             */
 /*--------------------------------------------------------------------*/
-Racf_terminal_options:
+RACF_TERMINAL_OPTIONS:
   rc= Setbool(rcvttaut,154,'80','NO','YES') /* terminal auth checking */
   rc= Setbool(rcvttuac,154,'40','NO','YES') /* terminal uacc          */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  RACF statistics                                                   */
 /*--------------------------------------------------------------------*/
-Racf_statistics:
+RACF_STATISTICS:
   rc= Setbool(rcvtnls ,53,'40','Yes','No')          /* racinit        */
   rc= Setbool(rcvtndss,53,'20','Yes','No')          /* data set       */
   rc= Setbool(rcvtntvs,53,'10','Yes','No')          /* tape           */
@@ -186,14 +186,14 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  RACF tape options                                                 */
 /*--------------------------------------------------------------------*/
-Racf_tape_options:
+RACF_TAPE_OPTIONS:
   rc= Setbool(rcvttvpr,150,'80','NO','YES') /* tape volume protection */
   rc= Setbool(rcvttdpr,392,'40','NO','YES') /* tape dataset protection*/
 RETURN
 /*--------------------------------------------------------------------*/
 /*  RACF audit options                                                */
 /*--------------------------------------------------------------------*/
-Racf_audit_options:
+RACF_AUDIT_OPTIONS:
   rcvtauop$=   d2x((x2d(cvtrac))+151)       /* rcvtauop     $         */
 
   x       =    storage(rcvtauop$,1)         /* rcvtauop               */

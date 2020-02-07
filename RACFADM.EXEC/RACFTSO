@@ -26,9 +26,11 @@
   x= OUTTRAP('trash.')
   interpret 'signal ' era_cmd
 
+/*--------------------------------------------------------------------*/
+/*  Add/change userid datasets                                        */
+/*--------------------------------------------------------------------*/
 ADDD:
 CHGD:
-  /*- Add userid dataset profile                    -*/
   "ADDSD  ('"user".**') UACC(READ) OWNER("owner")"
 /*-------------------------------------------------------------------*/
 /*- Authorize sys1.brodcast update for alias creation -              */
@@ -83,10 +85,9 @@ CHGD:
   address TSO "PROFILE PREF("USERID()")"                      /* @A1 */
 RETURN RC
 /*--------------------------------------------------------------------*/
-/*                                                                    */
+/*  Delete userid dataset profile                                     */
 /*--------------------------------------------------------------------*/
 DELD:
-  /*- Del userid dataset profile                    -*/
   signal off error
   "DELDSD  ('"user".**')"
   "DELETE '"user"."eraulib"'"
@@ -95,9 +96,9 @@ DELD:
   signal on error
 RETURN RC
 /*--------------------------------------------------------------------*/
-/*                                                                    */
+/*  Display message                                                   */
 /*--------------------------------------------------------------------*/
-Display_msg:
+DISPLAY_MSG:
   trash_msg= trash.0
   address ISPEXEC "VGET (ZSCREEN) ASIS"
   tblmsg= 'RCFER'ZSCREEN /* make table unique */
@@ -112,19 +113,17 @@ Display_msg:
   address ISPEXEC "TBEND" tblmsg
 RETURN
 /*--------------------------------------------------------------------*/
-/*                                                                    */
+/*  Delete userid dataset profile                                     */
 /*--------------------------------------------------------------------*/
-Error:
+ERROR:
   call Display_msg
-  /*- Delete userid dataset profile                    -*/
   "DELDSD  ('"user".**')"
   call Delete_Admin_permits
 RETURN 8
 /*--------------------------------------------------------------------*/
-/*                                                                    */
+/*  Delete temporary autorizations for RACF administrator             */
 /*--------------------------------------------------------------------*/
 Delete_admin_permits:
-  /*- Delete temporary autorizations for RACF administrator -*/
   "PERMIT '"user".**'     GEN DELETE ID("USERID()")"
 /*-------------------------------------------------------------------*/
 /*  "PERMIT 'SYS1.BRODCAST' GEN DELETE ID("USERID()")"               */

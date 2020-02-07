@@ -6,9 +6,9 @@
 /* @A0  200123  TRIDJK   Created REXX program                         */
 /*====================================================================*/
   Trace o
-/*--------------------------------------------------------------------*/
-/*  Call IRRUT100 for cross reference report                          */
-/*--------------------------------------------------------------------*/
+  /*--------------------------------------------*/
+  /*  Call IRRUT100 for cross reference report  */
+  /*--------------------------------------------*/
   Parse Arg user
   Address TSO
   x = outtrap('delete.','*')
@@ -27,9 +27,9 @@
   'Execio * diskw sysin (finis'
   "call *(irrut100)"
   'Execio * diskr sysprint (finis stem sysp.'
-/*--------------------------------------------------------------------*/
-/*  Display the report using Browse                                   */
-/*--------------------------------------------------------------------*/
+  /*-----------------------------------*/
+  /*  Display the report using Browse  */
+  /*-----------------------------------*/
   Address ISPExec
   'lminit dataid(id) ddname(sysprint) enq(exclu)'
   if rc ^= 0 then do
@@ -44,4 +44,4 @@
   'delstack'
   'free  f(sysut1 sysprint sysin)'
   'alloc f(sysin) ds(*) reuse'
-  return
+RETURN

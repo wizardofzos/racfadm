@@ -48,7 +48,7 @@ EXIT
 /*--------------------------------------------------------------------*/
 /*  Show all profiles for a filter                                    */
 /*--------------------------------------------------------------------*/
-Profl:
+PROFL:
   seconds=TIME('S')
   tbla= 'TA'ZSCREEN||SECONDS  /* table name unique */
   address ISPEXEC "TBCREATE" tbla "KEYS(GROUP)",
@@ -207,7 +207,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  Add new profile                                                   */
 /*--------------------------------------------------------------------*/
-Addd:
+ADDD:
   new='NO'
   if group= 'NONE' then
      new='YES'
@@ -254,7 +254,7 @@ CHGD:
      address ISPEXEC "TBMOD" tbla
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Delete Profile                                                    */
+/*  Delete profile                                                    */
 /*--------------------------------------------------------------------*/
 DELD:
   if group= 'NONE' then
@@ -389,7 +389,7 @@ DISD:
   end /* Do until */
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Get dsd info to initialize add or change option                   */
+/*  Get LG info to initialize add or change option                    */
 /*--------------------------------------------------------------------*/
 GETD:
   owner= ' '
@@ -410,7 +410,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  Change permit option                                              */
 /*--------------------------------------------------------------------*/
-Chgp:
+CHGP:
   If id= 'NONE' then
      return
   Address ISPEXEC "DISPLAY PANEL(RACFGRP6)"
@@ -478,16 +478,16 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  Get Multi Factor Authentication (MFA) option from RCVT            */
 /*--------------------------------------------------------------------*/
-get_setropts_options:                                         /* @A9 */
+GET_SETROPTS_OPTIONS:                                         /* @A9 */
   cvt     = c2x(storage(10,4))      /* cvt address        */  /* @A9 */
   cvtrac$ = d2x((x2d(cvt))+992)     /* cvt+3E0 = cvtrac $ */  /* @A9 */
   cvtrac  = c2x(storage(cvtrac$,4)) /* cvtrac=access cntl */  /* @A9 */
   rc= setbool(rcvtsmfa,633,'02','NO','YES') /* mfa        */  /* @A9 */
-return                                                        /* @A9 */
+RETURN                                                        /* @A9 */
 /*--------------------------------------------------------------------*/
-/*  Set Boolean value for mask                                        */
+/*  Set boolean value for mask                                        */
 /*--------------------------------------------------------------------*/
-setbool:
+SETBOOL:
   variable = arg(1)                                           /* @A9 */
   offset   = arg(2)                                           /* @A9 */
   value    = arg(3)                                           /* @A9 */
@@ -502,7 +502,7 @@ RETURN 0                                                      /* @A9 */
 /*--------------------------------------------------------------------*/
 /*  Add permit option                                                 */
 /*--------------------------------------------------------------------*/
-Addp:
+ADDP:
   new= 'NO'
   if id= 'NONE' then
      new= 'YES'
@@ -530,9 +530,9 @@ Addp:
   end
 RETURN
 /*--------------------------------------------------------------------*/
-/*   Delete Permit option                                             */
+/*   Delete permit option                                             */
 /*--------------------------------------------------------------------*/
-Delp:
+DELP:
   if id= 'NONE' then
      return
   msg='You are about to delete access for 'ID
@@ -546,9 +546,9 @@ Delp:
   end
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Error message Proc                                                */
+/*  Error message                                                     */
 /*--------------------------------------------------------------------*/
-Emsg:
+EMSG:
   Arg code
   rcflmsg= 'Reissue display to verify results of command'
   Select
@@ -575,7 +575,7 @@ Emsg:
   address ISPEXEC "SETMSG MSG(RACF011)"
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Confirm Delete                                                    */
+/*  Confirm delete                                                    */
 /*--------------------------------------------------------------------*/
 CONFIRM_DELETE:
   signal off error
@@ -597,7 +597,7 @@ CONFIRM_DELETE:
   zwinttl= ' '
 RETURN answer
 /*--------------------------------------------------------------------*/
-/*  Exec Command                                                      */
+/*  Exec command                                                      */
 /*--------------------------------------------------------------------*/
 EXCMD:
   signal off error

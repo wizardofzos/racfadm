@@ -26,7 +26,7 @@ EXIT
 /*--------------------------------------------------------------------*/
 /*  Get permits                                                       */
 /*--------------------------------------------------------------------*/
-Get_permits:
+GET_PERMITS:
   class=arg(1)
   user =arg(2)
   x= OUTTRAP('VAR.')
@@ -45,7 +45,7 @@ RETURN 0
 /*--------------------------------------------------------------------*/
 /*  Display permit table                                              */
 /*--------------------------------------------------------------------*/
-Display_table_permit:
+DISPLAY_TABLE_PERMIT:
  opta= ' '
  address ISPEXEC "TBSORT" tblb,
                  "FIELDS(CLASS,C,A,PROFILE,C,A)"
@@ -109,9 +109,9 @@ Display_table_permit:
  end  /* Do while (reta < 8) */
 RETURN 0
 /*--------------------------------------------------------------------*/
-/*                                                                    */
+/*  Select class                                                      */
 /*--------------------------------------------------------------------*/
-Select_class:
+SELECT_CLASS:
   seconds=time('S')
   tbla= 'TA'ZSCREEN||SECONDS  /* make table name unique */
   address ISPEXEC "TBCREATE" TBLA "KEYS(CLASS)",
@@ -123,7 +123,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  Display profile permits                                           */
 /*--------------------------------------------------------------------*/
-Get_act_class:
+GET_ACT_CLASS:
   Scan='OFF'
   x= OUTTRAP('var.')
   address TSO "SETROPTS LIST"
@@ -163,7 +163,7 @@ Get_act_class:
   end  /* end_scan output */
 RETURN
 /*--------------------------------------------------------------------*/
-/*                                                                    */
+/*  Display table                                                     */
 /*--------------------------------------------------------------------*/
 DISPLAY_TABLE:
   opta= ' '
@@ -219,7 +219,7 @@ DISPLAY_TABLE:
   end  /* Do while (reta < 8) */
 RETURN 0
 /*--------------------------------------------------------------------*/
-/*                                                                    */
+/*  Error message                                                     */
 /*--------------------------------------------------------------------*/
 Error:
   say 'Error RACFCLSS at line 'sigl

@@ -43,7 +43,7 @@ EXIT
 /*--------------------------------------------------------------------*/
 /*  Show all profiles for a filter                                    */
 /*--------------------------------------------------------------------*/
-Profl:
+PROFL:
   tbla= 'RCFDA'ZSCREEN
   address ISPEXEC "TBCREATE" tbla "KEYS(DATASET TYPE)",
                   "REPLACE NOWRITE"
@@ -155,7 +155,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  Add new profile                                                   */
 /*--------------------------------------------------------------------*/
-Addd:
+ADDD:
   chgsmade = "Y"                                              /* @A3 */
   new='NO'
   if dataset= 'NONE' then
@@ -208,7 +208,7 @@ Addd:
   end
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Change Profile                                                    */
+/*  Change profile                                                    */
 /*--------------------------------------------------------------------*/
 CHGD:
   chgsmade = "Y"                                              /* @A3 */
@@ -254,7 +254,7 @@ CHGD:
   end
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Delete Profile                                                    */
+/*  Delete profile                                                    */
 /*--------------------------------------------------------------------*/
 DELD:
   chgsmade = "Y"                                              /* @A3 */
@@ -397,7 +397,7 @@ DISD:
   end  /* Do until */
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Get dsd info to initialize add or change option                   */
+/*  Get LISTDSD info to initialize add or change option               */
 /*--------------------------------------------------------------------*/
 GETD:
   flags= 'OFF'
@@ -458,7 +458,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  Change permit option                                              */
 /*--------------------------------------------------------------------*/
-Chgp:
+CHGP:
   If id= 'NONE' then
      return
   Address ISPEXEC "DISPLAY PANEL(RACFDSN6)"
@@ -478,7 +478,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  Add permit option                                                 */
 /*--------------------------------------------------------------------*/
-Addp:
+ADDP:
   new= 'NO'
   if id= 'NONE' then
      new= 'YES'
@@ -512,9 +512,9 @@ Addp:
   end
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Delete Permit option                                              */
+/*  Delete permit option                                              */
 /*--------------------------------------------------------------------*/
-Delp:
+DELP:
   if id= 'NONE' then
      return
   if type= 'DISCRETE' then
@@ -530,9 +530,9 @@ Delp:
   end
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Error message Proc                                                */
+/*  Error message                                                     */
 /*--------------------------------------------------------------------*/
-Emsg:
+EMSG:
   Arg code
   rcflmsg= 'Reissue display to verify results of command'
   Select
@@ -561,9 +561,9 @@ Emsg:
   address ISPEXEC "SETMSG MSG(RACF011)"
 RETURN
 /*--------------------------------------------------------------------*/
-/*  ERA - Nested Call                                                 */
+/*  Display userid                                                    */
 /*--------------------------------------------------------------------*/
-Disp:
+DISP:
   x= msg('OFF')
   x= OUTTRAP('trash.')
   address TSO "LU "id
@@ -596,7 +596,7 @@ CONFIRM_REQUEST:
   zwinttl= ' '
 RETURN answer
 /*--------------------------------------------------------------------*/
-/*  Exec Command                                                      */
+/*  Exec command                                                      */
 /*--------------------------------------------------------------------*/
 EXCMD:
   signal off error
@@ -621,7 +621,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 /*  List dataset                                                      */
 /*--------------------------------------------------------------------*/
-lisd:                                                         /* @A1 */
+LISD:                                                         /* @A1 */
   WFDD     = "ERA"RANDOM(0,99999)                             /* @A1 */
   WFLDPRM  = "ALL"                                            /* @A1 */
   X        = OUTTRAP("WFREC.")                                /* @A1 */
