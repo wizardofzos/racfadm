@@ -112,7 +112,7 @@ PROFL:
   end
   /* profiles table display section */
   opta= ' '
-  sort='';fld_sort='GROUP';dfl_sort='GROUP,C,A'               /* @AG */
+  sort='';fld_sort='GROUP';dfl_sort='GROUP'                   /* @AG */
   CLRGROU = "WHITE"; CLRDATA = "TURQ"    /* Col. colors */    /* @A4 */
   address ISPEXEC "TBSORT" tbla "FIELDS("dfl_sort")"          /* @AG */
   address ISPEXEC "TBTOP" tbla
@@ -180,6 +180,7 @@ PROFL:
         sort=dfl_sort
         LOCARG = DFL_SORT                                     /* @A3 */
      END                                                      /* @A3 */
+     SAY LOCARG
      PARSE VAR FLD_SORT LOCARG "," .                          /* @A3 */
      CLRGROU = "TURQ"; CLRDATA = "TURQ"                       /* @A3 */
      INTERPRET "CLR"SUBSTR(LOCARG,1,4)" = 'WHITE'"            /* @A4 */

@@ -3,10 +3,10 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
-/* @AU  200207  RACFA    Fix color of sort col, when F3, diff. id     */
-/* @AT  200207  RACFA    Fix SORT, place at top of table              */
-/* @AS  200207  RACFA    Fix RESET, was not placing at top of table   */
-/* @AR  200207  RACFA    Fix LOCATE, not working when sort descending */
+/* @AU  200206  RACFA    Fix color of sort col, when F3, diff. id     */
+/* @AT  200206  RACFA    Fix SORT, place at top of table              */
+/* @AS  200206  RACFA    Fix RESET, was not placing at top of table   */
+/* @AR  200206  RACFA    Fix LOCATE, not working when sort descending */
 /* @AQ  200205  TRIDJK   Allow A/D in SORT command                    */
 /* @AP  200131  TRIDJK   Simulate irr* permanent user profiles        */
 /* @AO  200131  TRIDJK   Fixed logon date for digital certicate logons*/
@@ -148,7 +148,7 @@ PROFL:
   end
   /* profiles table display section */
   opta= ' '
-  sort='';fld_sort='';dfl_sort='USER,C,A'                     /* @AU */
+  sort='';fld_sort='USER';dfl_sort='USER'                     /* @AU */
   CLRUSER = "WHITE"; CLRNAME = "TURQ"     /* Col. colors */   /* @AU */
   CLRDEFG = "TURQ";  CLRDATE = "TURQ"                         /* @AU */
   CLROWNE = "TURQ";  CLRREVO = "TURQ"                         /* @AU */
@@ -247,7 +247,7 @@ PROFL:
      END                                                      /* @A7 */
      else DO                                                  /* @A7 */
         sort=dfl_sort
-        LOCARG = DFL_SORT                                     /* @A8 */
+        LOCARG = DFL_SORT
      END                                                      /* @A7 */
      CLRUSER = "TURQ"; CLRNAME = "TURQ"                       /* @AA */
      CLRDEFG = "TURQ"; CLRDATE = "TURQ"                       /* @AA */
