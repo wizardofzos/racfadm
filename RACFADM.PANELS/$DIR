@@ -2,60 +2,64 @@
 *                          RACFADM - Panels                           *
 *---------------------------------------------------------------------*
 
-  Member                           Description
- --------  -----------------------------------------------------------
- $DIR
- #RACCLSR  Tutorial - General resource (Classes)
- #RACCLS2  Tutorial - General resource (Classes)
- #RACCLS9  Tutorial - General resource (Classes)
- #RACDSN2  Tutorial - Dataset profile
- #RACGRP8  Tutorial - Group profile
- #RACMENU  Tutorial - Main menu
- #RACPRMJ  Tutorial - JES2 parameters
- #RACPRM1  Tutorial - User settings
- #RACPRM2  Tutorial - User settings
- #RACPUBL  Tutorial - RACF publications
- #RACSRCH  Tutorial - General resource
- #RACUSR2  Tutorial - User profile
- RACFAUT1  Analyze ACL - Input
- RACFAUT2  Analyze ACL - Output
- RACFDSN1  Dataset profiles
- RACFDSN2  Dataset profiles
- RACFDSN3  Dataset profiles
- RACFDSN4  Dataset profiles
- RACFDSN5  Dataset profiles
- RACFDSN6  Dataset profiles
- RACFDSN7  Dataset profiles
- RACFGCLA  Generic profiles
- RACFGCLB  Generic profiles
- RACFGCL1  Generic profiles
- RACFGCL2  Generic profiles
- RACFGCL3  Generic profiles
- RACFGCL4  Generic profiles
- RACFGCL5  Generic profiles
- RACFGCL6  Generic profiles
- RACFGCL7  Generic profiles
- RACFGCL9  Generic profiles
- RACFGRP1  Groups
- RACFGRP2  Groups
- RACFGRP3  Groups
- RACFGRP4  Groups
- RACFGRP5  Groups
- RACFGRP6  Groups
- RACFGRP7  Groups
- RACFGRP8  Groups
- RACFMENU  Main menu
- RACFMSG1  Pop-up message/panel
- RACFMSG2  Pop-up message/panel
- RACFPRMJ  Display RACF parameters
- RACFPRMU  Display user settings
- RACFCLSR  Select actuve classes & refresh
- RACFUSR1  Set user(S) filter
- RACFUSR2  List of user profiles (admin)
- RACFUSR3  Connect display
- RACFUSR4  Add connectiom
- RACFUSR5  Alter user
- RACFUSR6  Add user
- RACFUSR7  Change connection
- RACFUSR8  Alter TSO segment
- RACFUSR9  List of user profiles (user)
+  Member    Subject                     Description
+ --------  ---------  ------------------------------------------------
+ $DIR      Directory  Document members
+ #RACCLSR  Tutorial   Classes
+ #RACCLS2  Tutorial   Classes (Admin)
+ #RACCLS9  Tutorial   Classes (User)
+ #RACDSN2  Tutorial   Dataset profile
+ #RACGRP8  Tutorial   Group profile
+ #RACMENU  Tutorial   Main menu
+ #RACPRMJ  Tutorial   JES2 parameters
+ #RACPRM1  Tutorial   User settings
+ #RACPRM2  Tutorial   User settings
+ #RACPUBL  Tutorial   RACF publications
+ #RACSRCH  Tutorial   General resource (Classes)
+ #RACUSR2  Tutorial   User profile
+ RACFAUT1  ACL        Analyze Input
+ RACFAUT2  ACL        Analyze Output
+ RACFDSN1  Dataset    Set filter
+ RACFDSN2  Dataset    List profiles
+ RACFDSN3  Dataset    Add profile
+ RACFDSN4  Dataset    Change profile
+ RACFDSN5  Dataset    Show groups and access
+ RACFDSN6  Dataset
+ RACFDSN7  Dataset
+ RACFCLSA  Class
+ RACFCLSB  Class
+ RACFCLSR  Class      List profiles
+ RACFCLS1  Class      Set filter
+ RACFCLS2  Class
+ RACFCLS3  Class      Add profile
+ RACFCLS4  Class      Change profile
+ RACFCLS5  Class      Show profile
+ RACFCLS6  Class
+ RACFCLS7  Class
+ RACFCLS9  Class      List profiles
+ RACFGRP1  Group      Set filter
+ RACFGRP2  Group      List profiles
+ RACFGRP3  Group
+ RACFGRP4  Group
+ RACFGRP5  Group
+ RACFGRP6  Group
+ RACFGRP7  Group
+ RACFGRP8  Group
+ RACFMENU  Menu       Main
+ RACFMSG1  Message    Popup panel
+ RACFMSG2  Message    Popup panel
+ RACFPRMJ  Parmeter   RACF
+ RACFPRMU  Parmeter   User settings
+ RACFCLSR  Class      Active and refresh
+ RACFUSR1  User       Set filter
+ RACFUSR2  User       List profiles (admin)
+ RACFUSR3  User       Show groups
+ RACFUSR4  User       List/add connection
+ RACFUSR5  User       Change user
+ RACFUSR6  User       Add user
+ RACFUSR7  User       Change connection
+ RACFUSR8  User       Alter TSO segment
+ RACFUSR9  User       List profiles (general user)
+
+Notes
+  * Classes are General Resources
