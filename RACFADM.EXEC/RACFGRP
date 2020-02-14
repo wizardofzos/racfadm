@@ -180,7 +180,6 @@ PROFL:
         sort=dfl_sort
         LOCARG = DFL_SORT                                     /* @A3 */
      END                                                      /* @A3 */
-     SAY LOCARG
      PARSE VAR FLD_SORT LOCARG "," .                          /* @A3 */
      CLRGROU = "TURQ"; CLRDATA = "TURQ"                       /* @A3 */
      INTERPRET "CLR"SUBSTR(LOCARG,1,4)" = 'WHITE'"            /* @A4 */

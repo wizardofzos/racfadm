@@ -574,7 +574,7 @@ DISP:
   else call RACFGRP id
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Confirm Delete                                                    */
+/*  Confirm delete                                                    */
 /*--------------------------------------------------------------------*/
 CONFIRM_REQUEST:
   signal off error

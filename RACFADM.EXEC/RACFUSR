@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AX  200214  RACFA    Changed REXX pgm name RACFXREF to RACFUSRX   */
 /* @AU  200206  RACFA    Fix color of sort col, when F3, diff. id     */
 /* @AT  200206  RACFA    Fix SORT, place at top of table              */
 /* @AS  200206  RACFA    Fix RESET, was not placing at top of table   */
@@ -763,7 +764,7 @@ ADDP:
   end
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Delete Permit option                                              */
+/*  Delete permit option                                              */
 /*--------------------------------------------------------------------*/
 DELP:
   if id= 'NONE' then
@@ -805,7 +806,7 @@ RETURN
 /*  Xref command                                                      */
 /*--------------------------------------------------------------------*/
 XREFD:                                                        /* @AL */
-  Call RACFXREF user                                          /* @AL */
+  Call RACFUSRX user                                          /* @AX */
 RETURN                                                        /* @AL */
 /*--------------------------------------------------------------------*/
 /*  Simulate digital certificate user profiles                        */

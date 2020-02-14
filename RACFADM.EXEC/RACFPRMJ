@@ -85,7 +85,7 @@ RACF_PASSWORD_OPTIONS:
   rc = Setvalue(rcvtpina,243,1)             /* password inactive      */
 RETURN
 /*--------------------------------------------------------------------*/
-/*  RACF Setropt options                                              */
+/*  RACF setropt options                                              */
 /*--------------------------------------------------------------------*/
 RACF_SETROPT_OPTIONS:
   rc= Setbool(rcvtsegn,53,'01','NO','YES')  /* egn                    */
