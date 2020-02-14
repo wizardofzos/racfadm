@@ -9,7 +9,7 @@
 %
 +Change+RACF%&RCLASS +profile: %RALTER+command
 +
-+PROFILE%===> $PROFILE                                       +$TYPE
++PROFILE %===>$PROFILE                                       +$TYPE
 +
 {Change one or more of the fields below:
 +

@@ -17,9 +17,9 @@
 }*+TSO ISPPROF{........_Z                    { TSO ISPF profile
 }*+TSO JOBLIB{........._Z                    { TSO programmer library
 }*+TSO JOBLIB Volume{.._Z      {               TSO programmer library volume
-}*+TSO Alloc Unit{....._Z       {              z/OS Allocation unit
-}*+TSO A/S Size{......._Z   {                  z/OS Address space size
-+  Administrator{......_Z                   {  Full Administrator Userid
+}*+TSO Alloc Unit{....._Z       {              z/OS allocation unit
+}*+TSO A/S Size{......._Z   {                  z/OS address space size
++  Administrator{......_Z                   {  Full administrator userid
 +  Confirm Panel{......_Z  {                   Confirm command request (YES/NO)
 +  Common Group{......._Z      {               Connect new users to this group
 +  Default filter{....._Z                    { Default search filter for panels

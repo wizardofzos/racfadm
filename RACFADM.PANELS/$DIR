@@ -8,17 +8,17 @@
  #RACCLSR  Tutorial       List classes (show, refresh)
  #RACCLSS  Tutorial       List classes (show)
  #RACCLS8  Tutorial       List classes and profiles
- #RACCLS9  Tutorial       List profiles and description
+ #RACCLS9  Tutorial       List profiles and descriptions
  #RACDSN2  Tutorial       Dataset profile
  #RACGRP8  Tutorial       Group profile
  #RACMENU  Tutorial       Main menu
  #RACPRMJ  Tutorial       JES2 parameters
- #RACPRM1  Tutorial       User settings
- #RACPRM2  Tutorial       User settings
+ #RACPRM1  Tutorial       User settings (1 of 2)
+ #RACPRM2  Tutorial       User settings (2 of 2)
  #RACPUBL  Tutorial       RACF publications
  #RACUSR2  Tutorial       User profile
  RACFAUT1  Authorization  Enter profile/class/user
- RACFAUT2  Authorization  List group/id and access
+ RACFAUT2  Authorization  List group/ids and access
  RACFDSN1  Dataset        Set filter
  RACFDSN2  Dataset        List profiles and types
  RACFDSN3  Dataset        Add profile
