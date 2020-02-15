@@ -5,7 +5,7 @@
   { TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(BLUE)
   + TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(GREEN)
 )BODY EXPAND(\\)
-+\-\(%RACFADM - RACF Administration+)\-\
++\-\(%RACFADM - Authorization+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
 %
 +PROFILE: _PROFILE                                           +$TYPE

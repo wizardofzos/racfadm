@@ -8,7 +8,7 @@
 +\-\(%RACFADM - Group Profiles+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
 %
-+PROFILE:$GROUP                                          +$TYPE
++PROFILE:$GROUP
 +SUPGRP: $SUPGRP  { (Superior group)
 +OWNER:  $OWNER   { (Owner of profile)
 +                                                                  +

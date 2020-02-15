@@ -32,6 +32,7 @@ _Z ^Z      Z       Z                   Z       œZ       	Z       †Z  Z  —Z
   IF (&SAMT = ' ')
       &SAMT = &ZSCED
 )PROC
+  /* Line commands: SE is not displayed (hidden) */
   VER (&OPTA,LIST,S,s,SE,se,L,l,RS,rs,RV,rv)
 )PNTS
   FIELD(ZPS00001) VAR(ZCMD) VAL('SORT USERID')

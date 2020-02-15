@@ -1,5 +1,5 @@
 /*%NOCOMMENT====================* REXX *==============================*/
-/*  PURPOSE:  RACFXREF - Userid Cross Reference Report (Line cmd XE)  */
+/*  PURPOSE:  RACFXREF - Userid Cross Reference (Line cmd XR, hidden) */
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */

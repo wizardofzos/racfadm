@@ -13,7 +13,7 @@ Address ISPExec
   'libdef ispplib'
 
 Address TSO 'altlib deact app(exec)'
-exit 0
+EXIT 0
 /*--------------------------------------------------------------------*/
 /*  Obtain dataset names and LIBDEF/ALTLIB them                       */
 /*--------------------------------------------------------------------*/

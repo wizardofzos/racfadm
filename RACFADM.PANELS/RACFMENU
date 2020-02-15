@@ -9,11 +9,11 @@
 +Select one of the following and press%ENTER.+
 +
 % 0! Settings+  Customize options
-% 1! User    +  User Profiles
-% 2! Group   +  Group Profiles
-% 3! Dataset +  Dataset Profiles
-% 4! General +  General Resource _CLASS   +
-% 5! RACFprms+  RACF Parameters
+% 1! User    +  User profiles
+% 2! Group   +  Group profiles
+% 3! Dataset +  Dataset profiles
+% 4! General +  General resource _CLASS   +
+% 5! RACFprms+  RACF parameters
 +
 )INIT
   .CURSOR = ZCMD
@@ -26,7 +26,7 @@
       3,'CMD(%RACFDSN)'
       4,'CMD(%RACFCLSR &CLASS)'
       5,'CMD(%RACFPRMJ)'
-      6,'CMD(%RACAUTH)'     /* Analyze ACL for General Resources */
+      6,'CMD(%RACFAUTH)'          /* Hidden - Authorization */
     ' ',' '
       *,'?')
 )END

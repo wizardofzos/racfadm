@@ -51,7 +51,7 @@ DISPLAY_TABLE_PERMIT:
  address ISPEXEC "TBSORT" tblb,
                  "FIELDS(CLASS,C,A,PROFILE,C,A)"
  address ISPEXEC "TBTOP" tblb
- address ISPEXEC "TBDISPL" tblb "PANEL(RACFCLS8)"             /* @XX */
+ address ISPEXEC "TBDISPL" tblb "PANEL(RACFCLS8)"             /* @A3 */
  reta= rc
  do while (rc < 8)  /* tablea */
     address ISPEXEC "CONTROL DISPLAY SAVE"
@@ -105,7 +105,7 @@ DISPLAY_TABLE_PERMIT:
        ADDRESS ISPEXEC "TBSKIP" tblb "NUMBER("XTDTOP")"
     end
     ADDRESS ISPEXEC "CONTROL DISPLAY RESTORE"
-    ADDRESS ISPEXEC "TBDISPL" tblb "PANEL(RACFCLS8)"          /* @XX */
+    ADDRESS ISPEXEC "TBDISPL" tblb "PANEL(RACFCLS8)"          /* @A3 */
     reta= rc
  end  /* Do while (reta < 8) */
 RETURN 0
@@ -170,7 +170,7 @@ DISPLAY_TABLE:
   opta= ' '
   address ISPEXEC "TBSORT" tbla "FIELDS(CLASS)"
   address ISPEXEC "TBTOP" tbla
-  address ISPEXEC "TBDISPL" tbla "PANEL(RACFCLS8)"            /* @XX */
+  address ISPEXEC "TBDISPL" tbla "PANEL(RACFCLS8)"            /* @A3 */
   reta= rc
   Do while ^selection & (reta < 8)
      action=''
@@ -214,7 +214,7 @@ DISPLAY_TABLE:
      else address ISPEXEC "TBSKIP" tbla "NUMBER("XTDTOP")"
      address ISPEXEC "CONTROL DISPLAY RESTORE"
      if ^selection then do
-        address ISPEXEC "TBDISPL" tbla "PANEL(RACFCLS8)"      /* @XX */
+        address ISPEXEC "TBDISPL" tbla "PANEL(RACFCLS8)"      /* @A3 */
         reta= rc
      end
   end  /* Do while (reta < 8) */

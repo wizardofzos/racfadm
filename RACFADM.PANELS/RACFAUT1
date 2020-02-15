@@ -3,7 +3,7 @@
   + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
   _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT)   HILITE(USCORE)
 )BODY EXPAND(\\)
-+\-\(%RACFADM - RACF Administration+)\-\
++\-\(%RACFADM - Authorization+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
 %
 +PROFILE: _PROFILE                                         +&TYPE

@@ -8,17 +8,17 @@
  RACFADM   Software       Dynamically allocate and invoke software
  RACFAUTH  Authorization  Extract authorization on a given profile
  RACFCLSG  Class          Extract generic class profiles
- RACFCLSR  Class          Get active classes
- RACFCLSS  Class          Search classes
+ RACFCLSR  Class          Display class profiles
+ RACFCLSS  Class          Search and display classes
  RACFDSN   Dataset        Display dataset profiles
  RACFGRP   Group          Display group profiles
- RACFMSGC  Message        Display confirm panel
- RACFMSGS  Message        Issue error message
+ RACFMSGC  Message        Display 'Confirm Request' panel
+ RACFMSGS  Message        Display error message
  RACFPRMJ  Parameter      Display RACF parameters
- RACFPRMU  Parameter      Display user settings
- RACFTSO   TSO            Create TSO alias
+ RACFPRMU  Parameter      Display settings (Customize options)
+ RACFTSO   TSO            Create TSO alias and files
  RACFUSR   User           Display userid profiles
- RACFUSRX  User           Userid cross reference report
+ RACFUSRX  User           Userid cross reference report (line cmd XR)
 
 Notes
-  * Classes are General Resources
+  * Class is 'General Resources'

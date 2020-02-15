@@ -13,8 +13,8 @@
  #RACGRP8  Tutorial       Group profile
  #RACMENU  Tutorial       Main menu
  #RACPRMJ  Tutorial       JES2 parameters
- #RACPRM1  Tutorial       User settings (1 of 2)
- #RACPRM2  Tutorial       User settings (2 of 2)
+ #RACPRM1  Tutorial       Settings - Customize options (1 of 2)
+ #RACPRM2  Tutorial       Settings - Customize options (2 of 2)
  #RACPUBL  Tutorial       RACF publications
  #RACUSR2  Tutorial       User profile
  RACFAUT1  Authorization  Enter profile/class/user
@@ -49,19 +49,23 @@
  RACFGRP7  Group          Add connection
  RACFGRP8  Group          List groups and descriptions
  RACFMENU  Menu           Main menu
- RACFMSG1  Message        Confirm popup panel
- RACFMSG2  Message        Message popup panel
+ RACFMSG1  Message        'Confirm Request' (pop-up panel)
+ RACFMSG2  Message        Excute command error message (pop-up panel)
  RACFPRMJ  Parameter      RACF parameters
- RACFPRMU  Parameter      User settings
+ RACFPRMU  Parameter      Settings - Customize options
  RACFUSR1  User           Set filter
- RACFUSR2  User           List userids (admin)
+ RACFUSR2  User           List userids (Admin)
  RACFUSR3  User           Show groups and access
  RACFUSR4  User           Connect profile
  RACFUSR5  User           Change user
  RACFUSR6  User           Add user
  RACFUSR7  User           Change connection
  RACFUSR8  User           Alter TSO segment
- RACFUSR9  User           List userids (user)
+ RACFUSR9  User           List userids (User)
 
 Notes
-  * Classes are General Resources
+  - Class is 'General Resources'
+  - (Admin) = Administrator
+    * Line cmds: Show, List, Chg, Add, Remove, Reset, Revoke
+  - (User)  = General user
+    * Line cmds: Show, List, Reset, Revoke
