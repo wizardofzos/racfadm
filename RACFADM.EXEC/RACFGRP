@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AH  200216  RACFA    Chg color to turq/green, was white/turq      */
 /* @AG  200207  RACFA    Fix color of sort col, when F3, diff. id     */
 /* @AF  200207  RACFA    Fix SORT, place at top of table              */
 /* @AE  200207  RACFA    Fix RESET, was not placing at top of table   */
@@ -113,7 +114,7 @@ PROFL:
   /* profiles table display section */
   opta= ' '
   sort='';fld_sort='GROUP';dfl_sort='GROUP'                   /* @AG */
-  CLRGROU = "WHITE"; CLRDATA = "TURQ"    /* Col. colors */    /* @A4 */
+  CLRGROU = "TURQ";  CLRDATA = "GREEN"   /* Col. colors */    /* @AH */
   address ISPEXEC "TBSORT" tbla "FIELDS("dfl_sort")"          /* @AG */
   address ISPEXEC "TBTOP" tbla
   address ISPEXEC "TBDISPL" tbla "PANEL(RACFGRP8)"
@@ -181,8 +182,8 @@ PROFL:
         LOCARG = DFL_SORT                                     /* @A3 */
      END                                                      /* @A3 */
      PARSE VAR FLD_SORT LOCARG "," .                          /* @A3 */
-     CLRGROU = "TURQ"; CLRDATA = "TURQ"                       /* @A3 */
-     INTERPRET "CLR"SUBSTR(LOCARG,1,4)" = 'WHITE'"            /* @A4 */
+     CLRGROU = "GREEN"; CLRDATA = "GREEN"                     /* @AH */
+     INTERPRET "CLR"SUBSTR(LOCARG,1,4)" = 'TURQ'"             /* @AH */
      address ISPEXEC "TBSORT" tbla "FIELDS("sort")"
      address ISPEXEC "TBTOP" tbla
      if lparm<>'' then do

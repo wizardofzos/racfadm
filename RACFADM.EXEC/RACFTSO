@@ -123,7 +123,7 @@ RETURN 8
 /*--------------------------------------------------------------------*/
 /*  Delete temporary autorizations for RACF administrator             */
 /*--------------------------------------------------------------------*/
-Delete_admin_permits:
+DELETE_ADMIN_PERMITS:
   "PERMIT '"user".**'     GEN DELETE ID("USERID()")"
 /*-------------------------------------------------------------------*/
 /*  "PERMIT 'SYS1.BRODCAST' GEN DELETE ID("USERID()")"               */

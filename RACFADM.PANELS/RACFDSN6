@@ -29,7 +29,7 @@
 +\ \Press%ENTER+to process or%END+to exit\ \
 )INIT
   .CURSOR = ACC
-  .HELP   = #RACMENU
+  .HELP   = #RACDSNA
 )PROC
   VER (&UACC,NB,LIST,NONE,EXECUTE,READ,ALTER,CONTROL,UPDATE)
 )END

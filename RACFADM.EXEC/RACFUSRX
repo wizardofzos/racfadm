@@ -1,5 +1,5 @@
 /*%NOCOMMENT====================* REXX *==============================*/
-/*  PURPOSE:  RACFXREF - Userid Cross Reference (Line cmd XR, hidden) */
+/*  PURPOSE:  RACFXREF - Userid Cross Ref. Rpt  (Line cmd XR, hidden) */
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
@@ -27,9 +27,9 @@
   'Execio * diskw sysin (finis'
   "call *(irrut100)"
   'Execio * diskr sysprint (finis stem sysp.'
-  /*-----------------------------------*/
-  /*  Display the report using Browse  */
-  /*-----------------------------------*/
+  /*---------------------*/
+  /*  Browse the report  */
+  /*---------------------*/
   Address ISPExec
   'lminit dataid(id) ddname(sysprint) enq(exclu)'
   if rc ^= 0 then do

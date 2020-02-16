@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AY  200216  RACFA    Chg color to turq/green, was white/turq      */
 /* @AX  200214  RACFA    Changed REXX pgm name RACFXREF to RACFUSRX   */
 /* @AU  200206  RACFA    Fix color of sort col, when F3, diff. id     */
 /* @AT  200206  RACFA    Fix SORT, place at top of table              */
@@ -150,10 +151,10 @@ PROFL:
   /* profiles table display section */
   opta= ' '
   sort='';fld_sort='USER';dfl_sort='USER'                     /* @AU */
-  CLRUSER = "WHITE"; CLRNAME = "TURQ"     /* Col. colors */   /* @AU */
-  CLRDEFG = "TURQ";  CLRDATE = "TURQ"                         /* @AU */
-  CLROWNE = "TURQ";  CLRREVO = "TURQ"                         /* @AU */
-  CLRATTR = "TURQ";  CLRTSOU = "TURQ"                         /* @AU */
+  CLRUSER = "TURQ";  CLRNAME = "GREEN"    /* Col. colors */   /* @AY */
+  CLRDEFG = "GREEN"; CLRDATE = "GREEN"                        /* @AY */
+  CLROWNE = "GREEN"; CLRREVO = "GREEN"                        /* @AY */
+  CLRATTR = "GREEN"; CLRTSOU = "GREEN"                        /* @AY */
   address ISPEXEC "TBSORT" tbla "FIELDS("dfl_sort")"
   address ISPEXEC "TBTOP" tbla
   address ISPEXEC "TBDISPL" tbla "PANEL("user_list_pnl")"
@@ -250,11 +251,11 @@ PROFL:
         sort=dfl_sort
         LOCARG = DFL_SORT
      END                                                      /* @A7 */
-     CLRUSER = "TURQ"; CLRNAME = "TURQ"                       /* @AA */
-     CLRDEFG = "TURQ"; CLRDATE = "TURQ"                       /* @AA */
-     CLROWNE = "TURQ"; CLRREVO = "TURQ"                       /* @AA */
-     CLRATTR = "TURQ"; CLRTSOU = "TURQ"                       /* @AA */
-     INTERPRET "CLR"SUBSTR(LOCARG,1,4)" = 'WHITE'"            /* @AA */
+     CLRUSER = "GREEN"; CLRNAME = "GREEN"                     /* @AY */
+     CLRDEFG = "GREEN"; CLRDATE = "GREEN"                     /* @AY */
+     CLROWNE = "GREEN"; CLRREVO = "GREEN"                     /* @AY */
+     CLRATTR = "GREEN"; CLRTSOU = "GREEN"                     /* @AY */
+     INTERPRET "CLR"SUBSTR(LOCARG,1,4)" = 'TURQ'"             /* @AY */
      address ISPEXEC "TBSORT" tbla "FIELDS("sort")"
      address ISPEXEC "TBTOP" tbla
      if lparm<>'' then do

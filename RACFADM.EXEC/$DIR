@@ -20,5 +20,5 @@
  RACFUSR   User           Display userid profiles
  RACFUSRX  User           Userid cross reference report (line cmd XR)
 
-Notes
-  * Class is 'General Resources'
+ Notes
+   - Class is 'General Resources'

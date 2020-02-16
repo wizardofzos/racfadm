@@ -29,7 +29,7 @@
 +\ \Press%ENTER+to process or%END+to exit\ \
 )INIT
   .CURSOR = ID
-  .HELP   = #RACMENU
+  .HELP   = #RACDSNA
   IF (&ID = NONE)
       &ID = ' '
   &OLDID = &ID
