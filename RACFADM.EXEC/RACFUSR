@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B3  200218  RACFA    Use dynamic area to display SELECT commands  */
 /* @B2  200218  RACFA    Chged ERAADMN to YES/NO, was userid          */
 /* @B1  200218  RACFA    Fixed ERAADMN, was ERAADMIN                  */
 /* @AZ  200218  RACFA    Added 'Status Interval' option               */
@@ -52,12 +53,17 @@
   address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE ERAMCAT",   /* @AZ */
                         "ERAULIB ERAADMN ERASINT) ASIS"       /* @B1 */
   IF (ERASINT = "") THEN                                      /* @AZ */
-     ERASINT = 1                                              /* @AZ */
-  If (ERAADMN = "YES") then                                   /* @B2 */
-     user_list_pnl='RACFUSR2'
-  else
-     user_list_pnl='RACFUSR9'
-
+      ERASINT = 1                                             /* @AZ */
+  If (ERAADMN = "YES") then do                                /* @B2 */
+      SELCMDS2 = "ÝS¨Show,ÝL¨List,ÝC¨Change,ÝA¨Add,"||,       /* @B3 */
+                 "ÝR¨Remove,ÝRS¨Reset,ÝRV¨Revoke"             /* @B3 */
+      SELCMDS3 = "ÝS¨Show,ÝL¨List,ÝC¨Change,ÝA¨Add,"||,       /* @B3 */
+                 "ÝR¨Remove"                                  /* @B3 */
+  end
+  else do
+      SELCMDS2 = "ÝS¨Show,ÝL¨list"                            /* @B3 */
+      SELCMDS3 = "ÝS¨Show,ÝL¨list"                            /* @B3 */
+  end
   address TSO "PROFILE MSGID"
   rlv= SYSVAR('SYSLRACF')
   called= SYSVAR('SYSNEST')
@@ -163,7 +169,7 @@ PROFL:
   CLRATTR = "GREEN"; CLRTSOU = "GREEN"                        /* @AY */
   address ISPEXEC "TBSORT" tbla "FIELDS("dfl_sort")"
   address ISPEXEC "TBTOP" tbla
-  address ISPEXEC "TBDISPL" tbla "PANEL("user_list_pnl")"
+  address ISPEXEC "TBDISPL" tbla "PANEL(RACFUSR2)"            /* @B3 */
   reta= rc
   do while (reta < 8)   /* tablea panel */
      address ISPEXEC "CONTROL DISPLAY SAVE"
@@ -277,7 +283,7 @@ PROFL:
      end
      else address ISPEXEC "TBSKIP" tbla "NUMBER("XTDTOP")"
      address ISPEXEC "CONTROL DISPLAY RESTORE"
-     address ISPEXEC "TBDISPL" tbla "PANEL("user_list_pnl")"
+     address ISPEXEC "TBDISPL" tbla "PANEL(RACFUSR2)"         /* @B3 */
      reta= rc
   end  /* Do while (reta < 8) */
 RETURN

@@ -1,9 +1,12 @@
 )ATTR DEFAULT(%+_)
-  $ TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(TURQ)
-  # TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(GREEN)
-  _ TYPE(INPUT)  INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
-  { TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(BLUE)
-  + TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(GREEN)
+  $ TYPE(OUTPUT)  INTENS(LOW) JUST(LEFT) COLOR(TURQ)
+  # TYPE(OUTPUT)  INTENS(LOW) JUST(LEFT) COLOR(GREEN)
+  _ TYPE(INPUT)   INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  { TYPE(TEXT)    INTENS(LOW) SKIP(ON)   COLOR(BLUE)
+  + TYPE(TEXT)    INTENS(LOW) SKIP(ON)   COLOR(GREEN)
+  ¬ AREA(DYNAMIC) EXTEND(OFF)
+  ¨ TYPE(DATAOUT) INTENS(LOW) COLOR(GREEN)
+  Ý TYPE(DATAOUT) INTENS(HIGH)
 )BODY EXPAND(\\)
 +\-\(%RACFADM - General Resource+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
@@ -14,7 +17,7 @@
 +WARNING:$WARN    { (YES/NO)             %AUDIT: $AUDIT
 +DATA:   $DATA
 +                                           +
-+SELECT: %S+Show,%L+List,%C+Change,%A+Add,%R+Remove
++SELECT: ¬SELCMDS                                                              ¬
 +
 %S   Group/ID     Access
 %-------------------------------------------------------------------------------
@@ -29,5 +32,8 @@ _Z+ $Z           #Z
   IF (&SAMT = ' ')
       &SAMT = &ZSCED
 )PROC
-  VER (&OPTB,LIST,S,s,L,l,C,c,A,a,R,r)
+  IF (&ERAADMN = YES)
+     VER (&OPTB,LIST,S,s,L,l,C,c,A,a,R,r)
+  ELSE
+     VER (&OPTB,LIST,S,s,L,l)
 )END

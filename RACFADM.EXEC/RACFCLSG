@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AB  200218  RACFA    Use dynamic area to display SELECT commands  */
 /* @AA  200218  RACFA    Added 'Status Interval' option               */
 /* @A9  200123  RACFA    Retrieve default filter, Option 0 - Settings */
 /* @A8  200123  TRIDJK   If LG fails, then issue a LU                 */
@@ -25,8 +26,13 @@
   Pnl_list_prof='RACFCLS9'
   Rclass=strip(rclass)
   address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE ERACONF",   /* @AA */
-                        "ERASINT) ASIS"                       /* @AA */
-  IF (ERASINT = "") THEN ERASINT = 1                          /* @AA */
+                        "ERASINT ERAADMN) ASIS"               /* @AB */
+  IF (ERASINT = "") THEN                                      /* @AA */
+      ERASINT = 1                                             /* @AA */
+  If (ERAADMN = "YES") then                                   /* @AB */
+      SELCMDS = "ÝS¨Show,ÝL¨List,ÝC¨Change,ÝA¨Add,ÝR¨Remove"  /* @AB */
+  else
+      SELCMDS = "ÝS¨Show,ÝL¨list"                             /* @AB */
   address TSO "PROFILE MSGID"
   rlv= SYSVAR('SYSLRACF')
   called= SYSVAR('SYSNEST')

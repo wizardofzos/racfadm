@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AJ  200218  RACFA    Use dynamic area to display SELECT commands  */
 /* @AI  200218  RACFA    Added 'Status Interval' option               */
 /* @AH  200216  RACFA    Chg color to turq/green, was white/turq      */
 /* @AG  200207  RACFA    Fix color of sort col, when F3, diff. id     */
@@ -31,9 +32,14 @@
      address ISPEXEC "VGET (ERAFLTR) ASIS"                    /* @AB */
      Rfilter = ERAFLTR                                        /* @AB */
   end                                                         /* @AB */
-  address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE ERASINT)",  /* @AI */
-                        "ASIS"                                /* @AI */
-  IF (ERASINT = "") THEN ERASINT = 1                          /* @AI */
+  address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE ERASINT",   /* @AI */
+                        "ERAADMN) ASIS"                       /* @AJ */
+  IF (ERASINT = "") THEN                                      /* @AI */
+      ERASINT = 1                                             /* @AI */
+  If (ERAADMN = "YES") then                                   /* @B2 */
+      SELCMDS = "ÝS¨Show,ÝL¨List,ÝC¨Change,ÝA¨Add,ÝR¨Remove"  /* @AJ */
+  else
+      SELCMDS = "ÝS¨Show,ÝL¨list"                             /* @AJ */
   address TSO "PROFILE MSGID"
   rlv= SYSVAR('SYSLRACF')
   called= SYSVAR('SYSNEST')

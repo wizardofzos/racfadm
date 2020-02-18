@@ -56,18 +56,17 @@
  RACFPRMJ  Parameter      RACF parameters
  RACFPRMU  Parameter      Settings - Customize options
  RACFUSR1  User           Set filter
- RACFUSR2  User           List userids (Admin)
+ RACFUSR2  User           List userids (Admin/user)
  RACFUSR3  User           Show groups and access
  RACFUSR4  User           Connect profile
  RACFUSR5  User           Change user
  RACFUSR6  User           Add user
  RACFUSR7  User           Change connection
  RACFUSR8  User           Alter TSO segment
- RACFUSR9  User           List userids (User)
 
  Notes:
    - Class is 'General Resources'
    - (Admin) = Administrator
      * Line cmds: Show, List, Chg, Add, Remove, Reset, Revoke
    - (User)  = General user
-     * Line cmds: Show, List, Reset, Revoke
+     * Line cmds: Show, List

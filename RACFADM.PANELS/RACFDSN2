@@ -1,14 +1,17 @@
 )ATTR DEFAULT(%+_)
-  $ TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(TURQ)
-  # TYPE(OUTPUT) INTENS(LOW) JUST(LEFT) COLOR(GREEN)
-  _ TYPE(INPUT)  INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
-  + TYPE(TEXT)   INTENS(LOW) SKIP(ON)   COLOR(GREEN)
+  $ TYPE(OUTPUT)  INTENS(LOW) JUST(LEFT) COLOR(TURQ)
+  # TYPE(OUTPUT)  INTENS(LOW) JUST(LEFT) COLOR(GREEN)
+  _ TYPE(INPUT)   INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  + TYPE(TEXT)    INTENS(LOW) SKIP(ON)   COLOR(GREEN)
+  ¬ AREA(DYNAMIC) EXTEND(OFF)
+  ¨ TYPE(DATAOUT) INTENS(LOW) COLOR(GREEN)
+  Ý TYPE(DATAOUT) INTENS(HIGH)
 )BODY EXPAND(\\)
 +\-\(%RACFADM - Dataset Profiles+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
 %
 +FILTER: $RFILTER
-+SELECT: %S+Show,%L+List,%C+Change,%A+Add,%R+Remove
++SELECT: ¬SELCMDS                                                              ¬
 %
 %S   Profile Name                            Type
 %-------------------------------------------------------------------------------
@@ -22,5 +25,8 @@ _Z+ $Z                                      #Z
   IF (&SAMT = ' ')
       &SAMT = &ZSCED
 )PROC
-  VER (&OPTA,LIST,S,s,L,l,C,c,A,a,R,r)
+  IF (&ERAADMN = YES)
+     VER (&OPTA,LIST,S,s,L,l,C,c,A,a,R,r)
+  ELSE
+     VER (&OPTA,LIST,S,s,L,l)
 )END
