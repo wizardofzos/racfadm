@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B2  200218  RACFA    Chged ERAADMN to YES/NO, was userid          */
 /* @B1  200218  RACFA    Fixed ERAADMN, was ERAADMIN                  */
 /* @AZ  200218  RACFA    Added 'Status Interval' option               */
 /* @AY  200216  RACFA    Chg color to turq/green, was white/turq      */
@@ -50,10 +51,12 @@
   lparm=''                                /* Locate parm */   /* @A5 */
   address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE ERAMCAT",   /* @AZ */
                         "ERAULIB ERAADMN ERASINT) ASIS"       /* @B1 */
-  IF (ERASINT = "") THEN ERASINT = 1                          /* @AZ */
-  master=pos(userid(),eraadmn)
-  If master then user_list_pnl='RACFUSR2'
-  else user_list_pnl='RACFUSR9'
+  IF (ERASINT = "") THEN                                      /* @AZ */
+     ERASINT = 1                                              /* @AZ */
+  If (ERAADMN = "YES") then                                   /* @B2 */
+     user_list_pnl='RACFUSR2'
+  else
+     user_list_pnl='RACFUSR9'
 
   address TSO "PROFILE MSGID"
   rlv= SYSVAR('SYSLRACF')

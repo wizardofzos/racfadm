@@ -10,7 +10,7 @@
 %Command ===>_ZCMD                                                             +
 %
 %General:
-+  Administrator{......_Z       {              Full administrator userid
++  Administrator{......_Z  {                   Full administrator~(YES/NO)
 +  Default Filter{....._Z                    { Default search string for panels
 +  Status Interval{...._Z  {                   Progress message number~(0-999)
 +  Confirm Panel{......_Z  {                   Confirm command request~(YES/NO)
@@ -30,6 +30,10 @@
   VGET (ERAADMN ERAFLTR ERASINT ERACONF ERASHOW ERATRACE ERAMCAT +
         ERACTLG ERAISPP ERAULIB ERAUVOL ERAUNIT ERAASIZ  ERACGRP) +
         PROFILE
+  IF (&ERAADMN  = &Z)
+      &ERAADMN  = 'NO'
+  IF (&ERAADMN  NE NO, YES)
+      &ERAADMN  = 'NO'
   IF (&ERACONF  = &Z)
       &ERACONF  = 'YES'
   IF (&ERASINT  = &Z)
@@ -43,6 +47,7 @@
              ERAASIZ ERACGRP)'
   .HELP = #RACPRM1
 )PROC
+  VER  (&ERAADMN,NB,LIST,NO,YES)
   VER  (&ERASINT,NB,RANGE,0,999)
   VER  (&ERACONF,NB,LIST,NO,YES)
   VER  (&ERASHOW,NB,LIST,NO,YES)

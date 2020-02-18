@@ -7,8 +7,8 @@
 %Command ===>_ZCMD                                                             +
 %
 %General:
-!  Administrator+     Specify the administrator userid, providing more line
-+                     commands (A Add, C Change, etc.)
+!  Administrator+     Specify full administrator authority,+providing more line
++                     commands: A Add, C Change, etc.%(YES/NO)
 +
 !  Default filter+    Specify a default search string, when selecting option
 +                     1 (Userid), 2 (Group) and 3 (Dataset)
