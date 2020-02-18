@@ -4,47 +4,47 @@
   { TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(BLUE)
   } TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(RED)
   + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
+  ~ TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(TURQ)
 )BODY EXPAND(\\)
 +\-\(%RACFADM - Settings+)\-\
 %Command ===>_ZCMD                                                             +
 %
-+Change one of the following and press%ENTER.
+%General:
++  Administrator{......_Z       {              Full administrator userid
++  Default Filter{....._Z                    { Default search string for panels
++  Status Interval{...._Z  {                   Progress message number~(0-999)
++  Confirm Panel{......_Z  {                   Confirm command request~(YES/NO)
++  RACF Commands{......_Z  {                   Show RACF commands~(YES/NO)
++  REXX Trace{........._Z  {                   Start REXX trace  ~(YES/NO)
 +
-+  RACF Commands{......_Z  {                   Show RACF commands (YES/NO)
-+  REXX Trace{........._Z  {                   Start REXX trace   (YES/NO)
-}*+Master Catalog{....._Z                    { z/OS Master Catalog
-}*+TSO User Catalog{..._Z                    { z/OS Alias catalog
-}*+TSO ISPPROF{........_Z                    { TSO ISPF profile
-}*+TSO JOBLIB{........._Z                    { TSO programmer library
-}*+TSO JOBLIB Volume{.._Z      {               TSO programmer library volume
-}*+TSO Alloc Unit{....._Z       {              z/OS allocation unit
-}*+TSO A/S Size{......._Z   {                  z/OS address space size
-+  Administrator{......_Z                   {  Full administrator userid
-+  Confirm Panel{......_Z  {                   Confirm command request (YES/NO)
-+  Common Group{......._Z      {               Connect new users to this group
-+  Default Filter{....._Z                    { Default search filter for panels
-+  Status Interval{...._Z  {                   Progress message number (0-999)
-+
-+
-+ }(*)+= TSO users only
+%Adding TSO userids:
++  Master Catalog{....._Z                    { z/OS Master Catalog
++  TSO User Catalog{..._Z                    { z/OS Alias catalog
++  TSO ISPPROF{........_Z                    { TSO ISPF profile
++  TSO JOBLIB{........._Z                    { TSO programmer library
++  TSO JOBLIB Unit{...._Z       {              TSO programmer library unit
++  TSO Alloc Unit{....._Z       {              z/OS allocation unit
++  TSO A/S Size{......._Z    {                 z/OS address space size
++  Common Group{......._Z       {              Connect new users to this group
 )INIT
-  VGET (ERASHOW ERATRACE ERACTLG ERAUNIT) PROFILE
-  VGET (ERAASIZ ERAULIB  ERAUVOL ERAMCAT) PROFILE
-  VGET (ERAADMN ERACONF  ERACGRP ERAISPP) PROFILE
-  VGET (ERAFLTR ERASINT) PROFILE
-  IF (&ERASHOW  = &Z)
-      &ERASHOW  = 'NO'
-  IF (&ERATRACE = &Z)
-      &ERATRACE = 'NO'
+  VGET (ERAADMN ERAFLTR ERASINT ERACONF ERASHOW ERATRACE ERAMCAT +
+        ERACTLG ERAISPP ERAULIB ERAUVOL ERAUNIT ERAASIZ  ERACGRP) +
+        PROFILE
   IF (&ERACONF  = &Z)
       &ERACONF  = 'YES'
   IF (&ERASINT  = &Z)
       &ERASINT  = '1'
-  .ZVARS = '(ERASHOW ERATRACE ERAMCAT ERACTLG ERAISPP ERAULIB +
-             ERAUVOL ERAUNIT  ERAASIZ ERAADMN ERACONF ERACGRP +
-             ERAFLTR ERASINT)'
+  IF (&ERASHOW  = &Z)
+      &ERASHOW  = 'NO'
+  IF (&ERATRACE = &Z)
+      &ERATRACE = 'NO'
+  .ZVARS = '(ERAADMN ERAFLTR ERASINT ERACONF ERASHOW ERATRACE +
+             ERAMCAT ERACTLG ERAISPP ERAULIB ERAUVOL ERAUNIT  +
+             ERAASIZ ERACGRP)'
   .HELP = #RACPRM1
 )PROC
+  VER  (&ERASINT,NB,RANGE,0,999)
+  VER  (&ERACONF,NB,LIST,NO,YES)
   VER  (&ERASHOW,NB,LIST,NO,YES)
   VER  (&ERATRACE,NB,LIST,NO,YES)
   IF (&ERACTLG NE ' ')
@@ -54,10 +54,7 @@
      VER (&ERAUVOL,NB)
      VER (&ERAMCAT,NB)
      VER (&ERAISPP,NB)
-  VER  (&ERACONF,NB,LIST,NO,YES)
-  VER  (&ERASINT,NB,RANGE,0,999)
-  VPUT (ERASHOW ERATRACE ERACTLG ERAUNIT) PROFILE
-  VPUT (ERAASIZ ERAULIB  ERAUVOL ERAMCAT) PROFILE
-  VPUT (ERAADMN ERACONF  ERACGRP ERAISPP) PROFILE
-  VPUT (ERAFLTR ERASINT) PROFILE
+  VPUT (ERAADMN ERAFLTR ERASINT ERACONF ERASHOW ERATRACE ERAMCAT +
+        ERACTLG ERAISPP ERAULIB ERAUVOL ERAUNIT ERAASIZ  ERACGRP) +
+        PROFILE
 )END

@@ -1,13 +1,14 @@
 )ATTR DEFAULT(%+_)
   _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT) HILITE(USCORE)
   + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
+  ! TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(TURQ)
 )BODY EXPAND(\\)
 %Tutorial+\-\(%RACFADM - Settings - 3 of 3+)\-\%Tutorial
 %Command ===>_ZCMD                                                             +
 %
-% Status Interval+    The number of entries processed before displaying the
-+                     progress status message (0-999, 0=Do not display)
-+
+%Adding TSO Userid:
+!  Common Group+      Specify an optional common group to be connected
++                     to all new users
 +
 +
 +

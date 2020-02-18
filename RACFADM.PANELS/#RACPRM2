@@ -1,28 +1,29 @@
 )ATTR DEFAULT(%+_)
   _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT) HILITE(USCORE)
   + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
+  ! TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(TURQ)
 )BODY EXPAND(\\)
 %Tutorial+\-\(%RACFADM - Settings - 2 of 3+)\-\%Tutorial
 %Command ===>_ZCMD                                                             +
 %
-% TSO JOBLIB Volume+  Specify the volume on which initial job library
+%Adding TSO userid:
+!  Master Catalog+    Specify the MVS master catalog
++
+!  TSO User Catalog+  Specify the TSO user catalog in which all new TSO user
++                     aliases are to be defined.
++
+!  TSO ISPPROF+       Specify the name of the TSO profile
++
+!  TSO JOBLIB+        Specify an initial job library to be allocated
++                     for new TSO users
++
+!  TSO JOBLIB Unit+   Specify the volume on which initial job library
 +                     must be allocated
 +
-% TSO A/S Size+       Specify TSO address space size
+!  TSO Alloc Unit+    Specify the MVS esoteric unit name on which TSO user
++                     data sets are to be allocated.
 +
-% Administrator+      Specify one or more administrator userid separated
-+                     by blanks
-+
-% Confirm Panel+      Specify whether each modifying operation must be
-+                     confirmed
-+
-% Common Group+       Specify an optional common group to be connected
-+                     to all new users
-+
-% Default filter+     Sepcify a default search order, when selecting option
-+                     1 (Userid), 2 (Group) and 3 (Dataset)
-+
-+
+!  TSO A/S Size+      Specify the TSO address space size
 +
 + \ \ (press%ENTER+to continue) \ \
 )PROC
