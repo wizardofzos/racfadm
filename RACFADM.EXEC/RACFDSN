@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AD  200218  RACFA    Added 'Status Interval' option               */
 /* @AC  200123  RACFA    Retrieve default filter, Option 0 - Settings */
 /* @AB  200123  TRIDJK   If LG fails, then issue a LU                 */
 /* @AA  200120  TRIDJK   Fixed displaying NOWARNING                   */
@@ -19,10 +20,9 @@
 /*====================================================================*/
   Trace o
   Rclass ='DATASET'
-  address ISPEXEC "VGET (ZSCREEN) ASIS"
-  address ISPEXEC "VGET (ERASHOW) ASIS"
-  address ISPEXEC "VGET (ERATRACE) ASIS"
-  address ISPEXEC "VGET (ERAFLTR) ASIS"                       /* @AC */
+  address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE ERAFLTR",   /* @AD */
+                        "ERASINT) ASIS"                       /* @AD */
+  IF (ERASINT = "") THEN ERASINT = 1                          /* @AD */
   Rfilter = ERAFLTR                                           /* @AC */
   address TSO "PROFILE NOPREFIX MSGID"
   rlv= SYSVAR('SYSLRACF')
@@ -56,9 +56,13 @@ PROFL:
      /*---------------------------------------------*/
      /* Display number of records retrieved        -*/
      /*---------------------------------------------*/
-     n1=i;n2=var.0
-     address ISPEXEC "control display lock"
-     address ISPEXEC "display msg(RACF014)"
+     IF (ERASINT <> 0) THEN DO     /* Status interval */      /* @AD */
+        IF (I//ERASINT = 0) THEN DO                           /* @AD */
+           n1=i;n2=var.0
+           address ISPEXEC "control display lock"
+           address ISPEXEC "display msg(RACF014)"
+        END                                                   /* @AD */
+     END                                                      /* @AD */
 
      dataset= SUBWORD(temp,1,1)
      t= INDEX(temp,g)

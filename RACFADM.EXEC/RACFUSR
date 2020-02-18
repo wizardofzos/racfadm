@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B1  200218  RACFA    Fixed ERAADMN, was ERAADMIN                  */
+/* @AZ  200218  RACFA    Added 'Status Interval' option               */
 /* @AY  200216  RACFA    Chg color to turq/green, was white/turq      */
 /* @AX  200214  RACFA    Changed REXX pgm name RACFXREF to RACFUSRX   */
 /* @AU  200206  RACFA    Fix color of sort col, when F3, diff. id     */
@@ -46,12 +48,9 @@
   Call Digital_Certs                                          /* @AP */
   Rclass= 'USER'
   lparm=''                                /* Locate parm */   /* @A5 */
-  address ISPEXEC "VGET (ZSCREEN) ASIS"
-  address ISPEXEC "VGET (ERASHOW) ASIS"
-  address ISPEXEC "VGET (ERATRACE) ASIS"
-  address ISPEXEC "VGET (ERAMCAT) ASIS"
-  address ISPEXEC "VGET (ERAULIB) ASIS"
-  address ISPEXEC "VGET (ERAADMN) ASIS"
+  address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE ERAMCAT",   /* @AZ */
+                        "ERAULIB ERAADMN ERASINT) ASIS"       /* @B1 */
+  IF (ERASINT = "") THEN ERASINT = 1                          /* @AZ */
   master=pos(userid(),eraadmn)
   If master then user_list_pnl='RACFUSR2'
   else user_list_pnl='RACFUSR9'
@@ -135,9 +134,13 @@ PROFL:
      /*---------------------------------------------*/
      /* Display number of users retrieved          -*/
      /*---------------------------------------------*/
-     n1=i;n2=var.0
-     address ISPEXEC "control display lock"
-     address ISPEXEC "display msg(RACF014)"
+     IF (ERASINT <> 0) THEN DO     /* Status interval */      /* @AZ */
+        IF (I//ERASINT = 0) THEN DO                           /* @AZ */
+           n1=i;n2=var.0
+           address ISPEXEC "control display lock"
+           address ISPEXEC "display msg(RACF014)"
+        END                                                   /* @AZ */
+     END                                                      /* @AZ */
      /*---------------------------------------------*/
      /* Get further info                           -*/
      /*---------------------------------------------*/

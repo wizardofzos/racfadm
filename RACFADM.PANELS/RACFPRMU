@@ -23,6 +23,7 @@
 +  Confirm Panel{......_Z  {                   Confirm command request (YES/NO)
 +  Common Group{......._Z      {               Connect new users to this group
 +  Default Filter{....._Z                    { Default search filter for panels
++  Status Interval{...._Z  {                   Progress message number (0-999)
 +
 +
 + }(*)+= TSO users only
@@ -30,16 +31,18 @@
   VGET (ERASHOW ERATRACE ERACTLG ERAUNIT) PROFILE
   VGET (ERAASIZ ERAULIB  ERAUVOL ERAMCAT) PROFILE
   VGET (ERAADMN ERACONF  ERACGRP ERAISPP) PROFILE
-  VGET (ERAFLTR) PROFILE
+  VGET (ERAFLTR ERASINT) PROFILE
   IF (&ERASHOW  = &Z)
       &ERASHOW  = 'NO'
   IF (&ERATRACE = &Z)
       &ERATRACE = 'NO'
   IF (&ERACONF  = &Z)
       &ERACONF  = 'YES'
+  IF (&ERASINT  = &Z)
+      &ERASINT  = '1'
   .ZVARS = '(ERASHOW ERATRACE ERAMCAT ERACTLG ERAISPP ERAULIB +
              ERAUVOL ERAUNIT  ERAASIZ ERAADMN ERACONF ERACGRP +
-             ERAFLTR)'
+             ERAFLTR ERASINT)'
   .HELP = #RACPRM1
 )PROC
   VER  (&ERASHOW,NB,LIST,NO,YES)
@@ -52,8 +55,9 @@
      VER (&ERAMCAT,NB)
      VER (&ERAISPP,NB)
   VER  (&ERACONF,NB,LIST,NO,YES)
+  VER  (&ERASINT,NB,RANGE,0,999)
   VPUT (ERASHOW ERATRACE ERACTLG ERAUNIT) PROFILE
   VPUT (ERAASIZ ERAULIB  ERAUVOL ERAMCAT) PROFILE
   VPUT (ERAADMN ERACONF  ERACGRP ERAISPP) PROFILE
-  VPUT (ERAFLTR) PROFILE
+  VPUT (ERAFLTR ERASINT) PROFILE
 )END

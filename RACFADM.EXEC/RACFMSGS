@@ -3,14 +3,13 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A2  200218  RACFA    Condense VGETs into one line                 */
 /* @A1  200119  RACFA    Standardized/reduced lines of code           */
 /* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
 /*====================================================================*/
   Trace o
   Arg code
-  address ISPEXEC "VGET (ZSCREEN) ASIS"
-  address ISPEXEC "VGET (ERASHOW) ASIS"
-  address ISPEXEC "VGET (ERATRACE) ASIS"
+  address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE) ASIS"      /* @A2 */
   address TSO "PROFILE MSGID"
 
   Select

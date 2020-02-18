@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AA  200218  RACFA    Added 'Status Interval' option               */
 /* @A9  200123  RACFA    Retrieve default filter, Option 0 - Settings */
 /* @A8  200123  TRIDJK   If LG fails, then issue a LU                 */
 /* @A7  200122  RACFA    set rfilter='', so as not to tie up terminal */
@@ -23,10 +24,9 @@
   Raclist='NO'
   Pnl_list_prof='RACFCLS9'
   Rclass=strip(rclass)
-  address ISPEXEC "VGET (ZSCREEN) ASIS"
-  address ISPEXEC "VGET (ERASHOW) ASIS"
-  address ISPEXEC "VGET (ERATRACE) ASIS"
-  address ISPEXEC "VGET (ERACONF) ASIS"
+  address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE ERACONF",   /* @AA */
+                        "ERASINT) ASIS"                       /* @AA */
+  IF (ERASINT = "") THEN ERASINT = 1                          /* @AA */
   address TSO "PROFILE MSGID"
   rlv= SYSVAR('SYSLRACF')
   called= SYSVAR('SYSNEST')
@@ -112,9 +112,13 @@ PROFL:
      /*---------------------------------------------*/
      /* Display number of records retrieved        -*/
      /*---------------------------------------------*/
-     n1=i;n2=var.0
-     address ISPEXEC "control display lock"
-     address ISPEXEC "display msg(RACF014)"
+     IF (ERASINT <> 0) THEN DO     /* Status interval */      /* @AA */
+        IF (I//ERASINT = 0) THEN DO                           /* @AA */
+           n1=i;n2=var.0
+           address ISPEXEC "control display lock"
+           address ISPEXEC "display msg(RACF014)"
+        END                                                   /* @AA */
+     END                                                      /* @AA */
      /* Get Further information */
      call GETD
      address ISPEXEC "TBMOD" tbla

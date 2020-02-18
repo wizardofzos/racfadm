@@ -2,7 +2,7 @@
   _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT) HILITE(USCORE)
   + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
 )BODY EXPAND(\\)
-%Tutorial+\-\(%RACFADM - Settings - 1 of 2+)\-\%Tutorial
+%Tutorial+\-\(%RACFADM - Settings - 1 of 3+)\-\%Tutorial
 %Command ===>_ZCMD                                                             +
 %
 % RACF Commands+      Enter%YES+to view each RACF command before it is

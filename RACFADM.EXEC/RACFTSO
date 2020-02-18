@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A4  200218  RACFA    Condense VGETs into one line                 */
 /* @A3  200119  RACFA    Standardized/reduced lines of code           */
 /* @A2  200119  RACFA    Added comment box above procedures           */
 /* @A1  200118  RACFA    Fixed NOPREF issue with users TSO PROFILE    */
@@ -17,10 +18,9 @@
   defgrp=arg(5)
   owner =arg(6)
   joblib=arg(7)
-  address ISPEXEC "VGET (ERASHOW ERATRACE ERAISPP) ASIS"
-  address ISPEXEC "VGET (ERACTLG ERAUNIT ERAULIB",
-                  "ERAUVOL ERAMCAT) ASIS"
-
+  address ISPEXEC "VGET (ERASHOW ERATRACE ERAISPP ERACTLG",   /* @A4 */
+                        "ERAUNIT ERAULIB  ERAUVOL ERAMCAT)",  /* @A4 */
+                        "ASIS"                                /* @A4 */
   "PROF NOPREF"
   signal on error
   x= OUTTRAP('trash.')

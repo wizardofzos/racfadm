@@ -1,0 +1,30 @@
+)ATTR DEFAULT(%+_)
+  _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT) HILITE(USCORE)
+  + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
+)BODY EXPAND(\\)
+%Tutorial+\-\(%RACFADM - Settings - 3 of 3+)\-\%Tutorial
+%Command ===>_ZCMD                                                             +
+%
+% Status Interval+    The number of entries processed before displaying the
++                     progress status message (0-999, 0=Do not display)
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++ \ \ (press%ENTER+to continue) \ \
+)PROC
+  &ZUP     = #RACPRM1
+)END

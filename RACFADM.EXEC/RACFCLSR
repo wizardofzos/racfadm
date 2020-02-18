@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A4  200218  RACFA    Condense VGETs into one line                 */
 /* @A3  200120  RACFA    Removed 'say msg.msg_var' in EXCMD procedure */
 /* @A2  200119  RACFA    Standardized/reduced lines of code           */
 /* @A1  200119  RACFA    Placed comment boxes above procedures        */
@@ -10,9 +11,7 @@
 /*====================================================================*/
   Trace o
   Arg class
-  address ISPEXEC "VGET (ZSCREEN) ASIS"
-  address ISPEXEC "VGET (ERASHOW) ASIS"
-  address ISPEXEC "VGET (ERATRACE) ASIS"
+  address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE) ASIS"      /* @A4 */
 
   address TSO "PROFILE MSGID"
   rlv= SYSVAR('SYSLRACF')

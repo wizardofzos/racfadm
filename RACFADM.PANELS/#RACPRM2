@@ -2,7 +2,7 @@
   _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT) HILITE(USCORE)
   + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
 )BODY EXPAND(\\)
-%Tutorial+\-\(%RACFADM - Settings - 2 of 2+)\-\%Tutorial
+%Tutorial+\-\(%RACFADM - Settings - 2 of 3+)\-\%Tutorial
 %Command ===>_ZCMD                                                             +
 %
 % TSO JOBLIB Volume+  Specify the volume on which initial job library
@@ -27,4 +27,5 @@
 + \ \ (press%ENTER+to continue) \ \
 )PROC
   &ZUP     = #RACPRM1
+  &ZCONT   = #RACPRM3
 )END

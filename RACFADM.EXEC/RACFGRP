@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AI  200218  RACFA    Added 'Status Interval' option               */
 /* @AH  200216  RACFA    Chg color to turq/green, was white/turq      */
 /* @AG  200207  RACFA    Fix color of sort col, when F3, diff. id     */
 /* @AF  200207  RACFA    Fix SORT, place at top of table              */
@@ -30,9 +31,9 @@
      address ISPEXEC "VGET (ERAFLTR) ASIS"                    /* @AB */
      Rfilter = ERAFLTR                                        /* @AB */
   end                                                         /* @AB */
-  address ISPEXEC "VGET (ZSCREEN) ASIS"
-  address ISPEXEC "VGET (ERASHOW) ASIS"
-  address ISPEXEC "VGET (ERATRACE) ASIS"
+  address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE ERASINT)",  /* @AI */
+                        "ASIS"                                /* @AI */
+  IF (ERASINT = "") THEN ERASINT = 1                          /* @AI */
   address TSO "PROFILE MSGID"
   rlv= SYSVAR('SYSLRACF')
   called= SYSVAR('SYSNEST')
@@ -100,9 +101,13 @@ PROFL:
      /*---------------------------------------------*/
      /* Display number of records retrieved        -*/
      /*---------------------------------------------*/
-     n1=i;n2=var.0
-     address ISPEXEC "control display lock"
-     address ISPEXEC "display msg(RACF014)"
+     IF (ERASINT <> 0) THEN DO     /* Status interval */      /* @AI */
+        IF (I//ERASINT = 0) THEN DO                           /* @AI */
+           n1=i;n2=var.0
+           address ISPEXEC "control display lock"
+           address ISPEXEC "display msg(RACF014)"
+        END                                                   /* @AI */
+     END                                                      /* @AI */
      /* Get further information */
      Call GETD
      address ISPEXEC "TBMOD" tbla
