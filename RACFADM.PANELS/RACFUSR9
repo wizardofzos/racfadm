@@ -16,7 +16,7 @@
 +\-\(%RACFADM - User Profiles+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
 %
-+CLASS:  %USER +FILTER: $RFILTER
++FILTER: $RFILTER
 +SELECT: %S+Show,%L+List,%RS+Reset,%RV+Revoke
 %
 %S         ~Userid  ~Name                ~Group   ~Logon   ~Owner   ~Rev~Att~TSO

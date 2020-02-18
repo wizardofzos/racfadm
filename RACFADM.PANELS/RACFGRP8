@@ -9,7 +9,7 @@
 +\-\(%RACFADM - Group Profiles+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
 %
-+CLASS:  %GROUP +FILTER: $RFILTER
++FILTER: $RFILTER
 +SELECT: %S+Show,%L+List,%C+Change,%A+Add,%R+Remove
 %
 %S  ~Group     ~Description

@@ -35,7 +35,7 @@
 {\-\
 + JES early verify{.................$RCVTJCHK+
 + JES batch all{....................$RCVTJALL+
-+ JES Xbm all{......................$RCVTJXAL+
++ JES XBM all{......................$RCVTJXAL+
 + JES NJE userid{...................$RCVTJSYS+
 + JES undefined userid{.............$RCVTJUND+
 + Password interval{................$RCVTPINV+

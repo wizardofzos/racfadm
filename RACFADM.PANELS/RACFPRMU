@@ -22,7 +22,7 @@
 +  Administrator{......_Z                   {  Full administrator userid
 +  Confirm Panel{......_Z  {                   Confirm command request (YES/NO)
 +  Common Group{......._Z      {               Connect new users to this group
-+  Default filter{....._Z                    { Default search filter for panels
++  Default Filter{....._Z                    { Default search filter for panels
 +
 +
 + }(*)+= TSO users only

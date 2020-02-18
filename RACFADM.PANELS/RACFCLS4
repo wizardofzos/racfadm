@@ -30,7 +30,7 @@
 )INIT
   .ZVARS  = '(WARN)'
   .CURSOR = OWNER
-  .HELP   = #RACMENU
+  .HELP   = #RACCLSA
   &FAIL   = TRUNC(&FAIL,')')
   &SUCC   = TRUNC(&SUCC,')')
 )PROC
