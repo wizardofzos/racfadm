@@ -1,0 +1,62 @@
+*----------------------------------------------------------------------*
+*                          RACFADM - Changes                           *
+*----------------------------------------------------------------------*
+
+  19 Feb 2020 - V3R0
+     - Main Menu
+       * Added menu options
+           C  Changes   Version/updates
+           C  Tutorial  Help
+           X  Exit      Terminate
+
+  18 Feb 2020 - V2R9
+     - Menu Option 0 (Settings)
+       * Re-arranged the fields by subject (General/TSO)
+       * Added 'Status Interval' field, allows specifing how often
+         the progress message should be displayed when listing
+         userids, groups and datasets (0-999, 0=Do not display)
+     - Menu Option 1/2/3/4 (User, Dataset, Group and General Resource)
+       * When a general user, only display/execute line commands:
+           S-Show and L-List
+       * To display/execute other line commands (change, add,
+         revoke, etc.), invoke menu option 1 (Settings) and type
+         in 'Yes' in the Administrator field
+
+  10 Feb 20 - V2R8
+     - Menu Option 1 (User)
+       * Fixed locate command
+     - Menu Option 1 and 2 (User and Group)
+       * Column headers are now point-n-shoot, to sort the columns,
+         updated tutorial
+
+  05 Feb 20 - V2R7
+     - Main Menu
+       * Updated tutorial to include links to RACF manuals
+     - Menu Option 1 and 2 (User and Group)
+       * Added the capability to SORT the columns ascending or
+         descending, updated tutorial, syntax is:
+           ==> SORT Ýcolumn¨ ÝA|D¨
+
+  03 Feb 20 - V2R6
+     - Menu Option 1 (User)
+       * Fixed displaying logon date for digital certificate userids,
+         prior the field was blank
+
+  27 Jan 20 - V2R5
+     - Menu Option 0 (Settings)
+       * Added default 'Search Filter'
+     - Menu Option 1 (User)
+       * Changed 'Logon' date to YY/MM/DD, was YY.JJJ
+     - Other Items
+       * Several fixes to the code and panels
+
+  21 Jan 20 - V2R4
+     - Menu Option 1 (User)
+       * Fixed displaying 'Logon' date when displaying userids
+     - Menu Option 3 (Dataset)
+       * Fixed displaying 'WARNING' field when changing/adding
+         a dataset profile
+     - Other Items
+       * Renamed ERA to RACFADM, RACF Administration, due to ASPG
+         company has a trademark on ERA, Easy RACF Audit
+       * Standardized and fixed tutorials

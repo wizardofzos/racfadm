@@ -1,0 +1,10 @@
+/*%NOCOMMENT====================* REXX *==============================*/
+/*  PURPOSE:  RACFADM - Changes - Edit Macro - Turn off highlighting  */
+/*--------------------------------------------------------------------*/
+/* FLG  YYMMDD  USERID   DESCRIPTION                                  */
+/* ---  ------  -------  -------------------------------------------- */
+/* @A0  200218  RACFA    Created REXX                                 */
+/*====================================================================*/
+  trace o
+  "ISREDIT MACRO (PARM) NOPROCESS"
+  "ISREDIT HI OFF"

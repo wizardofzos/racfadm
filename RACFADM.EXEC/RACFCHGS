@@ -1,0 +1,11 @@
+/*%NOCOMMENT====================* REXX *==============================*/
+/*  PURPOSE:  RACFADM - Changes (Menu option C)                       */
+/*--------------------------------------------------------------------*/
+/* FLG  YYMMDD  USERID   DESCRIPTION                                  */
+/* ---  ------  -------  -------------------------------------------- */
+/* @A0  200218  RACFA    Created REXX                                 */
+/*====================================================================*/
+  trace o
+  ADDRESS ISPEXEC "QLIBDEF ISPPLIB TYPE(DATASET) ID(DSNAME)"
+  DSNAME = "'"STRIP(DSNAME,,"'")"($CHANGES)'"
+  ADDRESS ISPEXEC "VIEW DATASET("DSNAME") MACRO(RACFCHGE)"
