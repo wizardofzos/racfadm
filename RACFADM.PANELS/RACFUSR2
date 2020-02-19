@@ -35,11 +35,11 @@ _Z ^Z      Z       Z                   Z       œZ       	Z       †Z  Z  —Z
   IF (&SAMT = ' ')
       &SAMT = &ZSCED
 )PROC
-  /* Line commands: SE and XR are not displayed (hidden) */
+  /* Line command: XR is not displayed (hidden) */
   IF (&ERAADMN = YES)
      VER (&OPTA,LIST,S,s,SE,se,L,l,C,c,A,a,R,r,RS,rs,RV,rv,XR,xr)
   ELSE
-     VER (&OPTA,LIST,S,s,L,l,)
+     VER (&OPTA,LIST,S,s,SE,se,L,l,)
 )PNTS
   FIELD(ZPS00001) VAR(ZCMD) VAL('SORT USERID')
   FIELD(ZPS00002) VAR(ZCMD) VAL('SORT NAME')

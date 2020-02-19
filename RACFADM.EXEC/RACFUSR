@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B4  200219  RACFA    Display SE (Search), was a hidden line cmd   */
 /* @B3  200218  RACFA    Use dynamic area to display SELECT commands  */
 /* @B2  200218  RACFA    Chged ERAADMN to YES/NO, was userid          */
 /* @B1  200218  RACFA    Fixed ERAADMN, was ERAADMIN                  */
@@ -55,14 +56,14 @@
   IF (ERASINT = "") THEN                                      /* @AZ */
       ERASINT = 1                                             /* @AZ */
   If (ERAADMN = "YES") then do                                /* @B2 */
-      SELCMDS2 = "›S®Show,›L®List,›C®Change,›A®Add,"||,       /* @B3 */
-                 "›R®Remove,›RS®Reset,›RV®Revoke"             /* @B3 */
-      SELCMDS3 = "›S®Show,›L®List,›C®Change,›A®Add,"||,       /* @B3 */
-                 "›R®Remove"                                  /* @B3 */
+      SELCMDS2 = "›S®Show,›SE®Search,›L®List,›C®Chg,"||,      /* @B4 */
+                 "›A®Add,›R®Remove,›RS®Reset,›RV®Revoke"      /* @B4 */
+      SELCMDS3 = "›S®Show,›SE®Search›L®List,›C®Change,"||,    /* @B4 */
+                 "›A®Add,›R®Remove"                           /* @B4 */
   end
   else do
-      SELCMDS2 = "›S®Show,›L®list"                            /* @B3 */
-      SELCMDS3 = "›S®Show,›L®list"                            /* @B3 */
+      SELCMDS2 = "›S®Show,›SE®Search,›L®list"                 /* @B4 */
+      SELCMDS3 = "›S®Show,›SE®Search,›L®list"                 /* @B4 */
   end
   address TSO "PROFILE MSGID"
   rlv= SYSVAR('SYSLRACF')

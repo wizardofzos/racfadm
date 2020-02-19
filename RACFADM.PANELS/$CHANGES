@@ -2,6 +2,13 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  19 Feb 2020 - V3R2
+     - Menu Option 1 (User)
+       * Added line command SE (Search) for both general user and
+         administrator
+         o Prior was only available when Setting's 'Administrator=YES'
+           and was not displayed on the panel
+
   19 Feb 2020 - V3R1
      - Menu Option 0 (Settings)
        * Increased size of 'Status Interval' field to 3 characters,
@@ -19,7 +26,7 @@
      - Menu Option 4 (General Resources)
        * When typing 'S' next to a 'Profile Name' to display
          information, fixed the color of the OWNER/AUDIT field names,
-         (chged to green, was white)
+         (changed to green, was white)
      - Other Items
        * Changed color on input fields to red, was yellow
 
@@ -33,7 +40,7 @@
   18 Feb 2020 - V2R9
      - Menu Option 0 (Settings)
        * Re-arranged the input fields by subject (General/TSO)
-       * Added 'Status Interval' field, allows specifing how often
+       * Added 'Status Interval' field, allows specifying how often
          the progress message should be displayed when listing
          userids, groups and datasets (0-999, 0=Do not display)
      - Menu Option 1/2/3/4 (User, Dataset, Group, General Resource)
