@@ -1,7 +1,7 @@
 )ATTR DEFAULT(%+_)
-  _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT) HILITE(USCORE)
-  + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
-  ! TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(TURQ)
+  _ TYPE(INPUT) INTENS(HIGH) CAPS(ON) JUST(LEFT) HILITE(USCORE)
+  + TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(GREEN)
+  ! TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(TURQ)
 )BODY EXPAND(\\)
 %Tutorial+\-\(%RACFADM - Settings - 2 of 3+)\-\%Tutorial
 %Command ===>_ZCMD                                                             +

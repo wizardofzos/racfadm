@@ -1,10 +1,9 @@
 )ATTR DEFAULT(%+_)
-  ! TYPE(INPUT) INTENS(LOW) PAD(' ')
-  _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT)   HILITE(USCORE)
-  { TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(BLUE)
-  } TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(RED)
-  + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
-  ~ TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(TURQ)
+  _ TYPE(INPUT) INTENS(HIGH) CAPS(ON) JUST(LEFT)   HILITE(USCORE)
+  { TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(BLUE)
+  } TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(RED)
+  + TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(GREEN)
+  ~ TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(TURQ)
 )BODY EXPAND(\\)
 +\-\(%RACFADM - Settings+)\-\
 %Command ===>_ZCMD                                                             +
@@ -12,7 +11,7 @@
 %General:
 +  Administrator{......_Z  {                   Full administrator~(YES/NO)
 +  Default Filter{....._Z                    { Default search string for panels
-+  Status Interval{...._Z  {                   Progress message number~(0-999)
++  Status Interval{...._Z   {                  Progress message number~(0-9999)
 +  Confirm Panel{......_Z  {                   Confirm command request~(YES/NO)
 +  RACF Commands{......_Z  {                   Show RACF commands~(YES/NO)
 +  REXX Trace{........._Z  {                   Start REXX trace  ~(YES/NO)

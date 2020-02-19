@@ -1,11 +1,11 @@
 )ATTR DEFAULT(%+_)
-  $ TYPE(OUTPUT)  INTENS(LOW) JUST(LEFT) COLOR(TURQ)
-  # TYPE(OUTPUT)  INTENS(LOW) JUST(LEFT) COLOR(GREEN)
-  _ TYPE(INPUT)   INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
-  { TYPE(TEXT)    INTENS(LOW) SKIP(ON)   COLOR(BLUE)
-  + TYPE(TEXT)    INTENS(LOW) SKIP(ON)   COLOR(GREEN)
+  $ TYPE(OUTPUT)  INTENS(LOW)  JUST(LEFT) COLOR(TURQ)
+  # TYPE(OUTPUT)  INTENS(LOW)  JUST(LEFT) COLOR(GREEN)
+  _ TYPE(INPUT)   INTENS(HIGH) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  { TYPE(TEXT)    INTENS(LOW)  SKIP(ON)   COLOR(BLUE)
+  + TYPE(TEXT)    INTENS(LOW)  SKIP(ON)   COLOR(GREEN)
   ¬ AREA(DYNAMIC) EXTEND(OFF)
-  ¨ TYPE(DATAOUT) INTENS(LOW) COLOR(GREEN)
+  ¨ TYPE(DATAOUT) INTENS(LOW)  COLOR(GREEN)
   Ý TYPE(DATAOUT) INTENS(HIGH)
 )BODY EXPAND(\\)
 +\-\(%RACFADM - General Resource+)\-\
@@ -13,8 +13,8 @@
 %
 +PROFILE:_PROFILE                                         +$TYPE
 +CLASS:  _RCLASS   +
-+UACC:   $UACC    { (Default access)     %OWNER: $OWNER   { (Owner of profile)
-+WARNING:$WARN    { (YES/NO)             %AUDIT: $AUDIT
++UACC:   $UACC    { (Default access)     +OWNER: $OWNER   { (Owner of profile)
++WARNING:$WARN    { (YES/NO)             +AUDIT: $AUDIT
 +DATA:   $DATA
 +                                           +
 +SELECT: ¬SELCMDS                                                              ¬

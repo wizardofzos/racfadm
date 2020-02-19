@@ -1,7 +1,7 @@
 )ATTR DEFAULT(%+_)
-  _ TYPE(INPUT) INTENS(LOW) CAPS(ON) JUST(LEFT) HILITE(USCORE)
-  + TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(GREEN)
-  ! TYPE(TEXT)  INTENS(LOW) SKIP(ON) COLOR(TURQ)
+  _ TYPE(INPUT) INTENS(HIGH) CAPS(ON) JUST(LEFT) HILITE(USCORE)
+  + TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(GREEN)
+  ! TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(TURQ)
 )BODY EXPAND(\\)
 %Tutorial+\-\(%RACFADM - Settings - 1 of 3+)\-\%Tutorial
 %Command ===>_ZCMD                                                             +
@@ -14,7 +14,7 @@
 +                     1 (Userid), 2 (Group) and 3 (Dataset)
 +
 !  Status Interval+   The number of entries processed before displaying the
-+                     progress status message%(0-999, 0=Do not display)
++                     progress status message%(0-9999, 0=Do not display)
 +
 !  Confirm Panel+     Specify whether each modifying operation must be
 +                     confirmed

@@ -1,11 +1,11 @@
 )ATTR DEFAULT(%+_)
-  $ TYPE(OUTPUT)  INTENS(LOW) JUST(LEFT) COLOR(TURQ)
-  # TYPE(OUTPUT)  INTENS(LOW) JUST(LEFT) COLOR(GREEN)
-  _ TYPE(INPUT)   INTENS(LOW) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
-  { TYPE(TEXT)    INTENS(LOW) SKIP(ON)   COLOR(BLUE)
-  + TYPE(TEXT)    INTENS(LOW) SKIP(ON)   COLOR(GREEN)
+  $ TYPE(OUTPUT)  INTENS(LOW)  JUST(LEFT) COLOR(TURQ)
+  # TYPE(OUTPUT)  INTENS(LOW)  JUST(LEFT) COLOR(GREEN)
+  _ TYPE(INPUT)   INTENS(HIGH) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  { TYPE(TEXT)    INTENS(LOW)  SKIP(ON)   COLOR(BLUE)
+  + TYPE(TEXT)    INTENS(LOW)  SKIP(ON)   COLOR(GREEN)
   ¬ AREA(DYNAMIC) EXTEND(OFF)
-  ¨ TYPE(DATAOUT) INTENS(LOW) COLOR(GREEN)
+  ¨ TYPE(DATAOUT) INTENS(LOW)  COLOR(GREEN)
   Ý TYPE(DATAOUT) INTENS(HIGH)
 )BODY EXPAND(\\)
 +\-\(%RACFADM - Group Profiles+)\-\
@@ -14,10 +14,7 @@
 +PROFILE:$GROUP
 +SUPGRP: $SUPGRP  { (Superior group)
 +OWNER:  $OWNER   { (Owner of profile)
-+                                                                  +
-+DATA:   %Description
-+        %----------------------------------------------------------------
-+        $DATA
++DATA:   $DATA
 +                                                                  +
 +SELECT: ¬SELCMDS                                                              ¬
 +

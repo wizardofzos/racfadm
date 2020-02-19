@@ -2,25 +2,47 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
-  19 Feb 2020 - V3R0
+  19 Feb 2020 - V3R1
+     - Menu Option 0 (Settings)
+       * Increased size of 'Status Interval' field to 3 characters,
+         was 4 characters
+     - Menu Option 1 (User)
+       * When typing an 'S' next to a userid to show information,
+         display the 'ATTRIButes' in the header of the panel, prior
+         it displayed the 'DATA' field
+     - Menu Option 2 (Group)
+       * Reduced the number of rows to display the DATA (description)
+         in the header of the panel, allowing to display more userids
+     - Menu Option 3 (Dataset)
+       * Removed displaying 'DATA' in the header, allowing to display
+         more groups/userids
+     - Menu Option 4 (General Resources)
+       * When typing 'S' next to a 'Profile Name' to display
+         information, fixed the color of the OWNER/AUDIT field names,
+         (chged to green, was white)
+     - Other Items
+       * Changed color on input fields to red, was yellow
+
+  18 Feb 2020 - V3R0
      - Main Menu
        * Added menu options
            C  Changes   Version/updates
-           C  Tutorial  Help
+           T  Tutorial  Help
            X  Exit      Terminate
 
   18 Feb 2020 - V2R9
      - Menu Option 0 (Settings)
-       * Re-arranged the fields by subject (General/TSO)
+       * Re-arranged the input fields by subject (General/TSO)
        * Added 'Status Interval' field, allows specifing how often
          the progress message should be displayed when listing
          userids, groups and datasets (0-999, 0=Do not display)
-     - Menu Option 1/2/3/4 (User, Dataset, Group and General Resource)
-       * When a general user, only display/execute line commands:
+     - Menu Option 1/2/3/4 (User, Dataset, Group, General Resource)
+       * When a general user, the default, only display/execute
+         line commands:
            S-Show and L-List
        * To display/execute other line commands (change, add,
-         revoke, etc.), invoke menu option 1 (Settings) and type
-         in 'Yes' in the Administrator field
+         revoke, etc.), invoke menu option 0 (Settings) and type
+         in 'Yes' in the 'Administrator' field
 
   10 Feb 20 - V2R8
      - Menu Option 1 (User)
