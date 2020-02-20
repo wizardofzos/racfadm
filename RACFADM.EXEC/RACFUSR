@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B7  200220  RACFA    Added capability to browse/edit/view file    */
+/* @B6  200220  RACFA    Removed SE (Search) from panel RACFUSR3      */
 /* @B5  200220  RACFA    Chged REXX pgm name RACFTSO to RACFUSRT      */
 /* @B4  200219  RACFA    Display SE (Search), was a hidden line cmd   */
 /* @B3  200218  RACFA    Use dynamic area to display SELECT commands  */
@@ -53,13 +55,14 @@
   Rclass= 'USER'
   lparm=''                                /* Locate parm */   /* @A5 */
   address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE ERAMCAT",   /* @AZ */
-                        "ERAULIB ERAADMN ERASINT) ASIS"       /* @B1 */
+                        "ERAULIB ERAADMN ERASINT ERADISP",    /* @B7 */
+                        "ASIS"                                /* @B7 */
   IF (ERASINT = "") THEN                                      /* @AZ */
       ERASINT = 1                                             /* @AZ */
   If (ERAADMN = "YES") then do                                /* @B2 */
       SELCMDS2 = "›S®Show,›SE®Search,›L®List,›C®Chg,"||,      /* @B4 */
                  "›A®Add,›R®Remove,›RS®Reset,›RV®Revoke"      /* @B4 */
-      SELCMDS3 = "›S®Show,›SE®Search›L®List,›C®Change,"||,    /* @B4 */
+      SELCMDS3 = "›S®Show,›L®List,›C®Change,"||,              /* @B6 */
                  "›A®Add,›R®Remove"                           /* @B4 */
   end
   else do
@@ -415,7 +418,14 @@ LISD:
               "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @A2 */
   ADDRESS TSO "EXECIO * DISKW "WFDD" (STEM WFREC. FINIS"      /* @A2 */
   ADDRESS ISPEXEC "LMINIT DATAID(WFDATAID) DDNAME("WFDD")"    /* @A2 */
-  ADDRESS ISPEXEC "VIEW DATAID("WFDATAID")"                   /* @A2 */
+  SELECT                                                      /* @B7 */
+     WHEN (ERADISP = "EDIT") THEN                             /* @B7 */
+          ADDRESS ISPEXEC "EDIT DATAID("WFDATAID")"           /* @B7 */
+     WHEN (ERADISP = "VIEW") THEN                             /* @B7 */
+          ADDRESS ISPEXEC "VIEW DATAID("WFDATAID")"           /* @B7 */
+     OTHERWISE                                                /* @B7 */
+          ADDRESS ISPEXEC "BROWSE DATAID("WFDATAID")"         /* @B7 */
+  END                                                         /* @B7 */
   ADDRESS TSO "FREE FI("WFDD")"                               /* @A2 */
   DROP WFREC. WFDD WFLUPRM                                    /* @A2 */
   /* address TSO "LU "user" TSO" */                           /* @A1 */
@@ -463,7 +473,14 @@ LISP:
               "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @AC */
   ADDRESS TSO "EXECIO * DISKW "WFDD" (STEM WFREC. FINIS"      /* @AC */
   ADDRESS ISPEXEC "LMINIT DATAID(WFDATAID) DDNAME("WFDD")"    /* @AC */
-  ADDRESS ISPEXEC "VIEW DATAID("WFDATAID")"                   /* @AC */
+  SELECT                                                      /* @B7 */
+     WHEN (ERADISP = "EDIT") THEN                             /* @B7 */
+          ADDRESS ISPEXEC "EDIT DATAID("WFDATAID")"           /* @B7 */
+     WHEN (ERADISP = "VIEW") THEN                             /* @B7 */
+          ADDRESS ISPEXEC "VIEW DATAID("WFDATAID")"           /* @B7 */
+     OTHERWISE                                                /* @B7 */
+          ADDRESS ISPEXEC "BROWSE DATAID("WFDATAID")"         /* @B7 */
+  END                                                         /* @B7 */
   ADDRESS TSO "FREE FI("WFDD")"                               /* @AC */
   DROP WFREC. WFDD WFLUPRM                                    /* @AC */
   if rc=0 then                                                /* @AC */

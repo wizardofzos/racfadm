@@ -7,16 +7,16 @@
 %Command ===>_ZCMD                                                             +
 %
 %Adding TSO Userid:
-!  Common Group+      Specify an optional common group to be connected
+!  TSO JOBLIB unit+   Specify the volume on which initial job library
++                     must be allocated
++
+!  TSO alloc unit+    Specify the MVS esoteric unit name on which TSO user
++                     data sets are to be allocated
++
+!  TSO A/S Size+      Specify the TSO address space size
++
+!  Common group+      Specify an optional common group to be connected
 +                     to all new users
-+
-+
-+
-+
-+
-+
-+
-+
 +
 +
 +

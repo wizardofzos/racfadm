@@ -3,8 +3,10 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A1  200220  RACFA    Added RESET, to remove messages (==MSG>)     */
 /* @A0  200218  RACFA    Created REXX                                 */
 /*====================================================================*/
   trace o
   "ISREDIT MACRO (PARM) NOPROCESS"
   "ISREDIT HI OFF"
+  "ISREDIT RESET"                                             /* @A1 */

@@ -2,6 +2,22 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  20 Feb 2020 - V3R6
+     - Menu Opton 0 (Settings)
+       * Added 'Display file' field, Display files in BROWSE, EDIT or
+         VIEW mode when using the List line command and selecting menu
+         option C, Changes (VIEW=Default)
+       * Fixed coding issue with edit macro, when editing/viewing file
+
+  20 Feb 2020 - V3R5
+     - Menu Option 1 (User)
+       * When selecting userid (S-Show), do not display the line
+         command 'SE' (Search) when displaying the Groups connected/
+         associated to the userid
+       * Added RESET to edit macro being invoked when VIEWing the
+         changes, removing any unnecessary messages from being
+         displayed
+
   20 Feb 2020 - V3R4
      - Main Menu
        * Verify the class name typed in to the right of '4 - General

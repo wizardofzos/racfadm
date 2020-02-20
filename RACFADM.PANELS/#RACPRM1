@@ -8,22 +8,22 @@
 %
 %General:
 !  Administrator+     Specify full administrator authority,+providing more line
-+                     commands: A Add, C Change, etc.%(YES/NO)
++                     commands: A Add, C Change, etc.%(YES or NO, NO=Default)
 +
-!  Default filter+    Specify a default search string, when selecting option
-+                     1 (Userid), 2 (Group) and 3 (Dataset)
+!  Default filter+    Specify a default search string, when selecting menu
++                     option 1 (Userid), 2 (Group) and 3 (Dataset)
 +
-!  Status Interval+   The number of entries processed before displaying the
-+                     progress status message%(0-9999, 0=Do not display)
+!  Status interval+   The number of entries processed before displaying the
++                     progress status message%(0-9999, 0=Do not display,
+%                     1=Default)
 +
-!  Confirm Panel+     Specify whether each modifying operation must be
-+                     confirmed
+!  Display files+     Display files in%BROWSE, EDIT or VIEW+mode when using the
++                     List line command and selecting menu option C, Changes
++                    %(VIEW=Default)+
 +
-!  RACF Commands+     Enter%YES+to view each RACF command before it is
-+                     issued,%NO+to hide all RACF commands
+!  Confirm panel+     Specify whether each modifying operation must be
++                     confirmed%(YES or NO, YES=Default)+
 +
-!  REXX Trace+        Enter%YES+to trace the execution of the REXX exec,
-+                    %NO+to work without trace.
 +
 + \ \ (press%ENTER+to continue) \ \
 )PROC

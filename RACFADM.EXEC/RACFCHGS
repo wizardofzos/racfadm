@@ -3,9 +3,20 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A1  200220  RACFA    Added capability to browse/edit/view file    */
 /* @A0  200218  RACFA    Created REXX                                 */
 /*====================================================================*/
   trace o
+  ADDRESS ISPEXEC "VGET (ERADISP)"                            /* @A1 */
   ADDRESS ISPEXEC "QLIBDEF ISPPLIB TYPE(DATASET) ID(DSNAME)"
   DSNAME = "'"STRIP(DSNAME,,"'")"($CHANGES)'"
-  ADDRESS ISPEXEC "VIEW DATASET("DSNAME") MACRO(RACFCHGE)"
+  SELECT                                                      /* @A1 */
+     WHEN (ERADISP = "EDIT")   THEN                           /* @A1 */
+          ADDRESS ISPEXEC "EDIT DATASET("DSNAME")",           /* @A1 */
+                          "MACRO(RACFCHGE)"                   /* @A1 */
+     WHEN (ERADISP = "VIEW")   THEN                           /* @A1 */
+          ADDRESS ISPEXEC "VIEW DATASET("DSNAME")",
+                          "MACRO(RACFCHGE)"
+     OTHERWISE                                                /* @A1 */
+          ADDRESS ISPEXEC "BROWSE DATASET("DSNAME")"          /* @A1 */
+  END                                                         /* @A1 */
