@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B8  200220  RACFA    Removed SE (Search) when general user (USR3) */
 /* @B7  200220  RACFA    Added capability to browse/edit/view file    */
 /* @B6  200220  RACFA    Removed SE (Search) from panel RACFUSR3      */
 /* @B5  200220  RACFA    Chged REXX pgm name RACFTSO to RACFUSRT      */
@@ -67,7 +68,7 @@
   end
   else do
       SELCMDS2 = "ÝS¨Show,ÝSE¨Search,ÝL¨list"                 /* @B4 */
-      SELCMDS3 = "ÝS¨Show,ÝSE¨Search,ÝL¨list"                 /* @B4 */
+      SELCMDS3 = "ÝS¨Show,ÝL¨list"                            /* @B8 */
   end
   address TSO "PROFILE MSGID"
   rlv= SYSVAR('SYSLRACF')

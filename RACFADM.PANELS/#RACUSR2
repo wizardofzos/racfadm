@@ -19,14 +19,14 @@
 ~  Note:+Column headers are point-and-shoot%SORT+fields
 +
 +Line Commands
-%  S !Show   +List of groups connected to the user
-%  L !List   +Issue LISTUSER RACF command
-%  C !Change +Change user attributes
-%  A !Add    +Define a new user
-%  R !Remove +Remove user from RACF
-%  RS!Reset  +Resume user and initialize the password like the userID
-%  RV!Revoke +Revoke the user
-%  SE!Search +Analyze user access to general resource profiles
+%  S  !Show   +List of groups connected to the user
+%  SE !Search +Analyze user access to general resource profiles
+%  L  !List   +Issue LISTUSER RACF command
+%  C  !Change +Change user attributes (Admin)
+%  A  !Add    +Define a new user (Admin)
+%  R  !Remove +Remove user from RACF (Admin)
+%  RS !Reset  +Resume user and initialize the password like the userID (Admin)
+%  RV !Revoke +Revoke the user (Admin)
 )PROC
   &ZUP     = #RACUSR2
 )END

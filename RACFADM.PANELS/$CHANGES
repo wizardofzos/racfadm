@@ -2,6 +2,13 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  20 Feb 2020 - V3R7
+     - Menu Opton 1 (User)
+       * When general user (Administrator=NO), do not display SE
+         (Search) line command when displaying the Groups connected/
+         associated to the userid, prior fix installed, was only for
+         administrators, not general user
+
   20 Feb 2020 - V3R6
      - Menu Opton 0 (Settings)
        * Added 'Display file' field, Display files in BROWSE, EDIT or
