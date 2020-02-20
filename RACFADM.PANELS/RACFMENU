@@ -19,6 +19,7 @@
   .CURSOR = ZCMD
   .HELP   = #RACMENU
 )PROC
+  VER (&CLASS,NAME)
   &ZSEL=TRANS(TRUNC(&ZCMD,'.')
       0,'CMD(%RACFPRMU)'
       1,'CMD(%RACFUSR)'

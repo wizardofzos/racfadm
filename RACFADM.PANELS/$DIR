@@ -4,7 +4,9 @@
 
   Member      Subject                   Description
  --------  -------------  --------------------------------------------
+ $CHANGES  Updates        Document all changes
  $DIR      Directory      Document members
+ #RACCLSA  Tutorial       Add/Change class profile
  #RACCLSR  Tutorial       List classes (show, refresh)
  #RACCLSS  Tutorial       List classes (show)
  #RACCLS8  Tutorial       List classes and profiles
@@ -55,6 +57,7 @@
  RACFMSG2  Message        'Execute command' error message (pop-up panel)
  RACFPRMJ  Parameter      RACF parameters
  RACFPRMU  Parameter      Settings - Customize options
+ RACFUSRT  User           Add, change and delete a TSO userid
  RACFUSR1  User           Set filter
  RACFUSR2  User           List userids (Admin/user)
  RACFUSR3  User           Show groups and access

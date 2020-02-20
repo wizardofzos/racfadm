@@ -26,6 +26,7 @@
 %  R !Remove +Remove user from RACF
 %  RS!Reset  +Resume user and initialize the password like the userID
 %  RV!Revoke +Revoke the user
+%  SE!Search +Analyze user access to general resource profiles
 )PROC
   &ZUP     = #RACUSR2
 )END

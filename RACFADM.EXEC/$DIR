@@ -18,6 +18,7 @@
  RACFPRMU  Parameter      Display settings (Customize options)
  RACFTSO   TSO            Create TSO alias and files
  RACFUSR   User           Display userid profiles
+ RACFUSRT  User           Add, delete and change TSO userid
  RACFUSRX  User           Userid cross reference report (line cmd XR)
 
  Notes

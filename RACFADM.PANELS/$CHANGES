@@ -2,12 +2,25 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  20 Feb 2020 - V3R4
+     - Main Menu
+       * Verify the class name typed in to the right of '4 - General
+         Resources' does not contain wild card characters (% and *),
+         if it does, display error message
+     - Other Items
+       * Standardized members, renamed panel and REXX program RACFTSO
+         to RACFUSRT and updated $DIR members
+
+  19 Feb 2020 - V3R3
+     - Menu Option 1 (User)
+       * Documented the 'SE' line command in the tutorial
+
   19 Feb 2020 - V3R2
      - Menu Option 1 (User)
-       * Added line command SE (Search) for both general user and
-         administrator
+       * Added line command SE (Search), Analyze user access to
+         general resource profiles
          o Prior was only available when Setting's 'Administrator=YES'
-           and was not displayed on the panel
+           and was not displayed on the panel (hidden)
 
   19 Feb 2020 - V3R1
      - Menu Option 0 (Settings)

@@ -1,8 +1,9 @@
 /*%NOCOMMENT====================* REXX *==============================*/
-/*  PURPOSE:  RACFADM - Create TSO alias and datasets                 */
+/*  PURPOSE:  RACFADM - Userid profiles - Create TSO alias/datasets   */
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A5  200220  RACFA    Renamed RACFTSO to RACFUSRT (Standardization)*/
 /* @A4  200218  RACFA    Condense VGETs into one line                 */
 /* @A3  200119  RACFA    Standardized/reduced lines of code           */
 /* @A2  200119  RACFA    Added comment box above procedures           */
@@ -109,7 +110,7 @@ DISPLAY_MSG:
      address ISPEXEC "TBMOD" tblmsg
   end
   address ISPEXEC "TBTOP" tblmsg
-  address ISPEXEC "TBDISPL" tblmsg "PANEL(RACFTSO)"
+  address ISPEXEC "TBDISPL" tblmsg "PANEL(RACFUSRT)"          /* @A5 */
   address ISPEXEC "TBEND" tblmsg
 RETURN
 /*--------------------------------------------------------------------*/
