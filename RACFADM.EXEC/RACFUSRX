@@ -3,20 +3,22 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A2  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @A1  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A0  200123  TRIDJK   Created REXX program                         */
 /*====================================================================*/
-  Trace o
-  address ISPEXEC "VGET (ERATRACE) ASIS"                      /* @A1 */
-  If eratrace='YES' then Trace r                              /* @A1 */
+ADDRESS ISPEXEC                                               /* @A2 */
+  "VGET (ERATRACE) ASIS"                                      /* @A1 */
+  If (eratrace = 'YES') then Trace r                          /* @A1 */
   /*--------------------------------------------*/
   /*  Call IRRUT100 for cross reference report  */
   /*--------------------------------------------*/
   Parse Arg user
-  Address TSO
+
+Address TSO
   x = outtrap('delete.','*')
   'delete irrut100.'result
-  x= outtrap('off')
+  x = outtrap('off')
   'alloc f(sysprint) new reuse unit(sysallda)',
          'space(1,1) tracks'
   'alloc f(sysut1)   new reuse unit(sysallda)',
@@ -30,20 +32,22 @@
   'Execio * diskw sysin (finis'
   "call *(irrut100)"
   'Execio * diskr sysprint (finis stem sysp.'
+
   /*---------------------*/
   /*  Browse the report  */
   /*---------------------*/
-  Address ISPExec
+Address ISPExec
   'lminit dataid(id) ddname(sysprint) enq(exclu)'
-  if rc ^= 0 then do
+  if (rc ^= 0) then do
      zerrsm = 'Error'
      zerrlm = 'Error.  LMINIT failed for SYSPRINT'
      'setmsg msg(isrz002)'
      exit
   end
-  'Browse   dataid('id')'
+  'Browse dataid('id')'
   'lmfree dataid('id')'
-  Address TSO
+
+Address TSO
   'delstack'
   'free  f(sysut1 sysprint sysin)'
   'alloc f(sysin) ds(*) reuse'

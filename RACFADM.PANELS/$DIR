@@ -29,7 +29,6 @@
  RACFCLSR  Class          List classes (show, refresh)
  RACFCLSS  Class          List classes (show)
  RACFCLS1  Class          Set filter
- RACFCLS2  Class          Transactions
  RACFCLS3  Class          Add class
  RACFCLS4  Class          Change class
  RACFCLS5  Class          List group/ids and access
@@ -54,7 +53,7 @@
  RACFGRP8  Group          List groups and descriptions
  RACFMENU  Menu           Main menu
  RACFMSG1  Message        'Confirm Request' (pop-up panel)
- RACFMSG2  Message        'Execute command' error message (pop-up panel)
+ RACFMSG2  Message        'Execute RACF Command' (pop-up panel)
  RACFPRMJ  Parameter      RACF parameters
  RACFPRMU  Parameter      Settings - Customize options
  RACFUSRT  User           Add, change and delete a TSO userid

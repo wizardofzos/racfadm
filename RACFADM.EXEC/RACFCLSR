@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A7  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @A6  200220  RACFA    Fixed displaying all RACF commands           */
 /* @A5  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A4  200218  RACFA    Condense VGETs into one line                 */
@@ -11,14 +12,14 @@
 /* @A1  200119  RACFA    Placed comment boxes above procedures        */
 /* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
 /*====================================================================*/
-  Trace o
+ADDRESS ISPEXEC                                               /* @A7 */
   Arg class
-  address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE) ASIS"      /* @A4 */
-  If eratrace='YES' then Trace r                              /* @A5 */
+  "VGET (ZSCREEN ERASHOW ERATRACE) ASIS"                      /* @A4 */
+  If (eratrace = 'YES') then Trace r                          /* @A5 */
 
   address TSO "PROFILE MSGID"
-  rlv= SYSVAR('SYSLRACF')
-  if class='' then
+  rlv = SYSVAR('SYSLRACF')
+  if (class = '') then
      call Select_class
   else
      call RACFCLSG class '**' 'YES' /*generic prof routine*/
@@ -27,13 +28,13 @@ EXIT
 /*  Select class                                                      */
 /*--------------------------------------------------------------------*/
 SELECT_CLASS:
-  seconds=time('S')
+  seconds = time('S')
   tbla= 'TB'ZSCREEN||SECONDS  /* table name unique */
-  address ISPEXEC "TBCREATE" TBLA "KEYS(CLASS)",
+  "TBCREATE" TBLA "KEYS(CLASS)",
                   "NAMES(ACTION) REPLACE NOWRITE"
   call get_act_class
-  rc=display_table()
-  address ISPEXEC "TBEND" tbla
+  rc = display_table()
+  "TBEND" tbla
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Display profile permits                                           */
@@ -41,40 +42,40 @@ RETURN
 GET_ACT_CLASS:
   Scan = 'OFF'
   cmd  = "SETROPTS LIST"                                      /* @A6 */
-  if erashow = 'YES' then                                     /* @A6 */
+  if (erashow = 'YES') then                                   /* @A6 */
      call SHOWCMD                                             /* @A6 */
-  x= OUTTRAP('var.')
+  x = OUTTRAP('var.')
   address TSO cmd                                             /* @A6 */
-  x= OUTTRAP('OFF')
-  Do i= 1 to var.0         /* Scan output */
-     temp= var.i
-     if rlv > '1081' then  /* RACF 1.9 add blank */
+  x = OUTTRAP('OFF')
+  Do i = 1 to var.0         /* Scan output */
+     temp = var.i
+     if (rlv > '1081') then  /* RACF 1.9 add blank */
         temp= ' 'temp
      Select
-        when substr(temp,2,16)= 'ACTIVE CLASSES =' then do
-             scan='ON'
-             record=substr(temp,18,80)
-             nwords=words(record)
-             do t=1 to nwords
-                class=subword(record,t,1)
-                if class<>'USER',
-                 & class<>'DATASET',
-                 & class<>'GROUP' then
-                   address ISPEXEC "TBMOD" tbla
+        when (substr(temp,2,16) = 'ACTIVE CLASSES =') then do
+             scan   = 'ON'
+             record = substr(temp,18,80)
+             nwords = words(record)
+             do t = 1 to nwords
+                class = subword(record,t,1)
+                if (class <> 'USER'),
+                 & (class <> 'DATASET'),
+                 & (class <> 'GROUP') then
+                   "TBMOD" tbla
              end
         end
-        when substr(temp,2,25)='GENERIC',
-             'PROFILE CLASSES =' then leave
+        when (substr(temp,2,25) = 'GENERIC',
+             'PROFILE CLASSES =') then leave
         otherwise
-          if scan='ON' then do
-             record=var.i
-             nwords=words(record)
-             do t=1 to nwords
-                class=subword(record,t,1)
-                if class<>'USER',
-                 & class<>'DATASET',
-                 & class<>'GROUP' then
-                   address ISPEXEC "TBMOD" tbla
+          if (scan = 'ON') then do
+             record = var.i
+             nwords = words(record)
+             do t = 1 to nwords
+                class = subword(record,t,1)
+                if (class <> 'USER'),
+                 & (class <> 'DATASET'),
+                 & (class <> 'GROUP') then
+                   "TBMOD" tbla
              end
         end
      End  /* end_select */
@@ -84,67 +85,68 @@ RETURN
 /*  Profiles table display section                                    */
 /*--------------------------------------------------------------------*/
 DISPLAY_TABLE:
-  opta= ' '
-  address ISPEXEC "TBSORT" tbla "FIELDS(CLASS)"
-  address ISPEXEC "TBTOP" tbla
-  address ISPEXEC "TBDISPL" tbla "PANEL(RACFCLSR)"
-  reta= rc
+  opta = ' '
+  "TBSORT " tbla "FIELDS(CLASS)"
+  "TBTOP  " tbla
+  "TBDISPL" tbla "PANEL(RACFCLSR)"
+  reta = rc
   do while (reta < 8)   /* tablea */
-     action=''
-     address ISPEXEC "CONTROL DISPLAY SAVE"
+     action = ''
+     "CONTROL DISPLAY SAVE"
      Select
-        when subword(ZCMD,1,1)= 'LOCATE',
-           | subword(ZCMD,1,1)= 'L' then
-             lclass=subword(ZCMD,2,1)
-        otherwise lclass=''
+        when (subword(ZCMD,1,1) = 'LOCATE'),
+           | (subword(ZCMD,1,1) = 'L') then
+             lclass = subword(ZCMD,2,1)
+        otherwise lclass = ''
      End
-     xtdtop= ztdtop
-     opta= translate(opta) /* upper case */
+     xtdtop = ztdtop
+     opta   = translate(opta) /* upper case */
      Select
-        when opta= 'S' then
+        when (opta = 'S') then
              call RACFCLSG class '**' 'YES' /* call generic */
-        when opta= 'R' then call REFRESH
+        when (opta = 'R') then call REFRESH
         otherwise nop
      End
      Do while (reta = 4)   /* process multi selection */
-        address ISPEXEC "CONTROL DISPLAY RESTORE"
-        address ISPEXEC "TBDISPL" tbla
-        reta= rc
-        address ISPEXEC "CONTROL DISPLAY SAVE"
-        opta= translate(opta) /* upper case */
+        "CONTROL DISPLAY RESTORE"
+        "TBDISPL" tbla
+        reta = rc
+        "CONTROL DISPLAY SAVE"
+        opta = translate(opta) /* upper case */
         Select
-           when opta= 'S' then
+           when (opta = 'S') then
                 call RACFCLSG class '**' 'YES' /* gen prof. routine */
-           when opta= 'R' then call REFRESH
+           when (opta = 'R') then call REFRESH
            otherwise nop
         End
      end
-     opta= ' '
-     address ISPEXEC "TBSORT" tbla "FIELDS(CLASS)"
-     address ISPEXEC "TBTOP" tbla
-     if lclass<>'' then do
-        class=lclass
-        ADDRESS ISPEXEC "TBSARG" TBLA "NEXT NAMECOND(CLASS,GE)"
-        ADDRESS ISPEXEC "TBSCAN" TBLA "NOREAD"
+     opta = ' '
+     "TBSORT" tbla "FIELDS(CLASS)"
+     "TBTOP " tbla
+     if (lclass <> '') then do
+        class = lclass
+        "TBSARG" TBLA "NEXT NAMECOND(CLASS,GE)"
+        "TBSCAN" TBLA "NOREAD"
      end
-     else address ISPEXEC "TBSKIP" tbla "NUMBER("XTDTOP")"
-     address ISPEXEC "CONTROL DISPLAY RESTORE"
-     address ISPEXEC "TBDISPL" tbla "PANEL(RACFCLSR)"
-     reta= rc
+     else
+        "TBSKIP" tbla "NUMBER("XTDTOP")"
+     "CONTROL DISPLAY RESTORE"
+     "TBDISPL" tbla "PANEL(RACFCLSR)"
+     reta = rc
   end  /* Do while (reta < 8) */
 RETURN 0
 /*--------------------------------------------------------------------*/
 /*  Refresh class                                                     */
 /*--------------------------------------------------------------------*/
 REFRESH:
-  msg='You are about to refresh class 'class
-  Sure_?= RACFMSGC(msg)
-  if sure_? = 'YES' then do
+  msg    = 'You are about to refresh class 'class
+  Sure_? = RACFMSGC(msg)
+  if (sure_? = 'YES') then do
      call EXCMD "SETR RACLIST("class") REFRESH"
-     if rc<> 0 then call RACFMSGS "ERR10" /* CMD FAILED */
+     if (rc <> 0) then call RACFMSGS "ERR10" /* CMD FAILED */
      else do
-        action='*REFRESHED'
-        address ISPEXEC "TBMOD" tbla
+        action = '*REFRESHED'
+        "TBMOD" tbla
      end
   end
 RETURN
@@ -154,24 +156,25 @@ RETURN
 EXCMD:
   signal off error
   arg cmd
-  if erashow = 'YES' then                                     /* @A6 */
+  if (erashow = 'YES') then                                   /* @A6 */
      call SHOWCMD                                             /* @A6 */
-  x= OUTTRAP('msg.')
+  x = OUTTRAP('msg.')
   address TSO ""cmd""
-  ret_code=rc
-  x= OUTTRAP('OFF')
-  if subword(msg.1,1,1)= 'ICH11009I' |,
-     subword(msg.1,1,1)= 'ICH10006I' |,
-     subword(msg.1,1,1)= 'ICH06011I' then raclist= 'YES'
+  ret_code = rc
+  x = OUTTRAP('OFF')
+  if (subword(msg.1,1,1)= 'ICH11009I') |,
+     (subword(msg.1,1,1)= 'ICH10006I') |,
+     (subword(msg.1,1,1)= 'ICH06011I') then
+     raclist = 'YES'
   else
-     msg_var= 1 to msg.0                                      /* @A3 */
+     msg_var = 1 to msg.0                                     /* @A3 */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Display RACF command                                          @A6 */
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @A6 */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @A6 */
-  ADDRESS ISPEXEC 'ADDPOP ROW(6) COLUMN(4)'                   /* @A6 */
-  ADDRESS ISPEXEC 'DISPLAY PANEL(RACFMSG2)'                   /* @A6 */
-  ADDRESS ISPEXEC 'REMPOP'                                    /* @A6 */
+  'ADDPOP ROW(6) COLUMN(4)'                                   /* @A6 */
+  'DISPLAY PANEL(RACFMSG2)'                                   /* @A6 */
+  'REMPOP'                                                    /* @A6 */
 RETURN                                                        /* @A6 */

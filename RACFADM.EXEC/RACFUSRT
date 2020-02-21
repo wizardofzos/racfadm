@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A7  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
+/* @A6  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A5  200220  RACFA    Renamed RACFTSO to RACFUSRT (Standardization)*/
 /* @A4  200218  RACFA    Condense VGETs into one line                 */
 /* @A3  200119  RACFA    Standardized/reduced lines of code           */
@@ -10,21 +12,21 @@
 /* @A1  200118  RACFA    Fixed NOPREF issue with users TSO PROFILE    */
 /* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
 /*====================================================================*/
-  Trace o
+ADDRESS ISPEXEC                                               /* @A7 */
   signal off error
-  era_cmd=arg(1)
-  user=arg(2)
-  tsoproc=arg(3)
-  tsoacct=arg(4)
-  defgrp=arg(5)
-  owner =arg(6)
-  joblib=arg(7)
-  address ISPEXEC "VGET (ERASHOW ERATRACE ERAISPP ERACTLG",   /* @A4 */
-                        "ERAUNIT ERAULIB  ERAUVOL ERAMCAT)",  /* @A4 */
-                        "ASIS"                                /* @A4 */
+  era_cmd = arg(1)
+  user    = arg(2)
+  tsoproc = arg(3)
+  tsoacct = arg(4)
+  defgrp  = arg(5)
+  owner   = arg(6)
+  joblib  = arg(7)
+  "VGET (ERASHOW ERATRACE ERAISPP ERACTLG",                   /* @A4 */
+        "ERAUNIT ERAULIB  ERAUVOL ERAMCAT) ASIS"              /* @A4 */
+  If (eratrace = 'YES') then Trace r                          /* @A6 */
   "PROF NOPREF"
   signal on error
-  x= OUTTRAP('trash.')
+  x = OUTTRAP('trash.')
   interpret 'signal ' era_cmd
 
 /*--------------------------------------------------------------------*/
@@ -32,6 +34,7 @@
 /*--------------------------------------------------------------------*/
 ADDD:
 CHGD:
+ADDRESS TSO                                                   /* @A7 */
   "ADDSD  ('"user".**') UACC(READ) OWNER("owner")"
 /*-------------------------------------------------------------------*/
 /*- Authorize sys1.brodcast update for alias creation -              */
@@ -47,7 +50,7 @@ CHGD:
   /*- Authorize Library allocation                -*/
   "PERMIT '"user".**' GEN ACC(ALTER) ID("USERID()")"
   "SETROPTS REFRESH GENERIC(DATASET)"
-  address TSO "PROFILE MSGID"
+  "PROFILE MSGID"
 
   /*- Define user alias for datasets -*/
   signal off error
@@ -83,12 +86,13 @@ CHGD:
   "SETROPTS RACLIST(TSOPROC) REFRESH"
 
   call Delete_Admin_permits
-  address TSO "PROFILE PREF("USERID()")"                      /* @A1 */
+  "PROFILE PREF("USERID()")"                                  /* @A1 */
 RETURN RC
 /*--------------------------------------------------------------------*/
 /*  Delete userid dataset profile                                     */
 /*--------------------------------------------------------------------*/
 DELD:
+ADDRESS TSO                                                   /* @A7 */
   signal off error
   "DELDSD  ('"user".**')"
   "DELETE '"user"."eraulib"'"
@@ -100,23 +104,24 @@ RETURN RC
 /*  Display message                                                   */
 /*--------------------------------------------------------------------*/
 DISPLAY_MSG:
-  trash_msg= trash.0
-  address ISPEXEC "VGET (ZSCREEN) ASIS"
-  tblmsg= 'RCFER'ZSCREEN /* make table unique */
-  address ISPEXEC "TBCREATE" tblmsg "KEYS(MSG)",
-                  "REPLACE NOWRITE"
+ADDRESS ISPEXEC                                               /* @A7 */
+  trash_msg = trash.0
+  "VGET (ZSCREEN) ASIS"
+  tblmsg = 'RCFER'ZSCREEN /* make table unique */
+  "TBCREATE" tblmsg "KEYS(MSG) REPLACE NOWRITE"
   do trash_count=1 to trash_msg
      msg= trash.trash_count
-     address ISPEXEC "TBMOD" tblmsg
+     "TBMOD" tblmsg
   end
-  address ISPEXEC "TBTOP" tblmsg
-  address ISPEXEC "TBDISPL" tblmsg "PANEL(RACFUSRT)"          /* @A5 */
-  address ISPEXEC "TBEND" tblmsg
+  "TBTOP  " tblmsg
+  "TBDISPL" tblmsg "PANEL(RACFUSRT)"                          /* @A5 */
+  "TBEND  " tblmsg
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Delete userid dataset profile                                     */
 /*--------------------------------------------------------------------*/
 ERROR:
+ADDRESS TSO                                                   /* @A7 */
   call Display_msg
   "DELDSD  ('"user".**')"
   call Delete_Admin_permits
@@ -125,6 +130,7 @@ RETURN 8
 /*  Delete temporary autorizations for RACF administrator             */
 /*--------------------------------------------------------------------*/
 DELETE_ADMIN_PERMITS:
+ADDRESS TSO                                                   /* @A7 */
   "PERMIT '"user".**'     GEN DELETE ID("USERID()")"
 /*-------------------------------------------------------------------*/
 /*  "PERMIT 'SYS1.BRODCAST' GEN DELETE ID("USERID()")"               */

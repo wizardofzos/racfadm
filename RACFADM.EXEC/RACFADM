@@ -6,13 +6,13 @@
 /* @A1  200120  LBD      Added code for sites using qual. PLIB/MLIB   */
 /* @A0  200120  LBD      Created REXX                                 */
 /*====================================================================*/
-Address ISPExec
+ADDRESS ISPEXEC
   call Setup
   'Select Panel(racfmenu)'
   'libdef ispmlib'
   'libdef ispplib'
 
-Address TSO 'altlib deact app(exec)'
+   Address TSO 'altlib deact app(exec)'
 EXIT 0
 /*--------------------------------------------------------------------*/
 /*  Obtain dataset names and LIBDEF/ALTLIB them                       */
@@ -21,10 +21,10 @@ SETUP:
   parse source src
   parse value src with TSO Type Name DDName DSName NameO Env Addr Token
   cmd = name
-  if DSName /= '?' then exec =  "'"dsname"'"
+  if (DSName /= '?') then exec = "'"dsname"'"
   else do
-     x = listdsi(DDName 'FILE')
-     exec = "'"sysdsname"'"
+     x      = listdsi(DDName 'FILE')
+     exec   = "'"sysdsname"'"
      dsname = sysdsname
   end
   dsname = translate(dsname,' ','.')
@@ -37,9 +37,9 @@ SETUP:
   plib   = translate(plib,'.',' ')                            /* @A1 */
   mlib   = translate(mlib,'.',' ')                            /* @A1 */
   x = listdsi(plib)                                           /* @A1 */
-  if x = 0 then panels = plib                                 /* @A1 */
+  if (x = 0) then panels = plib                               /* @A1 */
   x = listdsi(mlib)                                           /* @A1 */
-  if x = 0 then msgs = mlib                                   /* @A1 */
+  if (x = 0) then msgs = mlib                                 /* @A1 */
   Address TSO 'Altlib Act app(Exec) Dataset('exec')'
   'Libdef ISPMLIB dataset id('msgs') Stack'
   'Libdef ISPPLIB dataset id('panels') Stack'

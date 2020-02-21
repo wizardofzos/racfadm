@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AO  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @AN  200220  RACFA    Fixed displaying all RACF commands           */
 /* @AM  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @AL  200220  RACFA    Removed initializing ERASINT variable        */
@@ -28,31 +29,31 @@
 /* @A1  200110  RACFA    Invoke RACFLIST when displaying a userid     */
 /* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
 /*====================================================================*/
-  trace o
-  Rclass='GROUP'
-  lparm=''                               /* Locate parm */    /* @A3 */
+ADDRESS ISPEXEC                                               /* @AO */
+  Rclass = 'GROUP'
+  lparm  = ''                            /* Locate parm */    /* @A3 */
   Arg Rfilter
   If (Rfilter = '') Then Do                                   /* @AB */
-     address ISPEXEC "VGET (ERAFLTR) ASIS"                    /* @AB */
+     "VGET (ERAFLTR) ASIS"                                    /* @AB */
      Rfilter = ERAFLTR                                        /* @AB */
   end                                                         /* @AB */
-  address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE ERASINT",   /* @AI */
+  "VGET (ZSCREEN ERASHOW ERATRACE ERASINT",                   /* @AI */
                         "ERAADMN ERADISP) ASIS"               /* @AK */
-  If eratrace='YES' then Trace r                              /* @AM */
+  If (eratrace = 'YES') then Trace r                          /* @AM */
   If (ERAADMN = "YES") then                                   /* @B2 */
       SELCMDS = "ÝS¨Show,ÝL¨List,ÝC¨Change,ÝA¨Add,ÝR¨Remove"  /* @AJ */
   else
       SELCMDS = "ÝS¨Show,ÝL¨list"                             /* @AJ */
   address TSO "PROFILE MSGID"
-  rlv= SYSVAR('SYSLRACF')
-  called= SYSVAR('SYSNEST')
-  If called='YES' then address ISPEXEC "CONTROL NONDISPL ENTER"
-  address ISPEXEC "DISPLAY PANEL(RACFGRP1)" /* get profile filter */
-  Do while (rc=0)
+  rlv    = SYSVAR('SYSLRACF')
+  called = SYSVAR('SYSNEST')
+  If (called = 'YES') then "CONTROL NONDISPL ENTER"
+  "DISPLAY PANEL(RACFGRP1)" /* get profile filter */
+  Do while (rc = 0)
      call Profl
-     If called<>'YES' then do
-        address ISPEXEC "DISPLAY PANEL(RACFGRP1)"
-        ret_code=rc
+     If (called <> 'YES') then do
+        "DISPLAY PANEL(RACFGRP1)"
+        ret_code = rc
      end
   end
 EXIT
@@ -62,52 +63,51 @@ EXIT
 PROFL:
   seconds = TIME('S')
   tbla    = 'TA'ZSCREEN||SECONDS  /* table name unique */
-  address ISPEXEC "TBCREATE" tbla "KEYS(GROUP)",
-                  "NAMES(DATA) REPLACE NOWRITE"
+  "TBCREATE" tbla "KEYS(GROUP) NAMES(DATA) REPLACE NOWRITE"
   cmd = "SEARCH FILTER("RFILTER") CLASS("rclass")"            /* @AN */
-  if erashow = 'YES' then                                     /* @AN */
+  if (erashow = 'YES') then                                   /* @AN */
      call SHOWCMD                                             /* @AN */
-  x= OUTTRAP('var.')
+  x = OUTTRAP('var.')
   address TSO cmd                                             /* @AN */
-  x= OUTTRAP('OFF')
-  g= '(G)'
-  Do i=1 to var.0
-     temp= var.i
-     group= SUBWORD(temp,1,1)
-     msgr= SUBWORD(temp,1,1)
+  x = OUTTRAP('OFF')
+  g = '(G)'
+  Do i = 1 to var.0
+     temp  = var.i
+     group = SUBWORD(temp,1,1)
+     msgr  = SUBWORD(temp,1,1)
      Select
-        when msgr= 'ICH31005I' then
-            group= 'NONE'       /* No groups  */
-        when msgr= 'ICH31009I' then do
-            group= 'INVALID'    /* Bad filter */
-            call Emsg 'ERR08'
+        when (msgr = 'ICH31005I') then
+             group = 'NONE'       /* No groups  */
+        when (msgr = 'ICH31009I') then do
+             group = 'INVALID'    /* Bad filter */
+             call Emsg 'ERR08'
         end
-        when msgr= 'ICH31012I' then do
-            group= 'INVALID'    /* Bad filter */
-            call Emsg 'ERR08'
+        when (msgr = 'ICH31012I') then do
+             group = 'INVALID'    /* Bad filter */
+             call Emsg 'ERR08'
         end
-        when msgr= 'ICH31014I' then do
-            group= 'INVALID'    /* Bad filter */
-            call Emsg 'ERR08'
+        when (msgr = 'ICH31014I') then do
+             group = 'INVALID'    /* Bad filter */
+             call Emsg 'ERR08'
         end
-        when msgr= 'ICH31016I' then do
-            group= 'INVALID'    /* Bad filter */
-            call Emsg 'ERR08'
+        when (msgr = 'ICH31016I') then do
+             group = 'INVALID'    /* Bad filter */
+             call Emsg 'ERR08'
         end
-        when msgr= 'ICH31017I' then do
-            group= 'INVALID'    /* Bad filter */
-            call Emsg 'ERR08'
+        when (msgr = 'ICH31017I') then do
+             group = 'INVALID'    /* Bad filter */
+             call Emsg 'ERR08'
         end
-        when msgr= 'ICH31018I' then do
-            group= 'INVALID'    /* Bad filter */
-            call Emsg 'ERR08'
+        when (msgr = 'ICH31018I') then do
+             group = 'INVALID'    /* Bad filter */
+             call Emsg 'ERR08'
         end
-        when msgr= 'IKJ56716I' then do
-            group= 'INVALID'    /* Bad filter */
-            call Emsg 'ERR08'
+        when (msgr = 'IKJ56716I') then do
+             group = 'INVALID'    /* Bad filter */
+             call Emsg 'ERR08'
         end
-        when substr(msgr,1,6)= 'ICH310' then
-            call Emsg 'ERR09'
+        when (substr(msgr,1,6) = 'ICH310') then
+             call Emsg 'ERR09'
         otherwise nop
      End  /* Select */
      /*---------------------------------------------*/
@@ -115,174 +115,175 @@ PROFL:
      /*---------------------------------------------*/
      IF (ERASINT <> 0) THEN DO     /* Status interval */      /* @AI */
         IF (I//ERASINT = 0) THEN DO                           /* @AI */
-           n1=i;n2=var.0
-           address ISPEXEC "control display lock"
-           address ISPEXEC "display msg(RACF014)"
+           n1 = i; n2 = var.0
+           "control display lock"
+           "display msg(RACF014)"
         END                                                   /* @AI */
      END                                                      /* @AI */
      /* Get further information */
      Call GETD
-     address ISPEXEC "TBMOD" tbla
+     "TBMOD" tbla
   end /* Do i=1 to var.0 */
-  if group= 'INVALID' then do
-     address ISPEXEC "TBEND" tbla
+  if (group = 'INVALID') then do
+     "TBEND" tbla
      return
   end
   /* profiles table display section */
-  opta= ' '
-  sort='';fld_sort='GROUP';dfl_sort='GROUP'                   /* @AG */
+  opta = ' '
+  sort = ''; fld_sort = 'GROUP'; dfl_sort = 'GROUP'           /* @AG */
   CLRGROU = "TURQ";  CLRDATA = "GREEN"   /* Col. colors */    /* @AH */
-  address ISPEXEC "TBSORT" tbla "FIELDS("dfl_sort")"          /* @AG */
-  address ISPEXEC "TBTOP" tbla
-  address ISPEXEC "TBDISPL" tbla "PANEL(RACFGRP8)"
-  reta= rc
+  "TBSORT " tbla "FIELDS("dfl_sort")"                         /* @AG */
+  "TBTOP  " tbla
+  "TBDISPL" tbla "PANEL(RACFGRP8)"
+  reta = rc
   do while (reta < 8)   /* tablea panel */
-     address ISPEXEC "CONTROL DISPLAY SAVE"
-     xtdtop= ztdtop
+     "CONTROL DISPLAY SAVE"
+     xtdtop = ztdtop
      PARSE VAR ZCMD ZCMD PARM seq                             /* @AC */
-     lparm=""                                                 /* @A3 */
+     lparm = ""                                               /* @A3 */
      Select
-        WHEN ABBREV("RESET",ZCMD,1) = 1 THEN DO               /* @AE */
+        WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO             /* @AE */
              fld_sort = 'GROUP,C,A'                           /* @A3 */
              xtdtop   = 1                                     /* @AE */
         END                                                   /* @AE */
-        WHEN ABBREV("SORT",ZCMD,1) = 1 THEN DO                /* @AF */
+        WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO              /* @AF */
              xtdtop   = 1                                     /* @AE */
-             if seq = 'A' | seq = 'D' then                    /* @AF */
+             if (seq = 'A') | (seq = 'D') then                /* @AF */
                 nop                                           /* @AF */
              else                                             /* @AF */
                 seq = 'A'                                     /* @AF */
              SELECT                                           /* @A3 */
-                when PARM= 'RESET'   then                     /* @A3 */
-                     fld_sort= ''                             /* @AC */
-                when PARM= 'GROUP'   then                     /* @A3 */
-                     fld_sort= 'GROUP,C,'seq                  /* @AC */
-                when PARM= 'DESC'    then                     /* @A3 */
-                     fld_sort= 'DATA,C,'seq                   /* @AC */
+                when (PARM = 'RESET') then                    /* @A3 */
+                     fld_sort = ''                            /* @AC */
+                when (PARM = 'GROUP') then                    /* @A3 */
+                     fld_sort = 'GROUP,C,'seq                 /* @AC */
+                when (PARM = 'DESC') then                     /* @A3 */
+                     fld_sort = 'DATA,C,'seq                  /* @AC */
                 otherwise NOP                                 /* @A3 */
              END                                              /* @A3 */
         END                                                   /* @AF */
-        WHEN ABBREV("LOCATE",ZCMD,1) = 1 THEN lparm = parm    /* @A3 */
-        otherwise lparm=''
+        WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN lparm = parm  /* @A3 */
+        otherwise lparm = ''
      End  /* Select */
-     ZCMD = "";PARM = ""                                      /* @A3 */
-     opta= translate(opta) /* upper case */
+     ZCMD = ""; PARM = ""                                     /* @A3 */
+     opta = translate(opta) /* upper case */
      Select
-        when opta= 'A' then call Addd
-        when opta= 'C' then call Chgd
-        when opta= 'S' then call Disd
-        when opta= 'R' then call Deld
-        when opta= 'L' then call Lisd
+        when (opta = 'A') then call Addd
+        when (opta = 'C') then call Chgd
+        when (opta = 'S') then call Disd
+        when (opta = 'R') then call Deld
+        when (opta = 'L') then call Lisd
         otherwise nop
      End /* Select */
      Do while (reta = 4)   /* process multi selection */
-        address ISPEXEC "CONTROL DISPLAY RESTORE"
-        address ISPEXEC "TBDISPL" tbla
-        reta= rc
-        address ISPEXEC "CONTROL DISPLAY SAVE"
-        opta= translate(opta) /* upper case */
+        "CONTROL DISPLAY RESTORE"
+        "TBDISPL" tbla
+        reta = rc
+        "CONTROL DISPLAY SAVE"
+        opta = translate(opta) /* upper case */
         Select
-           when opta= 'A' then call Addd
-           when opta= 'C' then call Chgd
-           when opta= 'S' then call Disd
-           when opta= 'R' then call Deld
-           when opta= 'L' then call Lisd
+           when (opta = 'A') then call Addd
+           when (opta = 'C') then call Chgd
+           when (opta = 'S') then call Disd
+           when (opta = 'R') then call Deld
+           when (opta = 'L') then call Lisd
            otherwise nop
         End
      end  /* Do while (reta < 4) */
-     if fld_sort<>'' then DO                                  /* @A3 */
-        sort=fld_sort
+     if (fld_sort <> '') then DO                              /* @A3 */
+        sort = fld_sort
         PARSE VAR FLD_SORT LOCARG "," .                       /* @A3 */
      END                                                      /* @A3 */
      else DO                                                  /* @A3 */
-        sort=dfl_sort
+        sort   = dfl_sort
         LOCARG = DFL_SORT                                     /* @A3 */
      END                                                      /* @A3 */
      PARSE VAR FLD_SORT LOCARG "," .                          /* @A3 */
      CLRGROU = "GREEN"; CLRDATA = "GREEN"                     /* @AH */
      INTERPRET "CLR"SUBSTR(LOCARG,1,4)" = 'TURQ'"             /* @AH */
-     address ISPEXEC "TBSORT" tbla "FIELDS("sort")"
-     address ISPEXEC "TBTOP" tbla
-     if lparm<>'' then do
+     "TBSORT" tbla "FIELDS("sort")"
+     "TBTOP " tbla
+     if (lparm <> '') then do
         ASTERICK = "*"                                        /* @A3 */
         INTERPRET LOCARG" = lparm||ASTERICK"                  /* @A3 */
-        address ISPEXEC "TBTOP" tbla                          /* @A3 */
+        "TBTOP" tbla                                          /* @A3 */
         PARSE VAR FLD_SORT . "," . "," SEQ                    /* @AD */
         IF (SEQ = "D") THEN                                   /* @AD */
            CONDLIST = "LE"                                    /* @AD */
         ELSE                                                  /* @AD */
            CONDLIST = "GE"                                    /* @AD */
-        ADDRESS ISPEXEC "TBSCAN "tbla,                        /* @A3 */
+        "TBSCAN "tbla,                                        /* @A3 */
                 "ARGLIST("LOCARG") CONDLIST("CONDLIST")"      /* @AD */
      end
-     else address ISPEXEC "TBSKIP" tbla "NUMBER("XTDTOP")"
-     opta= ' '
-     address ISPEXEC "CONTROL DISPLAY RESTORE"
-     address ISPEXEC "TBDISPL" tbla "PANEL(RACFGRP8)"
-     reta= rc
+     else
+        "TBSKIP" tbla "NUMBER("XTDTOP")"
+     opta = ' '
+     "CONTROL DISPLAY RESTORE"
+     "TBDISPL" tbla "PANEL(RACFGRP8)"
+     reta = rc
   end  /* Do while (reta < 8) */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Add new profile                                                   */
 /*--------------------------------------------------------------------*/
 ADDD:
-  new='NO'
-  if group= 'NONE' then
-     new='YES'
+  new = 'NO'
+  if (group = 'NONE') then
+     new ='YES'
   else
      CALL Getd
-  address ISPEXEC "DISPLAY PANEL(RACFGRP2)"
-  if rc > 0 then
+  "DISPLAY PANEL(RACFGRP2)"
+  if (rc > 0) then
      return
-  xtr= ' '
-  if data <> ' ' then
-     xtr= xtr "DATA('"data"')"
+  xtr = ' '
+  if (data <> ' ') then
+     xtr = xtr "DATA('"data"')"
   call EXCMD "AG ("group") OWNER("owner")",
              "SUPGROUP("supgrp")" xtr
-  if rc > 0 then do
+  if (rc > 0) then do
      CALL Emsg 'ERR01'  /* Add DSD failed */
      return
   end
-  address ISPEXEC "TBMOD" TBLA
-  if new= 'YES' then do
-     group= 'NONE'
-     address ISPEXEC "TBDELETE"  TBLA
+  "TBMOD" TBLA
+  if (new = 'YES') then do
+     group = 'NONE'
+     "TBDELETE"  TBLA
   end
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Add new profile                                                   */
 /*--------------------------------------------------------------------*/
 CHGD:
-  if group= 'NONE' then
+  if (group = 'NONE') then
      return
   CALL Getd
-  address ISPEXEC "DISPLAY PANEL(RACFGRP4)"
-  if rc > 0 then return
-  xtr= ' '
-  if data <> ' ' then do
-     if data= 'NONE' then
-        data= ' '
-     xtr= xtr "DATA('"DATA"')"
+  "DISPLAY PANEL(RACFGRP4)"
+  if (rc > 0) then return
+  xtr = ' '
+  if (data <> ' ') then do
+     if data = 'NONE' then
+        data = ' '
+     xtr = xtr "DATA('"DATA"')"
   end
   call EXCMD "ALG ("group") OWNER("OWNER")",
              "SUPGROUP("SUPGRP")" xtr
-  if rc >0 then
+  if (rc > 0) then
      call Emsg 'ERR07'  /* Altgroup failed */
   else
-     address ISPEXEC "TBMOD" tbla
+     "TBMOD" tbla
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Delete profile                                                    */
 /*--------------------------------------------------------------------*/
 DELD:
-  if group= 'NONE' then
+  if (group = 'NONE') then
      return
-  msg='You are about to delete 'group
-  Sure_?= Confirm_delete(msg)
-  if sure_? = 'YES' then do
+  msg    = 'You are about to delete 'group
+  Sure_? = Confirm_delete(msg)
+  if (sure_? = 'YES') then do
      call EXCMD "DG ("group")"
-     if rc= 0 then
-        address ISPEXEC "TBDELETE" TBLA
+     if (rc = 0) then
+        "TBDELETE" TBLA
      else
        CALL emsg "ERR02"  /* RDELETE failed */
   end
@@ -291,11 +292,11 @@ RETURN
 /*  Display profile permits                                           */
 /*--------------------------------------------------------------------*/
 DISD:
-  if group= 'NONE' then
+  if (group = 'NONE') then
      return
-  Do until (RB='NO')   /* allow rebuild option to loop */
-     tblb= 'TB'ZSCREEN||SECONDS   /* table name unique */
-     address ISPEXEC "TBCREATE" TBLB "KEYS(ID) NAMES(ACC)",
+  Do until (RB = 'NO')   /* allow rebuild option to loop */
+     tblb = 'TB'ZSCREEN||SECONDS   /* table name unique */
+     "TBCREATE" TBLB "KEYS(ID) NAMES(ACC)",
                      "REPLACE NOWRITE"
      flags = 'OFF'
      audit = ' '
@@ -303,110 +304,110 @@ DISD:
      uacc  = ' '
      data  = ' '
      cmd   = "LG "group                                       /* @AN */
-     if erashow = 'YES' then                                  /* @AN */
+     if (erashow = 'YES') then                                /* @AN */
         call SHOWCMD                                          /* @AN */
-     x= OUTTRAP('VAR.')
+     x = OUTTRAP('VAR.')
      address TSO cmd                                          /* @AN */
-     x= OUTTRAP('OFF')
-     Do i= 1 to var.0         /* Scan output */
-        temp= var.i
-        if rlv > '1081' then  /* RACF 1.9 add blank */
-           temp= ' 'temp
-        l= LENGTH(temp)
-        if uacc= ' ' then
-           if substr(temp,6,14)= 'SUPERIOR GROUP' then do
-              temp= var.i
-              uacc  =substr(temp,20,8)
-              supgrp= substr(temp,20,8)
-              owner= substr(temp,39,8)
+     x = OUTTRAP('OFF')
+     Do i = 1 to var.0          /* Scan output */
+        temp = var.i
+        if (rlv > '1081') then  /* RACF 1.9 add blank */
+           temp = ' 'temp
+        l = LENGTH(temp)
+        if (uacc = ' ') then
+           if (substr(temp,6,14) = 'SUPERIOR GROUP') then do
+              temp   = var.i
+              uacc   = substr(temp,20,8)
+              supgrp = substr(temp,20,8)
+              owner  = substr(temp,39,8)
            end
-        if data= ' ' then
-           if substr(temp,6,17)= 'INSTALLATION DATA' then do
-              temp= var.i
+        if (data = ' ') then
+           if (substr(temp,6,17) = 'INSTALLATION DATA') then do
+              temp = var.i
               data =  substr(temp,23,45)
-              i=i + 1
-              temp= var.i
-              if substr(temp,5,8)<> 'NO MODEL' &,
-                 substr(temp,5,5)<> 'MODEL' then
+              i    = i + 1
+              temp = var.i
+              if (substr(temp,5,8) <> 'NO MODEL') &,
+                 (substr(temp,5,5) <> 'MODEL') then
                  data = data || strip(substr(temp,23,45),'t')
             end
-        if flags= 'ON' then do
-           if l= 1 | l= 2 then
-              flags= 'OUT'     /* end access list */
-           if l > 8 then
-              if substr(temp,1,60)= ' ' then
-                 flags= 'OUT'  /* end access list */
+        if (flags = 'ON') then do
+           if (l = 1) | (l = 2) then
+              flags = 'OUT'     /* end access list */
+           if (l > 8) then
+              if (substr(temp,1,60) = ' ') then
+                 flags = 'OUT'  /* end access list */
         end
-        if flags= 'ON' then do
-           if substr(temp,2,10)= 'NO ENTRIES' then do
-              id= 'NONE'       /* empty access list */
-              acc= 'DEFINED'
+        if (flags = 'ON') then do
+           if (substr(temp,2,10) = 'NO ENTRIES') then do
+              id  = 'NONE'       /* empty access list */
+              acc = 'DEFINED'
            end
            else do
-              id = subword(temp,1,1)
-              acc= subword(temp,2,1)
+              id  = subword(temp,1,1)
+              acc = subword(temp,2,1)
            end
-           if substr(temp,8,2)<> ' ' then
-              address ISPEXEC "TBMOD" tblb
+           if (substr(temp,8,2) <> ' ') then
+              "TBMOD" tblb
         end
-        if subword(temp,1,1)= 'USER(S)=' then do
-           flags= 'ON'   /* start access list */
+        if (subword(temp,1,1) = 'USER(S)=') then do
+           flags = 'ON'   /* start access list */
         end
      end /* loop scan output */
      /* Permit table display section */
-     rb= 'NO'
-     optb= ' '
+     rb   = 'NO'
+     optb = ' '
      drop rownum
-     address ISPEXEC "TBQUERY" tblb "ROWNUM("rownum")"
-     if rownum=0 then do
-        id='NONE'
-        address ISPEXEC "TBMOD" tblb
+     "TBQUERY" tblb "ROWNUM("rownum")"
+     if (rownum = 0) then do
+        id = 'NONE'
+        "TBMOD" tblb
      end
-     address ISPEXEC "TBSORT" tblb "FIELDS(ID)"
-     address ISPEXEC "TBTOP" tblb
-     address ISPEXEC "TBDISPL" tblb "PANEL(RACFGRP5)"
-     retb= rc
+     "TBSORT " tblb "FIELDS(ID)"
+     "TBTOP  " tblb
+     "TBDISPL" tblb "PANEL(RACFGRP5)"
+     retb = rc
      Do while (retb < 8)        /* tableb panel */
-        address ISPEXEC "CONTROL DISPLAY SAVE"
-        optb= translate(optb)     /* upper case */
+        "CONTROL DISPLAY SAVE"
+        optb = translate(optb)     /* upper case */
         Select
-           when optb= 'A'  then call Addp
-           when optb= 'C'  then call Chgp
-           when optb= 'R'  then call Delp
-           when optb= 'L'  then call Lisp                     /* @A5 */
-           when optb= 'S'  then call RACFUSR id
-           when optb= 'SE' then call RACFCLSS id
+           when (optb = 'A')  then call Addp
+           when (optb = 'C')  then call Chgp
+           when (optb = 'R')  then call Delp
+           when (optb = 'L')  then call Lisp                  /* @A5 */
+           when (optb = 'S')  then call RACFUSR id
+           when (optb = 'SE') then call RACFCLSS id
            otherwise nop
         End
         Do while (retb = 4)   /* process multi-section */
-           address ISPEXEC "CONTROL DISPLAY RESTORE"
-           address ISPEXEC "TBDISPL" tblb
-           retb= rc
-           address ISPEXEC "CONTROL DISPLAY SAVE"
-           optb=TRANSLATE(optb)
+           "CONTROL DISPLAY RESTORE"
+           "TBDISPL" tblb
+           retb = rc
+           "CONTROL DISPLAY SAVE"
+           optb = TRANSLATE(optb)
            Select
-              when optb= 'A'  then call Addp
-              when optb= 'C'  then call Chgp
-              when optb= 'R'  then call Delp
-              when optb= 'L'  then call Lisp                  /* @A5 */
-              when optb= 'S'  then call RACFUSR id
-              when optb= 'SE' then call RACFCLSS id
+              when (optb = 'A')  then call Addp
+              when (optb = 'C')  then call Chgp
+              when (optb = 'R')  then call Delp
+              when (optb = 'L')  then call Lisp               /* @A5 */
+              when (optb = 'S')  then call RACFUSR id
+              when (optb = 'SE') then call RACFCLSS id
               otherwise nop
            End
         end /* While retb= 4 */
-        optb= ' '
-        address ISPEXEC "CONTROL DISPLAY RESTORE"
-        address ISPEXEC "TBSORT" tblb "FIELDS(ID)"
-        address ISPEXEC "TBTOP" tblb
-        address ISPEXEC "TBSKIP" tblb "NUMBER("ZTDTOP")"
-        if rb= "YES" then
-           retb= 12         /* rebuild table required */
+        optb = ' '
+        "CONTROL DISPLAY RESTORE"
+        "TBSORT" tblb "FIELDS(ID)"
+        "TBTOP " tblb
+        "TBSKIP" tblb "NUMBER("ZTDTOP")"
+        if (rb = "YES") then
+           retb = 12         /* rebuild table required */
         else do
-           address ISPEXEC "TBDISPL" tblb "PANEL(RACFGRP5)"
-           retb= rc
+           "TBDISPL" tblb "PANEL(RACFGRP5)"
+           retb = rc
         end
-     end /* While retb< 8 */
-     address ISPEXEC "TBEND" tblb
+     end /* While retb < 8 */
+     "TBEND" tblb
   end /* Do until */
 RETURN
 /*--------------------------------------------------------------------*/
@@ -417,16 +418,16 @@ GETD:
   data   = ' '
   supgrp = ' '
   cmd    = "LG "group                                         /* @AN */
-  if erashow = 'YES' then                                     /* @AN */
+  if (erashow = 'YES') then                                   /* @AN */
      call SHOWCMD                                             /* @AN */
-  x      = OUTTRAP('details.')
+  x = OUTTRAP('details.')
   address TSO cmd                                             /* @AN */
-  x      = OUTTRAP('OFF')
+  x = OUTTRAP('OFF')
   parse var details.2 'SUPERIOR GROUP=' supgrp 'OWNER=' owner
   parse var details.3 'INSTALLATION DATA=' data_1st_line
   data_2nd_line = details.4
-  if subword(data_2nd_line,2,1)= 'MODEL' |,
-     subword(data_2nd_line,1,1)= 'MODEL' then
+  if (subword(data_2nd_line,2,1) = 'MODEL') |,
+     (subword(data_2nd_line,1,1) = 'MODEL') then
      data = data_1st_line
   else
      data = data_1st_line||strip(substr(data_2nd_line,23,45),'t')
@@ -435,14 +436,14 @@ RETURN
 /*  Change permit option                                              */
 /*--------------------------------------------------------------------*/
 CHGP:
-  If id= 'NONE' then
+  If (id = 'NONE') then
      return
-  Address ISPEXEC "DISPLAY PANEL(RACFGRP6)"
-  if rc > 0 then
+  "DISPLAY PANEL(RACFGRP6)"
+  if (rc > 0) then
      return
   call EXCMD "CONNECT ("id") GROUP("group") AUTH("acc")"
-  if rc = 0 then
-     Address ISPEXEC "TBMOD" tblb
+  if (rc = 0) then
+     "TBMOD" tblb
   else
      Call Emsg 'ERR03'  /* Permit failed */
 RETURN
@@ -450,32 +451,32 @@ RETURN
 /*  List group                                                        */
 /*--------------------------------------------------------------------*/
 LISD:
-  action='*LISTED'
+  action   = '*LISTED'
   WFDD     = "ERA"RANDOM(0,99999)                             /* @A2 */
   WFLGPRM  = "CSDATA DFP OMVS OVM TME"                        /* @A2 */
   cmd      = "LG "GROUP" "WFLGPRM                             /* @AN */
-  if erashow = 'YES' then                                     /* @AN */
+  if (erashow = 'YES') then                                   /* @AN */
      call SHOWCMD                                             /* @AN */
-  X        = OUTTRAP("WFREC.")                                /* @A2 */
+  X = OUTTRAP("WFREC.")                                       /* @A2 */
   ADDRESS TSO cmd                                             /* @AN */
-  X        = OUTTRAP("OFF")                                   /* @A2 */
+  X = OUTTRAP("OFF")                                          /* @A2 */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A2 */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A2 */
               "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @A2 */
   ADDRESS TSO "EXECIO * DISKW "WFDD" (STEM WFREC. FINIS"      /* @A2 */
-  ADDRESS ISPEXEC "LMINIT DATAID(WFDATAID) DDNAME("WFDD")"    /* @A2 */
+  "LMINIT DATAID(WFDATAID) DDNAME("WFDD")"                    /* @A2 */
   SELECT                                                      /* @AK */
-     WHEN (ERADISP = "EDIT") THEN                             /* @AK */
-          ADDRESS ISPEXEC "EDIT DATAID("WFDATAID")"           /* @AK */
      WHEN (ERADISP = "VIEW") THEN                             /* @AK */
-          ADDRESS ISPEXEC "VIEW DATAID("WFDATAID")"           /* @AK */
+          "VIEW DATAID("WFDATAID")"                           /* @AK */
+     WHEN (ERADISP = "EDIT") THEN                             /* @AK */
+          "EDIT DATAID("WFDATAID")"                           /* @AK */
      OTHERWISE                                                /* @AK */
-          ADDRESS ISPEXEC "BROWSE DATAID("WFDATAID")"         /* @AK */
+          "BROWSE DATAID("WFDATAID")"                         /* @AK */
   END                                                         /* @AK */
   ADDRESS TSO "FREE FI("WFDD")"                               /* @A2 */
   DROP WFREC. WFDD WFLGPRM                                    /* @A2 */
-  if rc=0 then
-     address ISPEXEC "TBMOD" TBLA
+  if (rc = 0) then
+     "TBMOD" TBLA
   else
      CALL emsg "ERR10"   /* Generic failure */
 RETURN
@@ -483,39 +484,39 @@ RETURN
 /*  List userid                                                       */
 /*--------------------------------------------------------------------*/
 LISP:
-  action='*Listed'                                            /* @A5 */
-  WFDD     = "ERA"RANDOM(0,99999)                             /* @A5 */
-  WFLUPRM  = "CICS CSDATA DCE DFP EIM KERB LANGUAGE",         /* @A5 */
-             "LNOTES MFA NDS NETVIEW OMVS OPERPARM",          /* @A5 */
-             "OVM PROXY TSO WORKATTR"                         /* @A5 */
+  action  = '*Listed'                                         /* @A5 */
+  WFDD    = "ERA"RANDOM(0,99999)                              /* @A5 */
+  WFLUPRM = "CICS CSDATA DCE DFP EIM KERB LANGUAGE",          /* @A5 */
+            "LNOTES MFA NDS NETVIEW OMVS OPERPARM",           /* @A5 */
+            "OVM PROXY TSO WORKATTR"                          /* @A5 */
   call get_setropts_options                                   /* @A9 */
-  if rcvtsmfa = 'NO' then do                                  /* @A9 */
+  if (rcvtsmfa = 'NO') then do                                /* @A9 */
      mfa_pos = pos('MFA',wfluprm)                             /* @A9 */
      wfluprm = delstr(wfluprm,mfa_pos,4)                      /* @A9 */
   end                                                         /* @A9 */
   cmd = "LU "ID WFLUPRM                                       /* @AN */
-  if erashow = 'YES' then                                     /* @AN */
+  if (erashow = 'YES') then                                   /* @AN */
      call SHOWCMD                                             /* @AN */
-  X        = OUTTRAP("WFREC.")                                /* @A5 */
+  X = OUTTRAP("WFREC.")                                       /* @A5 */
   ADDRESS TSO cmd                                             /* @AN */
-  X        = OUTTRAP("OFF")                                   /* @A5 */
+  X = OUTTRAP("OFF")                                          /* @A5 */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A5 */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A5 */
               "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @A5 */
   ADDRESS TSO "EXECIO * DISKW "WFDD" (STEM WFREC. FINIS"      /* @A5 */
-  ADDRESS ISPEXEC "LMINIT DATAID(WFDATAID) DDNAME("WFDD")"    /* @A5 */
+  "LMINIT DATAID(WFDATAID) DDNAME("WFDD")"                    /* @A5 */
   SELECT                                                      /* @AK */
-     WHEN (ERADISP = "EDIT") THEN                             /* @AK */
-          ADDRESS ISPEXEC "EDIT DATAID("WFDATAID")"           /* @AK */
      WHEN (ERADISP = "VIEW") THEN                             /* @AK */
-          ADDRESS ISPEXEC "VIEW DATAID("WFDATAID")"           /* @AK */
+          "VIEW DATAID("WFDATAID")"                           /* @AK */
+     WHEN (ERADISP = "EDIT") THEN                             /* @AK */
+          "EDIT DATAID("WFDATAID")"                           /* @AK */
      OTHERWISE                                                /* @AK */
-          ADDRESS ISPEXEC "BROWSE DATAID("WFDATAID")"         /* @AK */
+          "BROWSE DATAID("WFDATAID")"                         /* @AK */
   END                                                         /* @AK */
   ADDRESS TSO "FREE FI("WFDD")"                               /* @A5 */
   DROP WFREC. WFDD WFLUPRM                                    /* @A5 */
-  if rc=0 then
-     address ISPEXEC "TBMOD" TBLB
+  if (rc = 0) then
+     "TBMOD" TBLB
   else
      CALL RACFMSGS "ERR10" /* Generic failure */
 RETURN
@@ -526,7 +527,7 @@ GET_SETROPTS_OPTIONS:                                         /* @A9 */
   cvt     = c2x(storage(10,4))      /* cvt address        */  /* @A9 */
   cvtrac$ = d2x((x2d(cvt))+992)     /* cvt+3E0 = cvtrac $ */  /* @A9 */
   cvtrac  = c2x(storage(cvtrac$,4)) /* cvtrac=access cntl */  /* @A9 */
-  rc= setbool(rcvtsmfa,633,'02','NO','YES') /* mfa        */  /* @A9 */
+  rc      = setbool(rcvtsmfa,633,'02','NO','YES') /* mfa  */  /* @A9 */
 RETURN                                                        /* @A9 */
 /*--------------------------------------------------------------------*/
 /*  Set boolean value for mask                                        */
@@ -537,37 +538,37 @@ SETBOOL:
   value    = arg(3)                                           /* @A9 */
   status1  = arg(4)                                           /* @A9 */
   status2  = arg(5)                                           /* @A9 */
-  interpret  "rcvtsta$= d2x((x2d("cvtrac"))+"offset")"        /* @A9 */
+  interpret "rcvtsta$= d2x((x2d("cvtrac"))+"offset")"         /* @A9 */
   x        = storage(rcvtsta$,1)                              /* @A9 */
-  interpret  variable '= 'status1                             /* @A9 */
-  interpret  "x=bitand(x,'"value"'x)" /*remove bad bits*/     /* @A9 */
-  interpret  "if (x= '"value"'x) then "variable"="status2     /* @A9 */
+  interpret variable '= 'status1                              /* @A9 */
+  interpret "x=bitand(x,'"value"'x)" /*remove bad bits*/      /* @A9 */
+  interpret "if (x= '"value"'x) then "variable"="status2      /* @A9 */
 RETURN 0                                                      /* @A9 */
 /*--------------------------------------------------------------------*/
 /*  Add permit option                                                 */
 /*--------------------------------------------------------------------*/
 ADDP:
-  new= 'NO'
-  if id= 'NONE' then
-     new= 'YES'
-  from= ' '
-  address ISPEXEC "DISPLAY PANEL(RACFGRP7)"
-  if rc > 0 then
+  new = 'NO'
+  if (id = 'NONE') then
+     new = 'YES'
+  from = ' '
+  "DISPLAY PANEL(RACFGRP7)"
+  if (rc > 0) then
      return
-  idopt= ' '
-  if id<> ' ' then
-     idopt= 'ID('ID') ACCESS('ACC')'
-  fopt= ' '
+  idopt = ' '
+  if (id <> ' ') then
+     idopt = 'ID('ID') ACCESS('ACC')'
+  fopt = ' '
   call EXCMD "CONNECT ("id") GROUP("group") AUTH("acc")"
-  if rc= 0 then do
-     address ISPEXEC "TBMOD" tblb
-     if new= 'YES' then do
-        id= 'NONE'
-        address ISPEXEC "TBDELETE" tblb
+  if (rc = 0) then do
+     "TBMOD" tblb
+     if (new = 'YES') then do
+        id = 'NONE'
+        "TBDELETE" tblb
      end
   end
   else do
-     if from<> ' ' then
+     if (from <> ' ') then
         call Emsg 'ERR04' /* Permit Warning/Failed */
      else
         call Emsg 'ERR05' /* Permit Failed */
@@ -577,14 +578,14 @@ RETURN
 /*   Delete permit option                                             */
 /*--------------------------------------------------------------------*/
 DELP:
-  if id= 'NONE' then
+  if (id = 'NONE') then
      return
-  msg='You are about to delete access for 'ID
-  Sure_?= Confirm_delete(msg)
-  if sure_? = 'YES' then do
+  msg    = 'You are about to delete access for 'ID
+  Sure_? = Confirm_delete(msg)
+  if (sure_? = 'YES') then do
      call EXCMD "REMOVE "id" GROUP("group")"
-     if rc= 0 then
-        address ISPEXEC "TBDELETE" tblb
+     if (rc = 0) then
+        "TBDELETE" tblb
      else
         call Emsg 'ERR06' /* Permit Failed */
   end
@@ -594,29 +595,29 @@ RETURN
 /*--------------------------------------------------------------------*/
 EMSG:
   Arg code
-  rcflmsg= 'Reissue display to verify results of command'
+  rcflmsg = 'Reissue display to verify results of command'
   Select
-     when code= 'ERR01' then
-          rcfsmsg= 'ADD PROFILE FAILED'
-     when code= 'ERR02' then
-          rcfsmsg= 'DELETE PROFILE FAILED'
-     when code= 'ERR03' then
-          rcfsmsg= 'PERMIT PROFILE FAILED'
-     when code= 'ERR04' then
-          rcfsmsg= 'CHECK PERMIT RESULTS'
-     when code= 'ERR05' then
-          rcfsmsg= 'PERMIT ADD FAILED'
-     when code= 'ERR06' then
-          rcfsmsg= 'PERMIT DELETE FAILED'
-     when code= 'ERR07' then
-          rcfsmsg= 'ALTER PROFILE FAILED'
-     when code= 'ERR08' then
-          rcfsmsg= 'FILTER IS INVALID'
-     when code= 'ERR09' then
-          rcfsmsg= 'ERROR IN SEARCH'
+     when (code = 'ERR01') then
+          rcfsmsg = 'ADD PROFILE FAILED'
+     when (code = 'ERR02') then
+          rcfsmsg = 'DELETE PROFILE FAILED'
+     when (code = 'ERR03') then
+          rcfsmsg = 'PERMIT PROFILE FAILED'
+     when (code = 'ERR04') then
+          rcfsmsg = 'CHECK PERMIT RESULTS'
+     when (code = 'ERR05') then
+          rcfsmsg = 'PERMIT ADD FAILED'
+     when (code = 'ERR06') then
+          rcfsmsg = 'PERMIT DELETE FAILED'
+     when (code = 'ERR07') then
+          rcfsmsg = 'ALTER PROFILE FAILED'
+     when (code = 'ERR08') then
+          rcfsmsg = 'FILTER IS INVALID'
+     when (code = 'ERR09') then
+          rcfsmsg = 'ERROR IN SEARCH'
      otherwise nop
   End  /* Select */
-  address ISPEXEC "SETMSG MSG(RACF011)"
+  "SETMSG MSG(RACF011)"
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Confirm delete                                                    */
@@ -624,21 +625,20 @@ RETURN
 CONFIRM_DELETE:
   signal off error
   arg message
-  answer= 'NO'
-  zwinttl= 'CONFIRM REQUEST'
-  address 'ISPEXEC'
-  Do until ckey='PF03' | ckey='ENTER'
+  answer  = 'NO'
+  zwinttl = 'CONFIRM REQUEST'
+  Do until (ckey = 'PF03') | (ckey = 'ENTER')
     'CONTROL NOCMD'
     'ADDPOP'
     'DISPLAY PANEL(RACFMSG1)'
     'REMPOP'
   end
   Select
-     when ckey='PF03'  then answer='NO'
-     when ckey='ENTER' then answer='YES'
+     when (ckey = 'PF03')  then answer = 'NO'
+     when (ckey = 'ENTER') then answer = 'YES'
      otherwise nop
   End
-  zwinttl= ' '
+  zwinttl = ' '
 RETURN answer
 /*--------------------------------------------------------------------*/
 /*  Exec command                                                      */
@@ -646,24 +646,24 @@ RETURN answer
 EXCMD:
   signal off error
   arg cmd
-  if erashow = 'YES' then                                     /* @AN */
+  if (erashow = 'YES') then                                   /* @AN */
      call SHOWCMD                                             /* @AN */
-  x= OUTTRAP('msg.')
+  x = OUTTRAP('msg.')
   address TSO ""cmd""
-  ret_code=rc
-  x= OUTTRAP('OFF')
-  if subword(msg.1,1,1)= 'ICH11009I' |,
-     subword(msg.1,1,1)= 'ICH10006I' |,
-     subword(msg.1,1,1)= 'ICH06011I' then raclist= 'YES'
+  ret_code = rc
+  x = OUTTRAP('OFF')
+  if (subword(msg.1,1,1)= 'ICH11009I') |,
+     (subword(msg.1,1,1)= 'ICH10006I') |,
+     (subword(msg.1,1,1)= 'ICH06011I') then raclist = 'YES'
   else
-     msg_var= 1 to msg.0
+     msg_var = 1 to msg.0
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Display RACF command                                          @AN */
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @AN */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @AN */
-  ADDRESS ISPEXEC 'ADDPOP ROW(6) COLUMN(4)'                   /* @AN */
-  ADDRESS ISPEXEC 'DISPLAY PANEL(RACFMSG2)'                   /* @AN */
-  ADDRESS ISPEXEC 'REMPOP'                                    /* @AN */
+  'ADDPOP ROW(6) COLUMN(4)'                                   /* @AN */
+  'DISPLAY PANEL(RACFMSG2)'                                   /* @AN */
+  'REMPOP'                                                    /* @AN */
 RETURN                                                        /* @AN */

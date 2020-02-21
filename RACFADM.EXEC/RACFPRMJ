@@ -3,14 +3,15 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A4  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @A3  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A2  200120  TRIDJK   Add multi factor authentication (rcvtsmfa)   */
 /* @A1  200119  RACFA    Standardized/reduced lines of code           */
 /* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
 /*====================================================================*/
-  Trace o
-  address ISPEXEC "VGET (ERATRACE) ASIS"                      /* @A3 */
-  If eratrace='YES' then Trace r                              /* @A3 */
+ADDRESS ISPEXEC                                               /* @A4 */
+  "VGET (ERATRACE) ASIS"                                      /* @A3 */
+  If (eratrace = 'YES') then Trace r                          /* @A3 */
   cvt     = c2x(storage(10,4))              /* cvt address            */
   cvtrac$ = d2x((x2d(cvt))+992)             /* cvt + 3E0 = cvtrac $   */
   cvtrac  = c2x(storage(cvtrac$,4))         /* cvtrac = access cntl   */
@@ -27,17 +28,17 @@
   call Racf_terminal_options
   call Racf_tape_options
   call Racf_statistics
-  address ISPEXEC 'display panel(RACFPRMJ)'
+  'display panel(RACFPRMJ)'
 
 RETURN 0000                                 /* exit                   */
 /*--------------------------------------------------------------------*/
 /*  Get initial RCVT values                                           */
 /*--------------------------------------------------------------------*/
 GET_INITIAL_RCVT_VALUES:
-  rc = Setchar(rcvtgdsn,56,44)              /* racf dsn               */
-  rcvtuvol ='None';rcvtuads='None'
-  rc = Setchar(rcvtuads,100,44)             /* uads dsn               */
-  rc = Setchar(rcvtuvol,144,6)              /* uads vol               */
+  rc        = Setchar(rcvtgdsn,56,44)       /* racf dsn               */
+  rcvtuvol  = 'None';rcvtuads='None'
+  rc        = Setchar(rcvtuads,100,44)      /* uads dsn               */
+  rc        = Setchar(rcvtuvol,144,6)       /* uads vol               */
 
   rcvtstat$ =  d2x((x2d(cvtrac))+616)       /*                        */
   x         =  storage(rcvtstat$,4)         /* rnm                    */
@@ -73,9 +74,9 @@ RACF_RVARY_PASSWORDS:
   rcvtrwpw  = c2x(storage(rcvtrwpw$,8))     /* rcvtrwpw               */
   rcvtrnpw$ = d2x((x2d(cvtrac))+448)        /* rcvtrwpw     $         */
   rcvtrnpw  = c2x(storage(rcvtrnpw$,8))     /* rcvtrnpw               */
-  rc = Setvalue(rcvtelen,244,1)             /* pe length begin        */
-  rc = Setvalue(rcvtslen,245,1)             /* pe length end          */
-  rc = Setchar(rcvtruls,246,8)              /* password syntax        */
+  rc        = Setvalue(rcvtelen,244,1)      /* pe length begin        */
+  rc        = Setvalue(rcvtslen,245,1)      /* pe length end          */
+  rc        = Setchar(rcvtruls,246,8)       /* password syntax        */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  RACF password options                                             */
@@ -112,10 +113,10 @@ RACF_SETROPT_OPTIONS:
   rc= Setvalue(rcvtsrpe,396,2)              /* retention period       */
 
   rcvtsta$ = d2x((x2d(cvtrac))+630)         /* rcvtsta      $         */
-  x = storage(rcvtsta$,2)
+  x        = storage(rcvtsta$,2)
   rcvtslui = c2d(x)                         /* lu session interval    */
 
-  rc = Setchar(rcvtqual,400,9)              /* prefix password+period */
+  rc       = Setchar(rcvtqual,400,9)        /* prefix password+period */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Set variable in a Yes/No                                          */
@@ -202,24 +203,24 @@ RACF_AUDIT_OPTIONS:
   x       =    storage(rcvtauop$,1)         /* rcvtauop               */
   rcvtagro='No'                             /* default                */
   x       =    bitand(x,'40'x)              /* remove unwanted bits   */
-  if (x= '40'x) then                        /* audit group class?     */
+  if (x = '40'x) then                       /* audit group class?     */
      rcvtagro='Yes'                         /* yes                    */
 
   x       =    storage(rcvtauop$,1)         /* rcvtauop               */
   rcvtause='No'                             /* default                */
   x       =    bitand(x,'20'x)              /* remove unwanted bits   */
-  if (x= '20'x) then                        /* audit user class ?     */
+  if (x = '20'x) then                       /* audit user class ?     */
      rcvtause='Yes'                         /* yes                    */
 
   x       =    storage(rcvtauop$,1)         /* rcvtauop               */
   rcvtadat='No'                             /* default                */
   x       =    bitand(x,'10'x)              /* remove unwanted bits   */
-  if (x= '10'x) then                        /* audit dataset class?   */
+  if (x = '10'x) then                       /* audit dataset class?   */
      rcvtadat='Yes'                         /* yes                    */
 
   x       =    storage(rcvtauop$,1)         /* rcvtauop               */
   rcvtadas='No'                             /* default                */
   x       =    bitand(x,'08'x)              /* remove unwanted bits   */
-  if (x= '08'x) then                        /* audit DASDVOL class?   */
+  if (x = '08'x) then                       /* audit DASDVOL class?   */
      rcvtadas='Yes'                         /* yes                    */
 RETURN
