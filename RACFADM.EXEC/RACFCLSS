@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A5  200220  RACFA    Fixed displaying all RACF commands           */
+/* @A4  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A3  200214  RACFA    Chged panel name RACFSRCH to RACFCLS8        */
 /* @A2  200120  RACFA    Standardized/reduced lines of code           */
 /* @A1  200120  RACFA    Added comment box above procedures           */
@@ -11,7 +13,8 @@
   Trace o
   Arg user
   selection=0  /* something selected */
-  address ISPEXEC "VGET (ZSCREEN) ASIS"
+  address ISPEXEC "VGET (ZSCREEN ERATRACE) ASIS"              /* @A4 */
+  If eratrace='YES' then Trace r                              /* @A4 */
   address TSO "PROFILE MSGID"
   address TSO "PROFILE PREF("USERID()")"
   rlv= SYSVAR('SYSLRACF')
@@ -28,11 +31,14 @@ EXIT
 /*  Get permits                                                       */
 /*--------------------------------------------------------------------*/
 GET_PERMITS:
-  class=arg(1)
-  user =arg(2)
-  x= OUTTRAP('VAR.')
-  address TSO "SEARCH CLASS("class") USER("user")"
-  x= OUTTRAP('OFF')
+  class = arg(1)
+  user  = arg(2)
+  cmd   = "SEARCH CLASS("class") USER("user")"                /* @A5 */
+  if erashow = 'YES' then                                     /* @A5 */
+     call SHOWCMD                                             /* @A5 */
+  x     = OUTTRAP('VAR.')
+  address TSO cmd                                             /* @A5 */
+  x     = OUTTRAP('OFF')
   Do i= 1 to var.0   /* Scan output */
      profile=subword(var.i,1,1)
      if profile<>'ICH31005I' then do
@@ -125,9 +131,12 @@ RETURN
 /*  Display profile permits                                           */
 /*--------------------------------------------------------------------*/
 GET_ACT_CLASS:
-  Scan='OFF'
+  Scan = 'OFF'
+  cmd  = "SETROPTS LIST"                                      /* @A5 */
+  if erashow = 'YES' then                                     /* @A5 */
+     call SHOWCMD                                             /* @A5 */
   x= OUTTRAP('var.')
-  address TSO "SETROPTS LIST"
+  address TSO cmd                                             /* @A5 */
   x= OUTTRAP('OFF')
   Do i= 1 to var.0          /* Scan output */
      temp= var.i
@@ -225,3 +234,12 @@ RETURN 0
 ERROR:
   say 'Error RACFCLSS at line 'sigl
 EXIT
+/*--------------------------------------------------------------------*/
+/*  Display RACF command                                          @A5 */
+/*--------------------------------------------------------------------*/
+SHOWCMD:                                                      /* @A5 */
+  PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @A5 */
+  ADDRESS ISPEXEC 'ADDPOP ROW(6) COLUMN(4)'                   /* @A5 */
+  ADDRESS ISPEXEC 'DISPLAY PANEL(RACFMSG2)'                   /* @A5 */
+  ADDRESS ISPEXEC 'REMPOP'                                    /* @A5 */
+RETURN                                                        /* @A5 */

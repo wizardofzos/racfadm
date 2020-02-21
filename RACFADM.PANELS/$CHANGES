@@ -2,6 +2,16 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  20 Feb 2020 - V3R8
+     - Menu Opton 0 (Settings)
+       * Fixed tracing REXX programs when 'REXX trace = YES'
+       * Fixed displaying RACF commands prior to execution when
+         'RACF commands = YES'
+     - Other Items
+       * When invoking RACFADM for the 1st time, initialize all
+         Settings in the main menu, removing duplication of code
+         in several modules
+
   20 Feb 2020 - V3R7
      - Menu Opton 1 (User)
        * When general user (Administrator=NO), do not display SE

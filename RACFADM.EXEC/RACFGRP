@@ -3,6 +3,9 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AN  200220  RACFA    Fixed displaying all RACF commands           */
+/* @AM  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
+/* @AL  200220  RACFA    Removed initializing ERASINT variable        */
 /* @AK  200220  RACFA    Added capability to browse/edit/view file    */
 /* @AJ  200218  RACFA    Use dynamic area to display SELECT commands  */
 /* @AI  200218  RACFA    Added 'Status Interval' option               */
@@ -35,8 +38,7 @@
   end                                                         /* @AB */
   address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE ERASINT",   /* @AI */
                         "ERAADMN ERADISP) ASIS"               /* @AK */
-  IF (ERASINT = "") THEN                                      /* @AI */
-      ERASINT = 1                                             /* @AI */
+  If eratrace='YES' then Trace r                              /* @AM */
   If (ERAADMN = "YES") then                                   /* @B2 */
       SELCMDS = "ÝS¨Show,ÝL¨List,ÝC¨Change,ÝA¨Add,ÝR¨Remove"  /* @AJ */
   else
@@ -58,12 +60,15 @@ EXIT
 /*  Show all profiles for a filter                                    */
 /*--------------------------------------------------------------------*/
 PROFL:
-  seconds=TIME('S')
-  tbla= 'TA'ZSCREEN||SECONDS  /* table name unique */
+  seconds = TIME('S')
+  tbla    = 'TA'ZSCREEN||SECONDS  /* table name unique */
   address ISPEXEC "TBCREATE" tbla "KEYS(GROUP)",
                   "NAMES(DATA) REPLACE NOWRITE"
+  cmd = "SEARCH FILTER("RFILTER") CLASS("rclass")"            /* @AN */
+  if erashow = 'YES' then                                     /* @AN */
+     call SHOWCMD                                             /* @AN */
   x= OUTTRAP('var.')
-  address TSO "SEARCH FILTER("RFILTER") CLASS("rclass")"
+  address TSO cmd                                             /* @AN */
   x= OUTTRAP('OFF')
   g= '(G)'
   Do i=1 to var.0
@@ -292,13 +297,16 @@ DISD:
      tblb= 'TB'ZSCREEN||SECONDS   /* table name unique */
      address ISPEXEC "TBCREATE" TBLB "KEYS(ID) NAMES(ACC)",
                      "REPLACE NOWRITE"
-     flags= 'OFF'
-     audit= ' '
-     owner= ' '
-     uacc = ' '
-     data = ' '
+     flags = 'OFF'
+     audit = ' '
+     owner = ' '
+     uacc  = ' '
+     data  = ' '
+     cmd   = "LG "group                                       /* @AN */
+     if erashow = 'YES' then                                  /* @AN */
+        call SHOWCMD                                          /* @AN */
      x= OUTTRAP('VAR.')
-     address TSO "LG "group
+     address TSO cmd                                          /* @AN */
      x= OUTTRAP('OFF')
      Do i= 1 to var.0         /* Scan output */
         temp= var.i
@@ -362,11 +370,11 @@ DISD:
         address ISPEXEC "CONTROL DISPLAY SAVE"
         optb= translate(optb)     /* upper case */
         Select
-           when optb= 'A' then call Addp
-           when optb= 'C' then call Chgp
-           when optb= 'R' then call Delp
-           when optb= 'L' then call Lisp                      /* @A5 */
-           when optb= 'S' then call RACFUSR id
+           when optb= 'A'  then call Addp
+           when optb= 'C'  then call Chgp
+           when optb= 'R'  then call Delp
+           when optb= 'L'  then call Lisp                     /* @A5 */
+           when optb= 'S'  then call RACFUSR id
            when optb= 'SE' then call RACFCLSS id
            otherwise nop
         End
@@ -377,11 +385,11 @@ DISD:
            address ISPEXEC "CONTROL DISPLAY SAVE"
            optb=TRANSLATE(optb)
            Select
-              when optb= 'A' then call Addp
-              when optb= 'C' then call Chgp
-              when optb= 'R' then call Delp
-              when optb= 'L' then call Lisp                   /* @A5 */
-              when optb= 'S' then call RACFUSR id
+              when optb= 'A'  then call Addp
+              when optb= 'C'  then call Chgp
+              when optb= 'R'  then call Delp
+              when optb= 'L'  then call Lisp                  /* @A5 */
+              when optb= 'S'  then call RACFUSR id
               when optb= 'SE' then call RACFCLSS id
               otherwise nop
            End
@@ -405,12 +413,15 @@ RETURN
 /*  Get LG info to initialize add or change option                    */
 /*--------------------------------------------------------------------*/
 GETD:
-  owner= ' '
-  data = ' '
+  owner  = ' '
+  data   = ' '
   supgrp = ' '
-  x= OUTTRAP('details.')
-  address TSO "LG "group
-  x= OUTTRAP('OFF')
+  cmd    = "LG "group                                         /* @AN */
+  if erashow = 'YES' then                                     /* @AN */
+     call SHOWCMD                                             /* @AN */
+  x      = OUTTRAP('details.')
+  address TSO cmd                                             /* @AN */
+  x      = OUTTRAP('OFF')
   parse var details.2 'SUPERIOR GROUP=' supgrp 'OWNER=' owner
   parse var details.3 'INSTALLATION DATA=' data_1st_line
   data_2nd_line = details.4
@@ -442,8 +453,11 @@ LISD:
   action='*LISTED'
   WFDD     = "ERA"RANDOM(0,99999)                             /* @A2 */
   WFLGPRM  = "CSDATA DFP OMVS OVM TME"                        /* @A2 */
+  cmd      = "LG "GROUP" "WFLGPRM                             /* @AN */
+  if erashow = 'YES' then                                     /* @AN */
+     call SHOWCMD                                             /* @AN */
   X        = OUTTRAP("WFREC.")                                /* @A2 */
-  ADDRESS TSO "LG "GROUP" "WFLGPRM                            /* @A2 */
+  ADDRESS TSO cmd                                             /* @AN */
   X        = OUTTRAP("OFF")                                   /* @A2 */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A2 */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A2 */
@@ -479,8 +493,11 @@ LISP:
      mfa_pos = pos('MFA',wfluprm)                             /* @A9 */
      wfluprm = delstr(wfluprm,mfa_pos,4)                      /* @A9 */
   end                                                         /* @A9 */
+  cmd = "LU "ID WFLUPRM                                       /* @AN */
+  if erashow = 'YES' then                                     /* @AN */
+     call SHOWCMD                                             /* @AN */
   X        = OUTTRAP("WFREC.")                                /* @A5 */
-  ADDRESS TSO "LU "ID WFLUPRM                                 /* @A5 */
+  ADDRESS TSO cmd                                             /* @AN */
   X        = OUTTRAP("OFF")                                   /* @A5 */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A5 */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A5 */
@@ -629,13 +646,8 @@ RETURN answer
 EXCMD:
   signal off error
   arg cmd
-  if erashow= 'YES' then do
-     address ISPEXEC
-     'CONTROL NOCMD'
-     'ADDPOP'
-     'DISPLAY PANEL(RACFMSG2)'
-     'REMPOP'
-  end
+  if erashow = 'YES' then                                     /* @AN */
+     call SHOWCMD                                             /* @AN */
   x= OUTTRAP('msg.')
   address TSO ""cmd""
   ret_code=rc
@@ -646,3 +658,12 @@ EXCMD:
   else
      msg_var= 1 to msg.0
 RETURN
+/*--------------------------------------------------------------------*/
+/*  Display RACF command                                          @AN */
+/*--------------------------------------------------------------------*/
+SHOWCMD:                                                      /* @AN */
+  PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @AN */
+  ADDRESS ISPEXEC 'ADDPOP ROW(6) COLUMN(4)'                   /* @AN */
+  ADDRESS ISPEXEC 'DISPLAY PANEL(RACFMSG2)'                   /* @AN */
+  ADDRESS ISPEXEC 'REMPOP'                                    /* @AN */
+RETURN                                                        /* @AN */

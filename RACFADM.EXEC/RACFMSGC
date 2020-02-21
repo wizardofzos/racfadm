@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A3  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A2  200218  RACFA    Condense VGETs into one line                 */
 /* @A1  200119  RACFA    Standardized/reduced lines of code           */
 /* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
@@ -11,6 +12,7 @@
   Arg message
   Signal off error
   address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE) ASIS"      /* @A2 */
+  If eratrace='YES' then Trace r                              /* @A3 */
   address TSO "PROFILE MSGID"
 
   answer= 'NO'

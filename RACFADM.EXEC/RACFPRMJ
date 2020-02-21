@@ -3,11 +3,14 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A3  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A2  200120  TRIDJK   Add multi factor authentication (rcvtsmfa)   */
 /* @A1  200119  RACFA    Standardized/reduced lines of code           */
 /* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
 /*====================================================================*/
   Trace o
+  address ISPEXEC "VGET (ERATRACE) ASIS"                      /* @A3 */
+  If eratrace='YES' then Trace r                              /* @A3 */
   cvt     = c2x(storage(10,4))              /* cvt address            */
   cvtrac$ = d2x((x2d(cvt))+992)             /* cvt + 3E0 = cvtrac $   */
   cvtrac  = c2x(storage(cvtrac$,4))         /* cvtrac = access cntl   */

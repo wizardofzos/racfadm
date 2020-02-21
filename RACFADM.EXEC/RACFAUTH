@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A5  200220  RACFA    Fixed displaying all RACF commands           */
+/* @A4  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A3  200218  RACFA    Condense VGETs into one line                 */
 /* @A2  200120  RACFA    Removed 'say msg.msg_var' in EXCMD procedure */
 /* @A1  200119  RACFA    Standardized/reduced lines of code           */
@@ -11,6 +13,7 @@
   Trace o
   Arg rclass profile user
   address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE) ASIS"      /* @A3 */
+  If eratrace='YES' then Trace r                              /* @A4 */
 
   address TSO "PROFILE MSGID"
   rlv= SYSVAR('SYSLRACF')
@@ -56,17 +59,20 @@ RETURN
 /*  Get profile permits                                               */
 /*--------------------------------------------------------------------*/
 GET_PROF_ACL:
-  flags= 'OFF'
-  audit= ' '
-  owner= ' '
-  uacc = ' '
-  data = ' '
-  warn = ' '
-  acl_ix=0
-  if type= 'DISCRETE' then
-     type= ' '
+  flags   = 'OFF'
+  audit   = ' '
+  owner   = ' '
+  uacc    = ' '
+  data    = ' '
+  warn    = ' '
+  acl_ix  = 0
+  if type = 'DISCRETE' then
+     type = ' '
+  cmd     = "RLIST "RCLASS PROFILE" AUTH"                     /* @A5 */
+  if erashow = 'YES' then                                     /* @A5 */
+     call SHOWCMD                                             /* @A5 */
   x= OUTTRAP('VAR.')
-  address TSO "RLIST "RCLASS PROFILE" AUTH"
+  address TSO cmd                                             /* @A5 */
   x= OUTTRAP('OFF')
   if type= ' ' then
      type= 'DISCRETE'
@@ -129,10 +135,13 @@ RETURN
 GET_USER_GROUP:
   If USER= 'NONE' then
      return
-  flags= 'OFF'
-  grp_ix=0
+  flags  = 'OFF'
+  grp_ix = 0
+  cmd    = "LU "USER                                          /* @A5 */
+  if erashow = 'YES' then                                     /* @A5 */
+     call SHOWCMD                                             /* @A5 */
   x= OUTTRAP('VAR.')
-  address TSO "LU "USER
+  address TSO cmd                                             /* @A5 */
   x= OUTTRAP('OFF')
   Do i= 1 to var.0               /* Scan output */
      temp= var.i
@@ -183,13 +192,8 @@ RETURN
 EXCMD:
   signal off error
   arg cmd
-  if erashow= 'YES' then do
-     address ISPEXEC
-     'CONTROL NOCMD'
-     'ADDPOP'
-     'DISPLAY PANEL(RACFMSG2)'
-     'REMPOP'
-  End
+  if erashow = 'YES' then                                     /* @A5 */
+     call SHOWCMD                                             /* @A5 */
   x= OUTTRAP('msg.')
   address TSO ""cmd""
   ret_code=rc
@@ -201,3 +205,12 @@ EXCMD:
   else
      msg_var= 1 to msg.0
 RETURN
+/*--------------------------------------------------------------------*/
+/*  Display RACF command                                          @A5 */
+/*--------------------------------------------------------------------*/
+SHOWCMD:                                                      /* @A5 */
+  PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @A5 */
+  ADDRESS ISPEXEC 'ADDPOP ROW(6) COLUMN(4)'                   /* @A5 */
+  ADDRESS ISPEXEC 'DISPLAY PANEL(RACFMSG2)'                   /* @A5 */
+  ADDRESS ISPEXEC 'REMPOP'                                    /* @A5 */
+RETURN                                                        /* @A5 */

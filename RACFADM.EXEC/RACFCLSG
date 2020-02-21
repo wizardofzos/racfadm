@@ -3,6 +3,9 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AF  200220  RACFA    Fixed displaying all RACF commands           */
+/* @AE  200220  RACFA    When ERATRACE=YES, then TRACE R, was I       */
+/* @AD  200220  RACFA    Removed initializing ERASINT variable        */
 /* @AC  200220  RACFA    Added capability to browse/edit/view file    */
 /* @AB  200218  RACFA    Use dynamic area to display SELECT commands  */
 /* @AA  200218  RACFA    Added 'Status Interval' option               */
@@ -28,8 +31,7 @@
   Rclass=strip(rclass)
   address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE ERACONF",   /* @AA */
                         "ERASINT ERAADMN ERADISP) ASIS"       /* @AC */
-  IF (ERASINT = "") THEN                                      /* @AA */
-      ERASINT = 1                                             /* @AA */
+  If eratrace='YES' then Trace r                              /* @AE */
   If (ERAADMN = "YES") then                                   /* @AB */
       SELCMDS = "ÝS¨Show,ÝL¨List,ÝC¨Change,ÝA¨Add,ÝR¨Remove"  /* @AB */
   else
@@ -37,7 +39,6 @@
   address TSO "PROFILE MSGID"
   rlv= SYSVAR('SYSLRACF')
   called= SYSVAR('SYSNEST')
-  If eratrace='YES' then Trace i
   If called='YES' & rdisp<>'YES' then
      address ISPEXEC "CONTROL NONDISPL ENTER"
   address ISPEXEC "DISPLAY PANEL(RACFCLS1)"
@@ -51,8 +52,12 @@
   If raclist= 'YES' then do
      msg='You are about to refresh class' rclass 'in RACLIST'
      Sure_?= Confirm_request(msg)
-     if sure_? = 'YES' then
-        address TSO "SETROPTS RACLIST("rclass") REFRESH"
+     if sure_? = 'YES' then do
+        cmd = "SETROPTS RACLIST("rclass") REFRESH"            /* @AF */
+        if erashow = 'YES' then                               /* @AF */
+           call SHOWCMD                                       /* @AF */
+        address TSO cmd                                       /* @AF */
+     end
   end
 RETURN 0
 /*--------------------------------------------------------------------*/
@@ -63,8 +68,11 @@ PROFL:
   tbla= 'TA'ZSCREEN||SECONDS  /* table unique */
   address ISPEXEC "TBCREATE" tbla "KEYS(PROFILE TYPE)",
                   "NAMES(RCLASS DATA) REPLACE NOWRITE"
+  cmd = "SEARCH FILTER("RFILTER") CLASS("rclass")"            /* @AF */
+  if erashow = 'YES' then                                     /* @AF */
+     call SHOWCMD                                             /* @AF */
   x= OUTTRAP('var.')
-  address TSO "SEARCH FILTER("RFILTER") CLASS("rclass")"
+  address TSO cmd                                             /* @AF */
   x= OUTTRAP('OFF')
   g= '(G)'
   Do i=1 to var.0
@@ -395,8 +403,11 @@ RETURN
 /*  Get member list                                                   */
 /*--------------------------------------------------------------------*/
 GETM:
+  cmd = "RLIST "RCLASS PROFILE" AUTH"                         /* @AF */
+  if erashow = 'YES' then                                     /* @AF */
+     call SHOWCMD                                             /* @AF */
   x= OUTTRAP('var.')
-  address TSO "RLIST "RCLASS PROFILE" AUTH"
+  address TSO cmd                                             /* @AF */
   x= OUTTRAP('OFF')
   dism_max=var.0
   rsce_beg=0
@@ -431,8 +442,11 @@ DISD:
     warn = ' '
     if type= 'DISCRETE' then
        type= ' '
+    cmd = "RLIST "RCLASS PROFILE" AUTH"                       /* @AF */
+    if erashow = 'YES' then                                   /* @AF */
+       call SHOWCMD                                           /* @AF */
     x= OUTTRAP('VAR.')
-    address TSO "RLIST "RCLASS PROFILE" AUTH"
+    address TSO cmd                                           /* @AF */
     x= OUTTRAP('OFF')
     if type= ' ' then
        type= 'DISCRETE'
@@ -543,15 +557,18 @@ RETURN
 /*  Get RLIST info                                                    */
 /*--------------------------------------------------------------------*/
 GETD:
-  flags= 'OFF'
-  owner= ' '
-  uacc = ' '
-  audit= ' '
-  data = ' '
-  warn = ' '
+  flags  = 'OFF'
+  owner  = ' '
+  uacc   = ' '
+  audit  = ' '
+  data   = ' '
+  warn   = ' '
   memcls = ' '
+  cmd    = "RLIST "RCLASS PROFILE                             /* @AF */
+  if erashow = 'YES' then                                     /* @AF */
+     call SHOWCMD                                             /* @AF */
   x= OUTTRAP('getd_var.')
-  address TSO "RLIST "RCLASS PROFILE
+  address TSO cmd                                             /* @AF */
   x= OUTTRAP('OFF')
   Do getd_i= 1 to getd_var.0 while (flags<> 'OUT') /* Scan output */
      getd_temp= getd_var.getd_i
@@ -629,9 +646,12 @@ RETURN
 /*  Display userid                                                    */
 /*--------------------------------------------------------------------*/
 DISP:
-  x= msg('OFF')
+  x   = msg('OFF')
+  cmd = "LU "id                                               /* @AF */
+  if erashow = 'YES' then                                     /* @AF */
+     call SHOWCMD                                             /* @AF */
   x= OUTTRAP('trash.')
-  address TSO "LU "id
+  address TSO cmd                                             /* @AF */
   ret_code=rc
   x= OUTTRAP('OFF')
   x= msg('ON')
@@ -759,13 +779,8 @@ RETURN answer
 EXCMD:
   signal off error
   arg cmd
-  if erashow= 'YES' then do
-     address ISPEXEC
-     'CONTROL NOCMD'
-     'ADDPOP'
-     'DISPLAY PANEL(RACFMSG2)'
-     'REMPOP'
-  end
+  if erashow = 'YES' then                                     /* @AF */
+     call SHOWCMD                                             /* @AF */
   x= OUTTRAP('msg.')
   address TSO ""cmd""
   ret_code=rc
@@ -789,8 +804,11 @@ LISD:                                                         /* @A1 */
      mfa_pos = pos('MFA',wfluprm)                             /* @A6 */
      wfluprm = delstr(wfluprm,mfa_pos,4)                      /* @A6 */
   end                                                         /* @A6 */
+  cmd      = "RLIST "RCLASS PROFILE" AUTH"                    /* @AF */
+  if erashow = 'YES' then                                     /* @AF */
+     call SHOWCMD                                             /* @AF */
   X        = OUTTRAP("WFREC.")                                /* @A1 */
-  ADDRESS TSO "RLIST "RCLASS PROFILE" AUTH"                   /* @A1 */
+  ADDRESS TSO cmd                                             /* @AF */
   X        = OUTTRAP("OFF")                                   /* @A1 */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A1 */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A1 */
@@ -842,12 +860,18 @@ RETURN 0                                                      /* @A6 */
 LISP:                                                         /* @A2 */
   WFDD     = "ERA"RANDOM(0,99999)                             /* @A2 */
   WFLGPRM  = "CSDATA DFP OMVS OVM TME"                        /* @A2 */
+  cmd      = "LG "ID WFLGPRM                                  /* @AF */
+  if erashow = 'YES' then                                     /* @AF */
+     call SHOWCMD                                             /* @AF */
   X        = OUTTRAP("WFREC.")                                /* @A2 */
-  ADDRESS TSO "LG "ID WFLGPRM                                 /* @A2 */
+  ADDRESS TSO cmd                                             /* @AF */
   lrc = rc                                                    /* @A8 */
   if lrc = 4 then do                                          /* @A8 */
      wfrec.1 = ' '                                            /* @A8 */
-     ADDRESS TSO "LU "ID                                      /* @A8 */
+     CMD = "LU "ID                                            /* @AF */
+     if erashow = 'YES' then                                  /* @AF */
+        call SHOWCMD                                          /* @AF */
+     ADDRESS TSO cmd                                          /* @AF */
      lrc = rc                                                 /* @A8 */
   end                                                         /* @A8 */
   X        = OUTTRAP("OFF")                                   /* @A2 */
@@ -871,3 +895,12 @@ LISP:                                                         /* @A2 */
   else                                                        /* @A2 */
      CALL emsg "ERR10"   /* Generic failure */                /* @A2 */
 RETURN                                                        /* @A2 */
+/*--------------------------------------------------------------------*/
+/*  Display RACF command                                          @AF */
+/*--------------------------------------------------------------------*/
+SHOWCMD:                                                      /* @AF */
+  PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @AF */
+  ADDRESS ISPEXEC 'ADDPOP ROW(6) COLUMN(4)'                   /* @AF */
+  ADDRESS ISPEXEC 'DISPLAY PANEL(RACFMSG2)'                   /* @AF */
+  ADDRESS ISPEXEC 'REMPOP'                                    /* @AF */
+RETURN                                                        /* @AF */

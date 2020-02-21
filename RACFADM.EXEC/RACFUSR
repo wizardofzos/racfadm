@@ -3,6 +3,9 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BB  200220  RACFA    Fixed displaying all RACF commands           */
+/* @BA  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
+/* @B9  200220  RACFA    Removed initializing ERASINT variable        */
 /* @B8  200220  RACFA    Removed SE (Search) when general user (USR3) */
 /* @B7  200220  RACFA    Added capability to browse/edit/view file    */
 /* @B6  200220  RACFA    Removed SE (Search) from panel RACFUSR3      */
@@ -58,8 +61,7 @@
   address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE ERAMCAT",   /* @AZ */
                         "ERAULIB ERAADMN ERASINT ERADISP",    /* @B7 */
                         "ASIS"                                /* @B7 */
-  IF (ERASINT = "") THEN                                      /* @AZ */
-      ERASINT = 1                                             /* @AZ */
+  If eratrace='YES' then Trace r                              /* @BA */
   If (ERAADMN = "YES") then do                                /* @B2 */
       SELCMDS2 = "ÝS¨Show,ÝSE¨Search,ÝL¨List,ÝC¨Chg,"||,      /* @B4 */
                  "ÝA¨Add,ÝR¨Remove,ÝRS¨Reset,ÝRV¨Revoke"      /* @B4 */
@@ -90,15 +92,18 @@ EXIT
 /*  Show all profiles for a filter                                    */
 /*--------------------------------------------------------------------*/
 PROFL:
-  action = ''
+  action  = ''
   seconds = TIME('S')
-  tbla= 'TA'ZSCREEN||SECONDS  /* table name unique */
+  tbla    = 'TA'ZSCREEN||SECONDS  /* table name unique */
   address ISPEXEC "TBCREATE" tbla ,
   "KEYS(USER) NAMES(ACTION NAME OWNER DEFGRP DATELGN",        /* @AB */
                    "REVOKED ATTR TSOUSER DATA ATTR2)",        /* @AB */
                    "REPLACE NOWRITE"                          /* @AB */
+  cmd = "SEARCH FILTER("RFILTER") CLASS("rclass")"            /* @BB */
+  if erashow = 'YES' then                                     /* @BB */
+     call SHOWCMD                                             /* @BB */
   x= OUTTRAP('var.')
-  address TSO "SEARCH FILTER("RFILTER") CLASS("rclass")"
+  address TSO cmd                                             /* @BB */
   x= OUTTRAP('OFF')
   g= '(G)'
   Do i=1 to var.0
@@ -226,15 +231,15 @@ PROFL:
      ZCMD = "";PARM = ""                                      /* @A5 */
      opta= translate(opta) /* upper case */
      Select
-        when opta= 'A' then call Addd
-        when opta= 'C' then call Chgd
-        when opta= 'S' then call Disd
+        when opta= 'A'  then call Addd
+        when opta= 'C'  then call Chgd
+        when opta= 'S'  then call Disd
         when opta= 'SE' then
              if revoked<>'YES' then call RACFCLSS user
              else call RACFMSGS 'ERR12' /* user revoked */
-        when opta= 'R' then call Deld
+        when opta= 'R'  then call Deld
         when opta= 'RS' then call Resd
-        when opta= 'L' then call Lisd
+        when opta= 'L'  then call Lisd
         when opta= 'RV' then call Revd
         when opta= 'XR' then call Xrefd                       /* @AL */
         otherwise nop
@@ -246,15 +251,15 @@ PROFL:
         address ISPEXEC "CONTROL DISPLAY SAVE"
         opta= translate(opta) /* upper case it */
         Select
-           when opta= 'A' then call Addd
-           when opta= 'C' then call Chgd
-           when opta= 'S' then call Disd
+           when opta= 'A'  then call Addd
+           when opta= 'C'  then call Chgd
+           when opta= 'S'  then call Disd
            when opta= 'SE' then
                 if revoked<>'YES' then call RACFCLSS user
                 else call RACFMSGS 'ERR12' /* user revoked */
-           when opta= 'R' then call Deld
+           when opta= 'R'  then call Deld
            when opta= 'RS' then call Resd
-           when opta= 'L' then call Lisd
+           when opta= 'L'  then call Lisd
            when opta= 'RV' then call Revd
            when opta= 'XR' then call Xrefd                    /* @AL */
            otherwise nop
@@ -390,8 +395,11 @@ LISD:
      mfa_pos = pos('MFA',wfluprm)                             /* @AJ */
      wfluprm = delstr(wfluprm,mfa_pos,4)                      /* @AJ */
   end                                                         /* @AJ */
+  cmd = "LU "USER WFLUPRM                                     /* @BB */
+  if erashow = 'YES' then                                     /* @BB */
+     call SHOWCMD                                             /* @BB */
   X        = OUTTRAP("WFREC.")                                /* @A2 */
-  ADDRESS TSO "LU "USER WFLUPRM                               /* @A2 */
+  ADDRESS TSO cmd                                             /* @BB */
   X        = OUTTRAP("OFF")                                   /* @A2 */
   if user = 'irrcerta' then do                                /* @AP */
     wfrec. = ''                                               /* @AP */
@@ -429,7 +437,6 @@ LISD:
   END                                                         /* @B7 */
   ADDRESS TSO "FREE FI("WFDD")"                               /* @A2 */
   DROP WFREC. WFDD WFLUPRM                                    /* @A2 */
-  /* address TSO "LU "user" TSO" */                           /* @A1 */
   if rc=0 then
      address ISPEXEC "TBMOD" TBLA
   else
@@ -466,8 +473,11 @@ LISP:
   action='*Listed'                                            /* @AC */
   WFDD     = "ERA"RANDOM(0,99999)                             /* @AC */
   WFLGPRM  = "CSDATA DFP OMVS OVM TME"                        /* @AC */
+  cmd      = "LG "ID" "WFLGPRM                                /* @BB */
+  if erashow = 'YES' then                                     /* @BB */
+     call SHOWCMD                                             /* @BB */
   X        = OUTTRAP("WFREC.")                                /* @AC */
-  ADDRESS TSO "LG "ID" "WFLGPRM                               /* @AC */
+  ADDRESS TSO cmd                                             /* @BB */
   X        = OUTTRAP("OFF")                                   /* @AC */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @AC */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @AC */
@@ -594,10 +604,13 @@ DISD:
      tblb= 'TB'ZSCREEN||SECONDS  /* table name unique */
      address ISPEXEC "TBCREATE" TBLB "KEYS(ID) NAMES(ACC)",
                      "REPLACE NOWRITE"
-     flags= 'OFF'
-     uacc = ' '
+     flags = 'OFF'
+     uacc  = ' '
+     cmd   = "LU "USER                                        /* @BB */
+     if erashow = 'YES' then                                  /* @BB */
+        call SHOWCMD                                          /* @BB */
      x= OUTTRAP('VAR.')
-     address TSO "LU "USER
+     address TSO cmd                                          /* @BB */
      x= OUTTRAP('OFF')
      Do i= 1 to var.0  /* Scan output */
         temp= var.i
@@ -658,22 +671,24 @@ RETURN
 /*  Get user info to initialize add or change option                  */
 /*--------------------------------------------------------------------*/
 GETD:
-  owner= ' '
-  name = ' '
-  defgrp = ' '
-  data   = ' '
-  datecre= ' '
-  datelgn= ' '
-  datepass= ' '
-  intpass= ' '
-  revoked = ' '
-  attr=''
-  tsouser=''
-
-  x= OUTTRAP('details.')
-  address TSO "LU "USER" TSO"
-  x= OUTTRAP('OFF')
-  getd_max=details.0
+  owner    = ' '
+  name     = ' '
+  defgrp   = ' '
+  data     = ' '
+  datecre  = ' '
+  datelgn  = ' '
+  datepass = ' '
+  intpass  = ' '
+  revoked  = ' '
+  attr     =''
+  tsouser  =''
+  cmd      = "LU "USER" TSO"                                  /* @BB */
+  if erashow = 'YES' then                                     /* @BB */
+     call SHOWCMD                                             /* @BB */
+  x        = OUTTRAP('details.')
+  address TSO cmd                                             /* @BB */
+  x        = OUTTRAP('OFF')
+  getd_max = details.0
 
   if user = 'irrcerta' then do                                /* @AP */
     details.1 = irrcerta.1                                    /* @AP */
@@ -818,13 +833,8 @@ RETURN
 EXCMD:
   signal off error
   arg cmd
-  if erashow= 'YES' then do
-     address ISPEXEC
-     'CONTROL NOCMD'
-     'ADDPOP'
-     'DISPLAY PANEL(RACFMSG2)'
-     'REMPOP'
-  end
+  if erashow = 'YES' then                                     /* @BB */
+     call SHOWCMD                                             /* @BB */
   x= OUTTRAP('msg.')
   address TSO ""cmd""
   ret_code=rc
@@ -864,3 +874,12 @@ DIGITAL_CERTS:                                                /* @AP */
   irrsitec.3 = ' ATTRIBUTES=REVOKED'                          /* @AP */
   irrsitec.6 = ' LAST-ACCESS=UNKNOWN'                         /* @AP */
 RETURN                                                        /* @AP */
+/*--------------------------------------------------------------------*/
+/*  Display RACF command                                          @BB */
+/*--------------------------------------------------------------------*/
+SHOWCMD:                                                      /* @BB */
+  PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @BB */
+  ADDRESS ISPEXEC 'ADDPOP ROW(6) COLUMN(4)'                   /* @BB */
+  ADDRESS ISPEXEC 'DISPLAY PANEL(RACFMSG2)'                   /* @BB */
+  ADDRESS ISPEXEC 'REMPOP'                                    /* @BB */
+RETURN                                                        /* @BB */

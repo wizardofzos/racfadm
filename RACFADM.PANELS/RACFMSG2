@@ -2,10 +2,14 @@
   $ TYPE(OUTPUT) INTENS(LOW)  JUST(LEFT) COLOR(TURQ) CAPS(OFF)
   _ TYPE(INPUT)  INTENS(HIGH) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
   + TYPE(TEXT)   INTENS(LOW)  SKIP(ON)   COLOR(GREEN)
-)BODY WINDOW(60,3)
-$cmd
+)BODY WINDOW(64,7) EXPAND(\\)
+%Command ===>_ZCMD
 
-+Press%ENTER+to continue
+ $msg1
+ $msg2
+ $msg3
+
++\ \+Press%ENTER+to continue\ \
 )INIT
 )PROC
 )END

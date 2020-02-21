@@ -16,6 +16,20 @@
 %T !Tutorial  +Help
 %X !Exit      +Terminate
 )INIT
+  VGET (ERAADMN ERACONF ERASINT ERADISP ERASHOW ERATRACE) PROFILE
+  IF (&ERAADMN  = &Z)
+      &ERAADMN  = 'NO'
+  IF (&ERACONF  = &Z)
+      &ERACONF  = 'YES'
+  IF (&ERASINT  = &Z)
+      &ERASINT  = '1'
+  IF (&ERADISP  = &Z)
+      &ERADISP  = 'VIEW'
+  IF (&ERASHOW  = &Z)
+      &ERASHOW  = 'NO'
+  IF (&ERATRACE = &Z)
+      &ERATRACE = 'NO'
+  VPUT (ERAADMN ERACONF ERASINT ERADISP ERASHOW ERATRACE) PROFILE
   .CURSOR = ZCMD
   .HELP   = #RACMENU
 )PROC

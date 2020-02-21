@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A6  200220  RACFA    Fixed displaying all RACF commands           */
+/* @A5  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A4  200218  RACFA    Condense VGETs into one line                 */
 /* @A3  200120  RACFA    Removed 'say msg.msg_var' in EXCMD procedure */
 /* @A2  200119  RACFA    Standardized/reduced lines of code           */
@@ -12,6 +14,7 @@
   Trace o
   Arg class
   address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE) ASIS"      /* @A4 */
+  If eratrace='YES' then Trace r                              /* @A5 */
 
   address TSO "PROFILE MSGID"
   rlv= SYSVAR('SYSLRACF')
@@ -36,9 +39,12 @@ RETURN
 /*  Display profile permits                                           */
 /*--------------------------------------------------------------------*/
 GET_ACT_CLASS:
-  Scan='OFF'
+  Scan = 'OFF'
+  cmd  = "SETROPTS LIST"                                      /* @A6 */
+  if erashow = 'YES' then                                     /* @A6 */
+     call SHOWCMD                                             /* @A6 */
   x= OUTTRAP('var.')
-  address TSO "SETROPTS LIST"
+  address TSO cmd                                             /* @A6 */
   x= OUTTRAP('OFF')
   Do i= 1 to var.0         /* Scan output */
      temp= var.i
@@ -148,13 +154,8 @@ RETURN
 EXCMD:
   signal off error
   arg cmd
-  if erashow= 'YES' then do
-     address ISPEXEC
-     'CONTROL NOCMD'
-     'ADDPOP'
-     'DISPLAY PANEL(RACFMSG2)'
-     'REMPOP'
-  end
+  if erashow = 'YES' then                                     /* @A6 */
+     call SHOWCMD                                             /* @A6 */
   x= OUTTRAP('msg.')
   address TSO ""cmd""
   ret_code=rc
@@ -165,3 +166,12 @@ EXCMD:
   else
      msg_var= 1 to msg.0                                      /* @A3 */
 RETURN
+/*--------------------------------------------------------------------*/
+/*  Display RACF command                                          @A6 */
+/*--------------------------------------------------------------------*/
+SHOWCMD:                                                      /* @A6 */
+  PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @A6 */
+  ADDRESS ISPEXEC 'ADDPOP ROW(6) COLUMN(4)'                   /* @A6 */
+  ADDRESS ISPEXEC 'DISPLAY PANEL(RACFMSG2)'                   /* @A6 */
+  ADDRESS ISPEXEC 'REMPOP'                                    /* @A6 */
+RETURN                                                        /* @A6 */

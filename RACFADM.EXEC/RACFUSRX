@@ -3,9 +3,12 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A1  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A0  200123  TRIDJK   Created REXX program                         */
 /*====================================================================*/
   Trace o
+  address ISPEXEC "VGET (ERATRACE) ASIS"                      /* @A1 */
+  If eratrace='YES' then Trace r                              /* @A1 */
   /*--------------------------------------------*/
   /*  Call IRRUT100 for cross reference report  */
   /*--------------------------------------------*/

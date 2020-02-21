@@ -3,11 +3,13 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A2  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A1  200220  RACFA    Added capability to browse/edit/view file    */
 /* @A0  200218  RACFA    Created REXX                                 */
 /*====================================================================*/
   trace o
-  ADDRESS ISPEXEC "VGET (ERADISP)"                            /* @A1 */
+  ADDRESS ISPEXEC "VGET (ERADISP ERATRACE) ASIS"              /* @A2 */
+  If eratrace='YES' then Trace r                              /* @A2 */
   ADDRESS ISPEXEC "QLIBDEF ISPPLIB TYPE(DATASET) ID(DSNAME)"
   DSNAME = "'"STRIP(DSNAME,,"'")"($CHANGES)'"
   SELECT                                                      /* @A1 */

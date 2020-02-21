@@ -3,6 +3,9 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AI  200220  RACFA    Fixed displaying all RACF commands           */
+/* @AH  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
+/* @AG  200220  RACFA    Removed initializing ERASINT variable        */
 /* @AF  200220  RACFA    Added capability to browse/edit/view file    */
 /* @AE  200218  RACFA    Use dynamic area to display SELECT commands  */
 /* @AD  200218  RACFA    Added 'Status Interval' option               */
@@ -24,8 +27,7 @@
   Rclass ='DATASET'
   address ISPEXEC "VGET (ZSCREEN ERASHOW ERATRACE ERAFLTR",   /* @AD */
                         "ERAADMN ERASINT ERADISP) ASIS"       /* @AF */
-  IF (ERASINT = "") THEN                                      /* @AD */
-      ERASINT = 1                                             /* @AD */
+  If eratrace='YES' then Trace r                              /* @AH */
   If (ERAADMN = "YES") then                                   /* @B2 */
       SELCMDS = "ÝS¨Show,ÝL¨List,ÝC¨Change,ÝA¨Add,"||,        /* @AE */
                 "ÝR¨Remove"                                   /* @AE */
@@ -55,8 +57,11 @@ PROFL:
   tbla= 'RCFDA'ZSCREEN
   address ISPEXEC "TBCREATE" tbla "KEYS(DATASET TYPE)",
                   "REPLACE NOWRITE"
+  cmd = "SEARCH FILTER("RFILTER") CLASS(DATASET)"             /* @AI */
+  if erashow = 'YES' then                                     /* @AI */
+     call SHOWCMD                                             /* @AI */
   x= OUTTRAP('var.')
-  address TSO "SEARCH FILTER("RFILTER") CLASS(DATASET)"
+  address TSO cmd                                             /* @AI */
   x= OUTTRAP('OFF')
   g= '(G)'
   Do i=1 to var.0
@@ -297,16 +302,19 @@ DISD:
      tblb= 'RCFDB'ZSCREEN  /* make table unique    */
      address ISPEXEC "TBCREATE" TBLB "KEYS(ID) NAMES(ACC)",
                      "REPLACE NOWRITE"
-     flags= 'OFF'
-     audit= ' '
-     owner= ' '
-     warn = ' '
-     uacc = ' '
-     data = ' '
-     if type= 'DISCRETE' then
-        type= ' '
+     flags = 'OFF'
+     audit = ' '
+     owner = ' '
+     warn  = ' '
+     uacc  = ' '
+     data  = ' '
+     if type = 'DISCRETE' then
+        type = ' '
+     cmd = "LISTDSD DA('"DATASET"') AUTH"                     /* @AI */
+     if erashow = 'YES' then                                  /* @AI */
+        call SHOWCMD                                          /* @AI */
      x= OUTTRAP('VAR.')
-     address TSO "LISTDSD DA('"DATASET"') AUTH"
+     address TSO cmd                                          /* @AI */
      x= OUTTRAP('OFF')
      if type= ' ' then
         type= 'DISCRETE'
@@ -418,8 +426,11 @@ GETD:
   uacc = ' '
   audit= ' '
   data = ' '
+  cmd  = "LISTDSD DA('"DATASET"')"                            /* @AI */
+  if erashow = 'YES' then                                     /* @AI */
+     call SHOWCMD                                             /* @AI */
   x= OUTTRAP('VAR.')
-  address TSO "LISTDSD DA('"DATASET"')"
+  address TSO cmd                                             /* @AI */
   x= OUTTRAP('OFF')
   Do i= 1 to var.0 while (flags<> 'OUT') /* Scan output */
      temp= var.i
@@ -576,9 +587,12 @@ RETURN
 /*  Display userid                                                    */
 /*--------------------------------------------------------------------*/
 DISP:
-  x= msg('OFF')
+  x   = msg('OFF')
+  cmd = "LU "id                                               /* @AI */
+  if erashow = 'YES' then                                     /* @AI */
+     call SHOWCMD                                             /* @AI */
   x= OUTTRAP('trash.')
-  address TSO "LU "id
+  address TSO cmd                                             /* @AI */
   ret_code=rc
   x= OUTTRAP('OFF')
   x= msg('ON')
@@ -613,13 +627,8 @@ RETURN answer
 EXCMD:
   signal off error
   arg cmd
-  if erashow= 'YES' then do
-     address ISPEXEC
-     'CONTROL NOCMD'
-     'ADDPOP'
-     'DISPLAY PANEL(RACFMSG2)'
-     'REMPOP'
-  end
+  if erashow = 'YES' then                                     /* @AI */
+     call SHOWCMD                                             /* @AI */
   x= OUTTRAP('msg.')
   address TSO ""cmd""
   ret_code=rc
@@ -636,8 +645,11 @@ RETURN
 LISD:                                                         /* @A1 */
   WFDD     = "ERA"RANDOM(0,99999)                             /* @A1 */
   WFLDPRM  = "ALL"                                            /* @A1 */
+  CMD      = "LISTDSD DATASET("DATASET")" WFLDPRM             /* @AI */
+  if erashow = 'YES' then                                     /* @AI */
+     call SHOWCMD                                             /* @AI */
   X        = OUTTRAP("WFREC.")                                /* @A1 */
-  ADDRESS TSO "LISTDSD DATASET("DATASET")" WFLDPRM            /* @A1 */
+  ADDRESS TSO cmd                                             /* @AI */
   X        = OUTTRAP("OFF")                                   /* @A1 */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A1 */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A1 */
@@ -665,12 +677,18 @@ RETURN                                                        /* @A1 */
 LISP:                                                         /* @A5 */
   WFDD     = "ERA"RANDOM(0,99999)                             /* @A5 */
   WFLGPRM  = "CSDATA DFP OMVS OVM TME"                        /* @A5 */
+  CMD      = "LG "ID WFLGPRM                                  /* @AI */
+  if erashow = 'YES' then                                     /* @AI */
+     call SHOWCMD                                             /* @AI */
   X        = OUTTRAP("WFREC.")                                /* @A5 */
-  ADDRESS TSO "LG "ID WFLGPRM                                 /* @A5 */
+  ADDRESS TSO cmd                                             /* @AI */
   lrc = rc                                                    /* @AB */
   if lrc = 4 then do                                          /* @AB */
      wfrec.1 = ' '                                            /* @AB */
-     ADDRESS TSO "LU "ID                                      /* @AB */
+     CMD = "LU "ID                                            /* @AI */
+     if erashow = 'YES' then                                  /* @AI */
+        call SHOWCMD                                          /* @AI */
+     ADDRESS TSO cmd                                          /* @AI */
      lrc = rc                                                 /* @AB */
   end                                                         /* @AB */
   X        = OUTTRAP("OFF")                                   /* @A5 */
@@ -694,3 +712,12 @@ LISP:                                                         /* @A5 */
   else                                                        /* @A5 */
      CALL emsg "ERR10"   /* Generic failure */                /* @A5 */
 RETURN                                                        /* @A5 */
+/*--------------------------------------------------------------------*/
+/*  Display RACF command                                          @AI */
+/*--------------------------------------------------------------------*/
+SHOWCMD:                                                      /* @AI */
+  PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @AI */
+  ADDRESS ISPEXEC 'ADDPOP ROW(6) COLUMN(4)'                   /* @AI */
+  ADDRESS ISPEXEC 'DISPLAY PANEL(RACFMSG2)'                   /* @AI */
+  ADDRESS ISPEXEC 'REMPOP'                                    /* @AI */
+RETURN                                                        /* @AI */

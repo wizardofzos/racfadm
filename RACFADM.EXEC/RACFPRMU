@@ -3,7 +3,10 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A1  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A0  200123  RACFA    Created REXX                                 */
 /*====================================================================*/
 ADDRESS ISPEXEC
+  address ISPEXEC "VGET (ERATRACE) ASIS"                      /* @A1 */
+  If eratrace='YES' then Trace r                              /* @A1 */
   "Display Panel(RACFPRMU)"
