@@ -7,17 +7,19 @@
  $DIR      Directory      Document members
  RACFADM   Software       Dynamically allocate and invoke software
  RACFAUTH  Authorization  Extract authorization on a given profile
+ RACFCHGE  Changes        Edit/view edit macro
+ RACFCHGS  Changes        Version/updates, menu option C
  RACFCLSG  Class          Extract generic class profiles
- RACFCLSR  Class          Display class profiles
+ RACFCLSR  Class          Display class profiles, menu option 4
  RACFCLSS  Class          Search and display classes
  RACFDSN   Dataset        Display dataset profiles
- RACFGRP   Group          Display group profiles
+ RACFGRP   Group          Display group profiles, menu option 2
  RACFMSGC  Message        Display 'Confirm Request' panel
  RACFMSGS  Message        Display error message
- RACFPRMJ  Parameter      Display RACF parameters
- RACFPRMU  Parameter      Display settings (Customize options)
+ RACFPRMJ  Parameter      Display RACF parameters, menu option 5
+ RACFPRMU  Parameter      Customize settings, menu option 0
  RACFTSO   TSO            Create TSO alias and files
- RACFUSR   User           Display userid profiles
+ RACFUSR   User           Display userid profiles, menu option 1
  RACFUSRT  User           Add, delete and change TSO userid
  RACFUSRX  User           Userid cross reference report (line cmd XR)
 

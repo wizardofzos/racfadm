@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A7  200221  RACFA    Get ERASHOW, to display RACF cmds            */
 /* @A6  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @A5  200220  RACFA    Fixed displaying all RACF commands           */
 /* @A4  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
@@ -14,7 +15,7 @@
 ADDRESS ISPEXEC                                               /* @A6 */
   Arg user
   selection = 0  /* something selected */
-  "VGET (ZSCREEN ERATRACE) ASIS"                              /* @A4 */
+  "VGET (ZSCREEN ERATRACE ERASHOW) ASIS"                      /* @A7 */
   If (eratrace = 'YES') then Trace r                          /* @A4 */
   address TSO "PROFILE MSGID"
   address TSO "PROFILE PREF("USERID()")"

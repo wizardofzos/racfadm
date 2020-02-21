@@ -189,45 +189,45 @@ PROFL:
      lparm  = ""                                              /* @A7 */
      xtdtop = ztdtop                                          /* @AS */
      Select
-       WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO              /* @AS */
-            fld_sort = 'USER,C,A'                             /* @A5 */
-            xtdtop   = 1                                      /* @AS */
-       END                                                    /* @AS */
-       WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO               /* @AT */
-            xtdtop   = 1                                      /* @AT */
-            if (seq = 'A') | (seq = 'D') then                 /* @AU */
-               nop                                            /* @AU */
-            else                                              /* @AU */
-               seq = 'A'                                      /* @AU */
-            SELECT                                            /* @A5 */
-               when (PARM = 'RESET')   then                   /* @A5 */
-                    fld_sort = ''                             /* @AQ */
-               when (PARM = 'SURNAME') then                   /* @A5 */
-                    fld_sort = 'NAME,C,'seq                   /* @AQ */
-               when (PARM = 'NAME')    then                   /* @A5 */
-                    fld_sort = 'NAME,C,'seq                   /* @AQ */
-               when (PARM = 'LOGON')   then                   /* @A5 */
-                    fld_sort = 'DATELGN,C,'seq                /* @AQ */
-               when (PARM = 'GROUP')   then                   /* @A5 */
-                    fld_sort = 'DEFGRP,C,'seq                 /* @AQ */
-               when (PARM = 'REV')     then                   /* @A5 */
-                    fld_sort = 'REVOKED,C,'seq                /* @AQ */
-               when (PARM = 'USERID')  then                   /* @A5 */
-                    fld_sort = 'USER,C,'seq                   /* @AQ */
-               when (PARM = 'OWNER')   then                   /* @A5 */
-                    fld_sort = 'OWNER,C,'seq                  /* @AQ */
-               when (PARM = 'ATTR')    then                   /* @A5 */
-                    fld_sort = 'ATTR,C,'seq                   /* @AQ */
-               when (PARM = 'ATT')     then                   /* @A5 */
-                    fld_sort = 'ATTR,C,'seq                   /* @AQ */
-               when (PARM = 'TSO')     then                   /* @A5 */
-                    fld_sort = 'TSOUSER,C,'seq                /* @AQ */
-               otherwise NOP                                  /* @A5 */
-            END                                               /* @A5 */
-       END                                                    /* @AT */
-       WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN                /* @A5 */
-            lparm = parm                                      /* @A5 */
-       otherwise lparm = ''
+        WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO             /* @AS */
+             fld_sort = 'USER,C,A'                            /* @A5 */
+             xtdtop   = 1                                     /* @AS */
+        END                                                   /* @AS */
+        WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO              /* @AT */
+             xtdtop   = 1                                     /* @AT */
+             if (seq = 'A') | (seq = 'D') then                /* @AU */
+                nop                                           /* @AU */
+             else                                             /* @AU */
+                seq = 'A'                                     /* @AU */
+             SELECT                                           /* @A5 */
+                when (PARM = 'RESET')   then                  /* @A5 */
+                     fld_sort = ''                            /* @AQ */
+                when (PARM = 'SURNAME') then                  /* @A5 */
+                     fld_sort = 'NAME,C,'seq                  /* @AQ */
+                when (PARM = 'NAME')    then                  /* @A5 */
+                     fld_sort = 'NAME,C,'seq                  /* @AQ */
+                when (PARM = 'LOGON')   then                  /* @A5 */
+                     fld_sort = 'DATELGN,C,'seq               /* @AQ */
+                when (PARM = 'GROUP')   then                  /* @A5 */
+                     fld_sort = 'DEFGRP,C,'seq                /* @AQ */
+                when (PARM = 'REV')     then                  /* @A5 */
+                     fld_sort = 'REVOKED,C,'seq               /* @AQ */
+                when (PARM = 'USERID')  then                  /* @A5 */
+                     fld_sort = 'USER,C,'seq                  /* @AQ */
+                when (PARM = 'OWNER')   then                  /* @A5 */
+                     fld_sort = 'OWNER,C,'seq                 /* @AQ */
+                when (PARM = 'ATTR')    then                  /* @A5 */
+                     fld_sort = 'ATTR,C,'seq                  /* @AQ */
+                when (PARM = 'ATT')     then                  /* @A5 */
+                     fld_sort = 'ATTR,C,'seq                  /* @AQ */
+                when (PARM = 'TSO')     then                  /* @A5 */
+                     fld_sort = 'TSOUSER,C,'seq               /* @AQ */
+                otherwise NOP                                 /* @A5 */
+             END                                              /* @A5 */
+        END                                                   /* @AT */
+        WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @A5 */
+             lparm = parm                                     /* @A5 */
+        otherwise lparm = ''
      End /* Select */
      ZCMD = ""; PARM = ""                                     /* @A5 */
      opta = translate(opta) /* upper case */

@@ -2,6 +2,13 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  21 Feb 2020 - V4R0
+     - Other Items
+       * Standardized code
+       * Updated $DIR members
+       * Fixed displaying RACF cmds when executing the line command
+         'SE'earch
+
   21 Feb 2020 - V3R9
      - Menu Option 1 (User)
        * After SEarching on a userid, place '*Search' message to the
