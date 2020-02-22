@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AQ  200221  RACFA    Removed "G = '(G)'", not referenced          */
+/* @AP  200221  LBDYCK   Add ONLY primary command                     */
 /* @AO  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @AN  200220  RACFA    Fixed displaying all RACF commands           */
 /* @AM  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
@@ -61,69 +63,7 @@ EXIT
 /*  Show all profiles for a filter                                    */
 /*--------------------------------------------------------------------*/
 PROFL:
-  seconds = TIME('S')
-  tbla    = 'TA'ZSCREEN||SECONDS  /* table name unique */
-  "TBCREATE" tbla "KEYS(GROUP) NAMES(DATA) REPLACE NOWRITE"
-  cmd = "SEARCH FILTER("RFILTER") CLASS("rclass")"            /* @AN */
-  if (erashow = 'YES') then                                   /* @AN */
-     call SHOWCMD                                             /* @AN */
-  x = OUTTRAP('var.')
-  address TSO cmd                                             /* @AN */
-  x = OUTTRAP('OFF')
-  g = '(G)'
-  Do i = 1 to var.0
-     temp  = var.i
-     group = SUBWORD(temp,1,1)
-     msgr  = SUBWORD(temp,1,1)
-     Select
-        when (msgr = 'ICH31005I') then
-             group = 'NONE'       /* No groups  */
-        when (msgr = 'ICH31009I') then do
-             group = 'INVALID'    /* Bad filter */
-             call Emsg 'ERR08'
-        end
-        when (msgr = 'ICH31012I') then do
-             group = 'INVALID'    /* Bad filter */
-             call Emsg 'ERR08'
-        end
-        when (msgr = 'ICH31014I') then do
-             group = 'INVALID'    /* Bad filter */
-             call Emsg 'ERR08'
-        end
-        when (msgr = 'ICH31016I') then do
-             group = 'INVALID'    /* Bad filter */
-             call Emsg 'ERR08'
-        end
-        when (msgr = 'ICH31017I') then do
-             group = 'INVALID'    /* Bad filter */
-             call Emsg 'ERR08'
-        end
-        when (msgr = 'ICH31018I') then do
-             group = 'INVALID'    /* Bad filter */
-             call Emsg 'ERR08'
-        end
-        when (msgr = 'IKJ56716I') then do
-             group = 'INVALID'    /* Bad filter */
-             call Emsg 'ERR08'
-        end
-        when (substr(msgr,1,6) = 'ICH310') then
-             call Emsg 'ERR09'
-        otherwise nop
-     End  /* Select */
-     /*---------------------------------------------*/
-     /* Display number of records retrieved        -*/
-     /*---------------------------------------------*/
-     IF (ERASINT <> 0) THEN DO     /* Status interval */      /* @AI */
-        IF (I//ERASINT = 0) THEN DO                           /* @AI */
-           n1 = i; n2 = var.0
-           "control display lock"
-           "display msg(RACF014)"
-        END                                                   /* @AI */
-     END                                                      /* @AI */
-     /* Get further information */
-     Call GETD
-     "TBMOD" tbla
-  end /* Do i=1 to var.0 */
+  call create_table                                           /* @AP */
   if (group = 'INVALID') then do
      "TBEND" tbla
      return
@@ -142,9 +82,25 @@ PROFL:
      PARSE VAR ZCMD ZCMD PARM seq                             /* @AC */
      lparm = ""                                               /* @A3 */
      Select
+        When (abbrev("ONLY",zcmd,1) = 1) then do              /* @AP */
+             find_str = translate(parm)                       /* @AP */
+             'tbtop ' tbla                                    /* @AP */
+             'tbskip' tbla                                    /* @AP */
+             do forever                                       /* @AP */
+                str = translate(group data)                   /* @AP */
+                if (pos(find_str,str) > 0) then nop           /* @AP */
+                else 'tbdelete' tbla                          /* @AP */
+                'tbskip' tbla                                 /* @AP */
+                if (rc > 0) then do                           /* @AP */
+                   'tbtop' tbla                               /* @AP */
+                   leave                                      /* @AP */
+                end                                           /* @AP */
+             end                                              /* @AP */
+        END                                                   /* @AP */
         WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO             /* @AE */
              fld_sort = 'GROUP,C,A'                           /* @A3 */
              xtdtop   = 1                                     /* @AE */
+             call create_table                                /* @AP */
         END                                                   /* @AE */
         WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO              /* @AF */
              xtdtop   = 1                                     /* @AE */
@@ -667,3 +623,70 @@ SHOWCMD:                                                      /* @AN */
   'DISPLAY PANEL(RACFMSG2)'                                   /* @AN */
   'REMPOP'                                                    /* @AN */
 RETURN                                                        /* @AN */
+/*--------------------------------------------------------------------*/
+/*  Create table                                                  @AP */
+/*--------------------------------------------------------------------*/
+CREATE_TABLE:                                                 /* @AP */
+  seconds = TIME('S')
+  tbla    = 'TA'ZSCREEN||SECONDS  /* table name unique */
+  "TBCREATE" tbla "KEYS(GROUP) NAMES(DATA) REPLACE NOWRITE"
+  cmd = "SEARCH FILTER("RFILTER") CLASS("rclass")"            /* @AN */
+  if (erashow = 'YES') then                                   /* @AN */
+     call SHOWCMD                                             /* @AN */
+  x = OUTTRAP('var.')
+  address TSO cmd                                             /* @AN */
+  x = OUTTRAP('OFF')
+  Do i = 1 to var.0
+     temp  = var.i
+     group = SUBWORD(temp,1,1)
+     msgr  = SUBWORD(temp,1,1)
+     Select
+        when (msgr = 'ICH31005I') then
+             group = 'NONE'       /* No groups  */
+        when (msgr = 'ICH31009I') then do
+             group = 'INVALID'    /* Bad filter */
+             call Emsg 'ERR08'
+        end
+        when (msgr = 'ICH31012I') then do
+             group = 'INVALID'    /* Bad filter */
+             call Emsg 'ERR08'
+        end
+        when (msgr = 'ICH31014I') then do
+             group = 'INVALID'    /* Bad filter */
+             call Emsg 'ERR08'
+        end
+        when (msgr = 'ICH31016I') then do
+             group = 'INVALID'    /* Bad filter */
+             call Emsg 'ERR08'
+        end
+        when (msgr = 'ICH31017I') then do
+             group = 'INVALID'    /* Bad filter */
+             call Emsg 'ERR08'
+        end
+        when (msgr = 'ICH31018I') then do
+             group = 'INVALID'    /* Bad filter */
+             call Emsg 'ERR08'
+        end
+        when (msgr = 'IKJ56716I') then do
+             group = 'INVALID'    /* Bad filter */
+             call Emsg 'ERR08'
+        end
+        when (substr(msgr,1,6) = 'ICH310') then
+             call Emsg 'ERR09'
+        otherwise nop
+     End  /* Select */
+     /*---------------------------------------------*/
+     /* Display number of records retrieved        -*/
+     /*---------------------------------------------*/
+     IF (ERASINT <> 0) THEN DO     /* Status interval */      /* @AI */
+        IF (I//ERASINT = 0) THEN DO                           /* @AI */
+           n1 = i; n2 = var.0
+           "control display lock"
+           "display msg(RACF014)"
+        END                                                   /* @AI */
+     END                                                      /* @AI */
+     /* Get further information */
+     Call GETD
+     "TBMOD" tbla
+  end /* Do i=1 to var.0 */
+RETURN                                                        /* @AP */

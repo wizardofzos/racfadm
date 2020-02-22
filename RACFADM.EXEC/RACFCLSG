@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AH  200221  RACFA    Removed "G = '(G)'", not referenced          */
 /* @AG  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @AF  200220  RACFA    Fixed displaying all RACF commands           */
 /* @AE  200220  RACFA    When ERATRACE=YES, then TRACE R, was I       */
@@ -75,7 +76,6 @@ PROFL:
   x = OUTTRAP('var.')
   address TSO cmd                                             /* @AF */
   x = OUTTRAP('OFF')
-  g = '(G)'
   Do i = 1 to var.0
      temp    = var.i
      profile = SUBWORD(temp,1,1)

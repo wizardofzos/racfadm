@@ -37,9 +37,9 @@ _Z ^Z      Z       Z                   Z       œZ       	Z       †Z  Z  —Z
 )PROC
   /* Line command: XR is not displayed (hidden) */
   IF (&ERAADMN = YES)
-     VER (&OPTA,LIST,S,s,SE,se,L,l,C,c,A,a,R,r,RS,rs,RV,rv,XR,xr)
+     VER (&OPTA,LIST,S,SE,L,C,A,R,RS,RV,XR)
   ELSE
-     VER (&OPTA,LIST,S,s,SE,se,L,l,)
+     VER (&OPTA,LIST,S,SE,L)
 )PNTS
   FIELD(ZPS00001) VAR(ZCMD) VAL('SORT USERID')
   FIELD(ZPS00002) VAR(ZCMD) VAL('SORT NAME')

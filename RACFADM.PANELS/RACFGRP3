@@ -27,5 +27,5 @@ _Z+  $Z          #Z
   IF (&SAMT = ' ')
       &SAMT = &ZSCED
 )PROC
-  VER (&OPTB,LIST,C,c,A,a,R,r)
+  VER (&OPTB,LIST,C,A,R)
 )END

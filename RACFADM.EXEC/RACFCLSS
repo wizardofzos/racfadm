@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A8  200221  RACFA    Removed "G = '(G)'", not referenced          */
 /* @A7  200221  RACFA    Get ERASHOW, to display RACF cmds            */
 /* @A6  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @A5  200220  RACFA    Fixed displaying all RACF commands           */

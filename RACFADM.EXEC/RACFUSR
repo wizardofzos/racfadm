@@ -3,7 +3,9 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
-/* @BD  200221  RACFA    Dsiplay '*Search' to right of userid         */
+/* @BF  200221  RACFA    Removed "G = '(G)'", not referenced          */
+/* @BE  200221  LBDYCK   Add ONLY primary command                     */
+/* @BD  200221  RACFA    Display '*Search' to right of userid         */
 /* @BC  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @BB  200220  RACFA    Fixed displaying all RACF commands           */
 /* @BA  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
@@ -93,81 +95,7 @@ EXIT
 /*  Show all profiles for a filter                                    */
 /*--------------------------------------------------------------------*/
 PROFL:
-  action  = ''
-  seconds = TIME('S')
-  tbla    = 'TA'ZSCREEN||SECONDS  /* table name unique */
-  "TBCREATE" tbla ,
-       "KEYS(USER) NAMES(ACTION NAME OWNER DEFGRP DATELGN",   /* @AB */
-                        "REVOKED ATTR TSOUSER DATA ATTR2)",   /* @AB */
-                        "REPLACE NOWRITE"                     /* @AB */
-  cmd = "SEARCH FILTER("RFILTER") CLASS("rclass")"            /* @BB */
-  if (erashow = 'YES') then                                   /* @BB */
-     call SHOWCMD                                             /* @BB */
-  x = OUTTRAP('var.')
-  address TSO cmd                                             /* @BB */
-  x = OUTTRAP('OFF')
-  g = '(G)'
-  Do i = 1 to var.0
-     temp = var.i
-     USER = SUBWORD(temp,1,1)
-     t    = INDEX(temp,g)
-     if (t > 0) then nop
-     else do
-        msgr = SUBWORD(temp,1,1)
-        Select
-           when (msgr = 'ICH31005I') then do
-                USER = 'NONE'        /* No USERs */
-           end
-           when (msgr = 'ICH31009I') then do
-                USER = 'INVALID'     /* Bad filter */
-                call RACFMSGS 'ERR08'
-           end
-           when (msgr = 'ICH31012I') then do
-                USER = 'INVALID'     /* Bad filter */
-                call RACFMSGS 'ERR08'
-           end
-           when (msgr = 'ICH31014I') then do
-                USER = 'INVALID'     /* Bad filter */
-                call RACFMSGS 'ERR08'
-           end
-           when (msgr = 'ICH31016I') then do
-                USER = 'INVALID'     /* Bad filter */
-                call RACFMSGS 'ERR08'
-           end
-           when (msgr = 'ICH31017I') then do
-                USER = 'INVALID'     /* Bad filter */
-                call RACFMSGS 'ERR08'
-           end
-           when (msgr = 'ICH31018I') then do
-                USER = 'INVALID'     /* Bad filter */
-                call RACFMSGS 'ERR08'
-           end
-           when (msgr = 'IKJ56716I') then do
-                USER = 'INVALID'     /* Bad filter */
-                call RACFMSGS 'ERR08'
-           end
-           when (substr(msgr,1,6) = 'ICH310') then do
-                call RACFMSGS 'ERR09'
-           end
-           otherwise nop
-        End  /* Select */
-     end  /* Else */
-     /*---------------------------------------------*/
-     /* Display number of users retrieved          -*/
-     /*---------------------------------------------*/
-     IF (ERASINT <> 0) THEN DO     /* Status interval */      /* @AZ */
-        IF (I//ERASINT = 0) THEN DO                           /* @AZ */
-           n1 = i; n2 = var.0
-           "control display lock"
-           "display msg(RACF014)"
-        END                                                   /* @AZ */
-     END                                                      /* @AZ */
-     /*---------------------------------------------*/
-     /* Get further info                           -*/
-     /*---------------------------------------------*/
-     call GETD
-     "TBMOD" tbla
-  end  /* Do i=1 to var.0 */
+  call create_table                                           /* @BE */
   if (USER = 'INVALID') then do
      "TBEND" tbla
      return
@@ -189,45 +117,62 @@ PROFL:
      lparm  = ""                                              /* @A7 */
      xtdtop = ztdtop                                          /* @AS */
      Select
-        WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO             /* @AS */
-             fld_sort = 'USER,C,A'                            /* @A5 */
-             xtdtop   = 1                                     /* @AS */
-        END                                                   /* @AS */
-        WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO              /* @AT */
-             xtdtop   = 1                                     /* @AT */
-             if (seq = 'A') | (seq = 'D') then                /* @AU */
-                nop                                           /* @AU */
-             else                                             /* @AU */
-                seq = 'A'                                     /* @AU */
-             SELECT                                           /* @A5 */
-                when (PARM = 'RESET')   then                  /* @A5 */
-                     fld_sort = ''                            /* @AQ */
-                when (PARM = 'SURNAME') then                  /* @A5 */
-                     fld_sort = 'NAME,C,'seq                  /* @AQ */
-                when (PARM = 'NAME')    then                  /* @A5 */
-                     fld_sort = 'NAME,C,'seq                  /* @AQ */
-                when (PARM = 'LOGON')   then                  /* @A5 */
-                     fld_sort = 'DATELGN,C,'seq               /* @AQ */
-                when (PARM = 'GROUP')   then                  /* @A5 */
-                     fld_sort = 'DEFGRP,C,'seq                /* @AQ */
-                when (PARM = 'REV')     then                  /* @A5 */
-                     fld_sort = 'REVOKED,C,'seq               /* @AQ */
-                when (PARM = 'USERID')  then                  /* @A5 */
-                     fld_sort = 'USER,C,'seq                  /* @AQ */
-                when (PARM = 'OWNER')   then                  /* @A5 */
-                     fld_sort = 'OWNER,C,'seq                 /* @AQ */
-                when (PARM = 'ATTR')    then                  /* @A5 */
-                     fld_sort = 'ATTR,C,'seq                  /* @AQ */
-                when (PARM = 'ATT')     then                  /* @A5 */
-                     fld_sort = 'ATTR,C,'seq                  /* @AQ */
-                when (PARM = 'TSO')     then                  /* @A5 */
-                     fld_sort = 'TSOUSER,C,'seq               /* @AQ */
-                otherwise NOP                                 /* @A5 */
-             END                                              /* @A5 */
-        END                                                   /* @AT */
-        WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @A5 */
-             lparm = parm                                     /* @A5 */
-        otherwise lparm = ''
+        When (abbrev("ONLY",zcmd,1) = 1) then do              /* @BE */
+             find_str = translate(parm)                       /* @BE */
+             'tbtop ' tbla                                    /* @BE */
+             'tbskip' tbla                                    /* @BE */
+             do forever                                       /* @BE */
+                str = translate(user name defgrp owner attr)  /* @BE */
+                if (pos(find_str,str) > 0) then nop           /* @BE */
+                else 'tbdelete' tbla                          /* @BE */
+                'tbskip' tbla                                 /* @BE */
+                if (rc > 0) then do                           /* @BE */
+                   'tbtop' tbla                               /* @BE */
+                   leave                                      /* @BE */
+                end                                           /* @BE */
+             end                                              /* @BE */
+         END                                                  /* @LB */
+         WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO            /* @AS */
+              fld_sort = 'USER,C,A'                           /* @A5 */
+              xtdtop   = 1                                    /* @AS */
+              "TBEND" tbla                                    /* @BE */
+              call create_table                               /* @BE */
+         END                                                  /* @AS */
+         WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO             /* @AT */
+              xtdtop   = 1                                    /* @AT */
+              if (seq = 'A') | (seq = 'D') then               /* @AU */
+                 nop                                          /* @AU */
+              else                                            /* @AU */
+                 seq = 'A'                                    /* @AU */
+              SELECT                                          /* @A5 */
+                 when (PARM = 'RESET')   then                 /* @A5 */
+                      fld_sort = ''                           /* @AQ */
+                 when (PARM = 'SURNAME') then                 /* @A5 */
+                      fld_sort = 'NAME,C,'seq                 /* @AQ */
+                 when (PARM = 'NAME')    then                 /* @A5 */
+                      fld_sort = 'NAME,C,'seq                 /* @AQ */
+                 when (PARM = 'LOGON')   then                 /* @A5 */
+                      fld_sort = 'DATELGN,C,'seq              /* @AQ */
+                 when (PARM = 'GROUP')   then                 /* @A5 */
+                      fld_sort = 'DEFGRP,C,'seq               /* @AQ */
+                 when (PARM = 'REV')     then                 /* @A5 */
+                      fld_sort = 'REVOKED,C,'seq              /* @AQ */
+                 when (PARM = 'USERID')  then                 /* @A5 */
+                      fld_sort = 'USER,C,'seq                 /* @AQ */
+                 when (PARM = 'OWNER')   then                 /* @A5 */
+                      fld_sort = 'OWNER,C,'seq                /* @AQ */
+                 when (PARM = 'ATTR')    then                 /* @A5 */
+                      fld_sort = 'ATTR,C,'seq                 /* @AQ */
+                 when (PARM = 'ATT')     then                 /* @A5 */
+                      fld_sort = 'ATTR,C,'seq                 /* @AQ */
+                 when (PARM = 'TSO')     then                 /* @A5 */
+                      fld_sort = 'TSOUSER,C,'seq              /* @AQ */
+                 otherwise NOP                                /* @A5 */
+              END                                             /* @A5 */
+         END                                                  /* @AT */
+         WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN              /* @A5 */
+              lparm = parm                                    /* @A5 */
+         otherwise lparm = ''
      End /* Select */
      ZCMD = ""; PARM = ""                                     /* @A5 */
      opta = translate(opta) /* upper case */
@@ -891,3 +836,82 @@ SHOWCMD:                                                      /* @BB */
   'DISPLAY PANEL(RACFMSG2)'                                   /* @BB */
   'REMPOP'                                                    /* @BB */
 RETURN                                                        /* @BB */
+/*--------------------------------------------------------------------*/
+/*  Create table                                                  @BE */
+/*--------------------------------------------------------------------*/
+CREATE_TABLE:                                                 /* @BE */
+  action  = ''
+  seconds = TIME('S')
+  tbla    = 'TA'ZSCREEN||SECONDS  /* table name unique */
+  "TBCREATE" tbla ,
+       "KEYS(USER) NAMES(ACTION NAME OWNER DEFGRP DATELGN",
+                        "REVOKED ATTR TSOUSER DATA ATTR2)",
+                        "REPLACE NOWRITE"
+  cmd = "SEARCH FILTER("RFILTER") CLASS("rclass")"            /* @BB */
+  if (erashow = 'YES') then                                   /* @BB */
+     call SHOWCMD                                             /* @BB */
+  x = OUTTRAP('var.')
+  address TSO cmd                                             /* @BB */
+  x = OUTTRAP('OFF')
+  Do i = 1 to var.0
+     temp = var.i
+     USER = SUBWORD(temp,1,1)
+     t    = INDEX(temp,g)
+     if (t > 0) then nop
+     else do
+        msgr = SUBWORD(temp,1,1)
+        Select
+           when (msgr = 'ICH31005I') then do
+                USER = 'NONE'        /* No USERs */
+           end
+           when (msgr = 'ICH31009I') then do
+                USER = 'INVALID'     /* Bad filter */
+                call RACFMSGS 'ERR08'
+           end
+           when (msgr = 'ICH31012I') then do
+                USER = 'INVALID'     /* Bad filter */
+                call RACFMSGS 'ERR08'
+           end
+           when (msgr = 'ICH31014I') then do
+                USER = 'INVALID'     /* Bad filter */
+                call RACFMSGS 'ERR08'
+           end
+           when (msgr = 'ICH31016I') then do
+                USER = 'INVALID'     /* Bad filter */
+                call RACFMSGS 'ERR08'
+           end
+           when (msgr = 'ICH31017I') then do
+                USER = 'INVALID'     /* Bad filter */
+                call RACFMSGS 'ERR08'
+           end
+           when (msgr = 'ICH31018I') then do
+                USER = 'INVALID'     /* Bad filter */
+                call RACFMSGS 'ERR08'
+           end
+           when (msgr = 'IKJ56716I') then do
+                USER = 'INVALID'     /* Bad filter */
+                call RACFMSGS 'ERR08'
+           end
+           when (substr(msgr,1,6) = 'ICH310') then do
+                call RACFMSGS 'ERR09'
+           end
+           otherwise nop
+        End  /* Select */
+     end  /* Else */
+     /*---------------------------------------------*/
+     /* Display number of users retrieved          -*/
+     /*---------------------------------------------*/
+     IF (ERASINT <> 0) THEN DO     /* Status interval */      /* @AZ */
+        IF (I//ERASINT = 0) THEN DO                           /* @AZ */
+           n1 = i; n2 = var.0
+           "control display lock"
+           "display msg(RACF014)"
+        END                                                   /* @AZ */
+     END                                                      /* @AZ */
+     /*---------------------------------------------*/
+     /* Get further info                           -*/
+     /*---------------------------------------------*/
+     call GETD
+     "TBMOD" tbla
+  end  /* Do i=1 to var.0 */
+RETURN                                                        /* @BE */

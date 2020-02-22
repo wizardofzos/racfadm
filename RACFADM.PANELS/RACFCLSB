@@ -30,5 +30,5 @@ _Z+  $Z           +
 )REINIT
   .CURSOR = OPTB
 )PROC
-  VER (&OPTB,LIST,A,a,R,r)
+  VER (&OPTB,LIST,A,R)
 )END

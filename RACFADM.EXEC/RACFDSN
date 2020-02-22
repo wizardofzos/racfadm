@@ -3,6 +3,9 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AM  200221  RACFA    Added primary commands 'LOCATE'              */
+/* @AL  200221  RACFA    Added primary commands 'ONLY' and 'RESET'    */
+/* @AK  200221  RACFA    Removed "G = '(G)'", not referenced          */
 /* @AJ  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @AI  200220  RACFA    Fixed displaying all RACF commands           */
 /* @AH  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
@@ -55,77 +58,7 @@ EXIT
 /*  Show all profiles for a filter                                    */
 /*--------------------------------------------------------------------*/
 PROFL:
-  tbla = 'RCFDA'ZSCREEN
-  "TBCREATE" tbla "KEYS(DATASET TYPE) REPLACE NOWRITE"
-  cmd = "SEARCH FILTER("RFILTER") CLASS(DATASET)"             /* @AI */
-  if (erashow = 'YES') then                                   /* @AI */
-     call SHOWCMD                                             /* @AI */
-  x = OUTTRAP('var.')
-  address TSO cmd                                             /* @AI */
-  x = OUTTRAP('OFF')
-  g = '(G)'
-  Do i = 1 to var.0
-     temp = var.i
-     /*---------------------------------------------*/
-     /* Display number of records retrieved        -*/
-     /*---------------------------------------------*/
-     IF (ERASINT <> 0) THEN DO     /* Status interval */      /* @AD */
-        IF (I//ERASINT = 0) THEN DO                           /* @AD */
-           n1 = i; n2 = var.0
-           "control display lock"
-           "display msg(RACF014)"
-        END                                                   /* @AD */
-     END                                                      /* @AD */
-
-     dataset = SUBWORD(temp,1,1)
-     t       = INDEX(temp,g)
-     if (t > 0) then
-        type = 'GEN'
-     else do
-        type = 'DISCRETE'
-        msgr = SUBWORD(temp,1,1)
-        Select
-           when (msgr = 'ICH31005I') then do
-                dataset = 'NONE'     /* No datasets */
-                type    = 'GEN'
-           end
-           when (msgr = 'ICH31009I') then do
-                dataset = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
-           end
-           when (msgr = 'ICH31012I') then do
-                dataset = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
-           end
-           when (msgr = 'ICH31014I') then do
-                dataset = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
-           end
-           when (msgr = 'ICH31016I') then do
-                dataset = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
-           end
-           when (msgr = 'ICH31017I') then do
-                dataset = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
-           end
-           when (msgr = 'ICH31018I') then do
-                dataset = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
-           end
-           when (msgr= 'IKJ56716I') then do
-                dataset = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
-           end
-           when (substr(msgr,1,6) = 'ICH310') then do
-                type = ' '           /* Misc. errs  */
-                call Emsg 'ERR09'
-           end
-           otherwise nop
-        End  /* Select */
-     end  /* Else */
-     "TBMOD" tbla
-  end        /* Do i=1 to var.0 */
+  call create_table
   if (dataset = 'INVALID') then do
      "TBEND" tbla
      return
@@ -139,6 +72,31 @@ PROFL:
      "CONTROL DISPLAY SAVE"
      xtdtop = ztdtop
      opta   = translate(opta) /* upper case */
+     lparm  = ""                                              /* @AM */
+     PARSE VAR ZCMD ZCMD PARM                                 /* @AL */
+     Select                                                   /* @AL */
+        When (abbrev("ONLY",zcmd,1) = 1) then do              /* @AL */
+             find_str = translate(parm)                       /* @AL */
+             'tbtop ' tbla                                    /* @AL */
+             'tbskip' tbla                                    /* @AL */
+             do forever                                       /* @AL */
+                str = translate(dataset type)                 /* @AL */
+                if (pos(find_str,str) > 0) then nop           /* @AL */
+                else 'tbdelete' tbla                          /* @AL */
+                'tbskip' tbla                                 /* @AL */
+                if (rc > 0) then do                           /* @AL */
+                   'tbtop' tbla                               /* @AL */
+                   leave                                      /* @AL */
+                end                                           /* @AL */
+             end                                              /* @AL */
+        END                                                   /* @AL */
+        WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO             /* @AL */
+             call create_table                                /* @AL */
+             xtdtop   = 1                                     /* @AL */
+        END                                                   /* @AL */
+        WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN lparm = parm  /* @AM */
+        otherwise NOP                                         /* @AM */
+     END /* Select */                                         /* @AL */
      Select
         when (opta = 'A') then call Addd
         when (opta = 'C') then call Chgd
@@ -163,7 +121,21 @@ PROFL:
      end  /* Do while (reta < 4) */
      opta = ' '
      "TBTOP  " tbla
-     "TBSKIP " tbla "NUMBER("XTDTOP")"
+     if (lparm <> '') then do                                 /* @AM */
+        locarg   = "DATASET"                                  /* @AM */
+        ASTERICK = "*"                                        /* @AM */
+        INTERPRET LOCARG" = lparm||ASTERICK"                  /* @AM */
+        "TBTOP" tbla                                          /* @AM */
+        PARSE VAR FLD_SORT . "," . "," SEQ                    /* @AM */
+        IF (SEQ = "D") THEN                                   /* @AM */
+           CONDLIST = "LE"                                    /* @AM */
+        ELSE                                                  /* @AM */
+           CONDLIST = "GE"                                    /* @AM */
+        "TBSCAN "tbla,                                        /* @AM */
+                "ARGLIST("LOCARG") CONDLIST("CONDLIST")"      /* @AM */
+     end                                                      /* @AM */
+     else                                                     /* @AM */
+        "TBSKIP" tbla "NUMBER("XTDTOP")"
      "CONTROL DISPLAY RESTORE"
      "TBDISPL" tbla "PANEL(RACFDSN2)"
      reta = rc
@@ -720,3 +692,78 @@ SHOWCMD:                                                      /* @AI */
   'DISPLAY PANEL(RACFMSG2)'                                   /* @AI */
   'REMPOP'                                                    /* @AI */
 RETURN                                                        /* @AI */
+/*--------------------------------------------------------------------*/
+/*  Create table                                                  @AL */
+/*--------------------------------------------------------------------*/
+CREATE_TABLE:
+  tbla = 'RCFDA'ZSCREEN
+  "TBCREATE" tbla "KEYS(DATASET TYPE) REPLACE NOWRITE"
+  cmd = "SEARCH FILTER("RFILTER") CLASS(DATASET)"             /* @AI */
+  if (erashow = 'YES') then                                   /* @AI */
+     call SHOWCMD                                             /* @AI */
+  x = OUTTRAP('var.')
+  address TSO cmd                                             /* @AI */
+  x = OUTTRAP('OFF')
+  Do i = 1 to var.0
+     temp = var.i
+     /*---------------------------------------------*/
+     /* Display number of records retrieved        -*/
+     /*---------------------------------------------*/
+     IF (ERASINT <> 0) THEN DO     /* Status interval */      /* @AD */
+        IF (I//ERASINT = 0) THEN DO                           /* @AD */
+           n1 = i; n2 = var.0
+           "control display lock"
+           "display msg(RACF014)"
+        END                                                   /* @AD */
+     END                                                      /* @AD */
+
+     dataset = SUBWORD(temp,1,1)
+     t       = INDEX(temp,g)
+     if (t > 0) then
+        type = 'GEN'
+     else do
+        type = 'DISCRETE'
+        msgr = SUBWORD(temp,1,1)
+        Select
+           when (msgr = 'ICH31005I') then do
+                dataset = 'NONE'     /* No datasets */
+                type    = 'GEN'
+           end
+           when (msgr = 'ICH31009I') then do
+                dataset = 'INVALID'  /* Bad filter  */
+                call Emsg 'ERR08'
+           end
+           when (msgr = 'ICH31012I') then do
+                dataset = 'INVALID'  /* Bad filter  */
+                call Emsg 'ERR08'
+           end
+           when (msgr = 'ICH31014I') then do
+                dataset = 'INVALID'  /* Bad filter  */
+                call Emsg 'ERR08'
+           end
+           when (msgr = 'ICH31016I') then do
+                dataset = 'INVALID'  /* Bad filter  */
+                call Emsg 'ERR08'
+           end
+           when (msgr = 'ICH31017I') then do
+                dataset = 'INVALID'  /* Bad filter  */
+                call Emsg 'ERR08'
+           end
+           when (msgr = 'ICH31018I') then do
+                dataset = 'INVALID'  /* Bad filter  */
+                call Emsg 'ERR08'
+           end
+           when (msgr= 'IKJ56716I') then do
+                dataset = 'INVALID'  /* Bad filter  */
+                call Emsg 'ERR08'
+           end
+           when (substr(msgr,1,6) = 'ICH310') then do
+                type = ' '           /* Misc. errs  */
+                call Emsg 'ERR09'
+           end
+           otherwise nop
+        End  /* Select */
+     end  /* Else */
+     "TBMOD" tbla
+  end        /* Do i=1 to var.0 */
+RETURN

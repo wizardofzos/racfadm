@@ -7,22 +7,23 @@
 %Command ===>_ZCMD                                                             +
 %
 %General:
-!  RACF commands+     Enter%YES+to view each RACF command before it is
-+                     issued,%NO+to hide all RACF commands
+%  S  !Show        +List of permits defined for this profile
+!  RACF commands   +Enter%YES+to view each RACF command before it is
++                  +issued,%NO+to hide all RACF commands
 +
-!  REXX trace+        Enter%YES+to trace the execution of the REXX exec,
-+                    %NO+to work without trace
+!  REXX trace      +Enter%YES+to trace the execution of the REXX exec,
++                  %NO+to work without trace
 +
 %Adding TSO userid:
-!  Master catalog+    Specify the MVS master catalog
+!  Master catalog  +Specify the MVS master catalog
 +
-!  TSO User catalog+  Specify the TSO user catalog in which all new TSO user
-+                     aliases are to be defined
+!  TSO User catalog+Specify the TSO user catalog in which all new TSO user
++                  +aliases are to be defined
 +
-!  TSO ISPPROF+       Specify the name of the TSO profile
+!  TSO ISPPROF     +Specify the name of the TSO profile
 +
-!  TSO JOBLIB+        Specify an initial job library to be allocated
-+                     for new TSO users
+!  TSO JOBLIB      +Specify an initial job library to be allocated
++                  +for new TSO users
 +
 +
 + \ \ (press%ENTER+to continue) \ \

@@ -31,7 +31,7 @@ _Z+ $Z         #Z
   &ZCMD = ' '
 )PROC
   IF (&ERAADMN = YES)
-     VER (&OPTB,LIST,S,s,L,l,C,c,A,a,R,r)
+     VER (&OPTB,LIST,S,L,C,A,R)
   ELSE
-     VER (&OPTB,LIST,S,s,L,l)
+     VER (&OPTB,LIST,S,L)
 )END

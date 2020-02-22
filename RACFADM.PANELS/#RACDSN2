@@ -6,12 +6,17 @@
 %Tutorial+\-\(%RACFADM - Dataset Profiles+)\-\%Tutorial
 %Command ===>_ZCMD                                                             +
 %
++Primary Commands
+%  Only text       +Only display rows with text string
+%  Locate text     +Locate text in the sorted column
+%  Reset           +Redisplay all rows and sort first column
++
 +Line Commands
-%  S !Show   +List of permits defined for this profile
-%  L !List   +Issue LISTDSD RACF command
-%  C !Change +Change profile attributes
-%  A !Add    +Define a new profile
-%  R !Remove +Remove profile from RACF
+%  S  !Show        +List of permits defined for this profile
+%  L  !List        +Issue LISTDSD RACF command
+%  C  !Change      +Change profile attributes (admin)
+%  A  !Add         +Define a new profile (admin)
+%  R  !Remove      +Remove profile from RACF (admin)
 )PROC
   &ZUP     = #RACDSN2
 )END

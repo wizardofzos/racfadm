@@ -22,5 +22,5 @@ _Z+ $Z         #Z                                                              +
       &SAMT = &ZSCED
   &ZCMD = ' '
 )PROC
-  VER (&OPTA,LIST,S,s)
+  VER (&OPTA,LIST,S)
 )END

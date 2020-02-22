@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A9  200221  RACFA    Added primary commands 'ONLY' and 'RESET'    */
+/* @A8  200221  RACFA    Allow abbreviating the 'LOCATE' command      */
 /* @A7  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @A6  200220  RACFA    Fixed displaying all RACF commands           */
 /* @A5  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
@@ -19,8 +21,11 @@ ADDRESS ISPEXEC                                               /* @A7 */
 
   address TSO "PROFILE MSGID"
   rlv = SYSVAR('SYSLRACF')
-  if (class = '') then
+  if (class = '') then DO                                     /* @A9 */
      call Select_class
+     rc = display_table()                                     /* @A9 */
+     "TBEND" tbla                                             /* @A9 */
+  END                                                         /* @A9 */
   else
      call RACFCLSG class '**' 'YES' /*generic prof routine*/
 EXIT
@@ -33,8 +38,6 @@ SELECT_CLASS:
   "TBCREATE" TBLA "KEYS(CLASS)",
                   "NAMES(ACTION) REPLACE NOWRITE"
   call get_act_class
-  rc = display_table()
-  "TBEND" tbla
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Display profile permits                                           */
@@ -93,13 +96,34 @@ DISPLAY_TABLE:
   do while (reta < 8)   /* tablea */
      action = ''
      "CONTROL DISPLAY SAVE"
+     xtdtop = ztdtop                                          /* @A9 */
+     PARSE VAR ZCMD ZCMD PARM                                 /* @A8 */
+     lclass = ''                                              /* @A9 */
      Select
-        when (subword(ZCMD,1,1) = 'LOCATE'),
-           | (subword(ZCMD,1,1) = 'L') then
-             lclass = subword(ZCMD,2,1)
-        otherwise lclass = ''
+        When (abbrev("ONLY",zcmd,1) = 1) then do              /* @A9 */
+             find_str = translate(parm)                       /* @A9 */
+             'tbtop ' tbla                                    /* @A9 */
+             'tbskip' tbla                                    /* @A9 */
+             do forever                                       /* @A9 */
+                str = translate(class action)                 /* @A9 */
+                if (pos(find_str,str) > 0) then nop           /* @A9 */
+                else 'tbdelete' tbla                          /* @A9 */
+                'tbskip' tbla                                 /* @A9 */
+                if (rc > 0) then do                           /* @A9 */
+                   'tbtop' tbla                               /* @A9 */
+                   leave                                      /* @A9 */
+                end                                           /* @A9 */
+             end                                              /* @A9 */
+        END                                                   /* @A9 */
+        WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO             /* @A9 */
+             call select_class                                /* @A9 */
+             fld_sort = 'CLASS,C,A'                           /* @A9 */
+             xtdtop   = 1                                     /* @A9 */
+        END                                                   /* @A9 */
+        WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @A8 */
+             lclass = parm                                    /* @A8 */
+        OTHERWISE NOP                                         /* @A8 */
      End
-     xtdtop = ztdtop
      opta   = translate(opta) /* upper case */
      Select
         when (opta = 'S') then

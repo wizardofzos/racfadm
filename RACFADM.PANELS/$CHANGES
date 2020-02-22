@@ -2,6 +2,25 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  22 Feb 2020 - V4R2
+     - Menu Option 3 (Dataset)
+       * Fixed typing in a 'L' next to a group/id a general user
+         (panel = RACFDSN5)
+     - Other Items
+       * Standardized tutorial panels (columns, etc.)
+       * Updated all panels to only validate uppercase line commands
+
+  22 Feb 2020 - V4R1
+     - Menu Option 1/2/3/4 (User/Group/Dataset/General Resource)
+       * Added 'ONLY' primary command
+     - Menu Option 3 (Dataset)
+       * Added 'RESET' and LOCATE' primary commands
+     - Menu Option 4 (General Resource)
+       * Added 'RESET' primary command, updated tutorial
+       * Allow abbreviating the 'LOCATE' primary command
+     - Other Items
+       * Updated tutorials with information on the new primary commands
+
   21 Feb 2020 - V4R0
      - Other Items
        * Standardized code
@@ -14,7 +33,7 @@
        * After SEarching on a userid, place '*Search' message to the
          right of the userid
      - Other Items
-       * Standardizing, reduced code/typing, making easier to read
+       * Standardized, reduced code/typing, making easier to read
          and maintain
          o Deleted panel RACFCLS2, not referenced/used
          o Removed 'Trace o' at top of all programs

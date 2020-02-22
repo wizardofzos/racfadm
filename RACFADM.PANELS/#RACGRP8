@@ -8,22 +8,18 @@
 %Command ===>_ZCMD                                                             +
 %
 +Primary Commands
-%  SORT argument A/D
-+    Sort the table by a particular column, in ascending or descending
-+    sequence, ex.%S DESC+or%SORT DESC D
-%  LOCATE argument
-+    Locate text in the sorted column, ex.%L SSAPP+or%LOCATE SSAPP+
-%  RESET
-+    Sort the table by 1st column, ex.%R+or%RESET+
-+
-~  Note:+Column headers are point-and-shoot%SORT+fields
+%  Sort column A/D +Sort a column, in ascending or descending order
++                  +(Column headers are point-and-shoot%SORT+fields)
+%  Only text       +Only display rows with text string
+%  Locate text     +Locate text in the sorted column
+%  Reset           +Redisplay all rows and sort first column
 +
 +Line Commands
-%  S !Show   +List of groups connected to the users
-%  L !List   +Issue LISTGROUP RACF command
-%  C !Change +Change group attributes
-%  A !Add    +Define a new group
-%  R !Remove +Remove group from RACF
+%  S  !Show        +List of groups connected to the users
+%  L  !List        +Issue LISTGROUP RACF command
+%  C  !Change      +Change group attributes (admin)
+%  A  !Add         +Define a new group (admin)
+%  R  !Remove      +Remove group from RACF (admin)
 )PROC
   &ZUP     = #RACGRP8
 )END
