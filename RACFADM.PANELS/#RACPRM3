@@ -6,7 +6,7 @@
 %Tutorial+\-\(%RACFADM - Settings - 3 of 3+)\-\%Tutorial
 %Command ===>_ZCMD                                                             +
 %
-%Adding TSO Userid:
++Adding TSO Userid:
 !  TSO JOBLIB unit +Specify the volume on which initial job library
 +                  +must be allocated
 +

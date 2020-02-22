@@ -1,8 +1,20 @@
 *----------------------------------------------------------------------*
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
-* This is NOT an ISPF panel - it is a text file used for the changes   *
-*----------------------------------------------------------------------*
+
+  23 Feb 2020 - V4R4
+     - Menu Option T (Tutoral)
+       * Fixed tutorial menu, was invoking incorrect tutorial for
+         option '3 Dataset profile'
+
+  23 Feb 2020 - V4R3
+     - Main Menu
+       * Added point-n-shoot fields to menu options
+     - Menu Option 3 (Dataset)
+       * Added primary command 'SORT', updated tutorial
+     - Menu Option T (Tutoral)
+       * Added/updated 'Dataset' and 'General Resource' Access
+         Authority tutorials
 
   22 Feb 2020 - V4R2
      - Menu Option 3 (Dataset)

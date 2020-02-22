@@ -1,11 +1,13 @@
 )ATTR DEFAULT(%+_)
-  $ TYPE(OUTPUT)  INTENS(LOW)  JUST(LEFT) COLOR(TURQ)
-  # TYPE(OUTPUT)  INTENS(LOW)  JUST(LEFT) COLOR(GREEN)
-  _ TYPE(INPUT)   INTENS(HIGH) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
-  + TYPE(TEXT)    INTENS(LOW)  SKIP(ON)   COLOR(GREEN)
-  ¬ AREA(DYNAMIC) EXTEND(OFF)
-  ¨ TYPE(DATAOUT) INTENS(LOW)  COLOR(GREEN)
-  Ý TYPE(DATAOUT) INTENS(HIGH)
+  01 TYPE(OUTPUT)  INTENS(LOW)  SKIP(ON)   COLOR(&CLRDATA)
+  02 TYPE(OUTPUT)  INTENS(LOW)  SKIP(ON)   COLOR(&CLRTYPE)
+  $  TYPE(OUTPUT) INTENS(LOW)  JUST(LEFT) COLOR(TURQ)
+  _  TYPE(INPUT)   INTENS(HIGH) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  +  TYPE(TEXT)    INTENS(LOW)  SKIP(ON)   COLOR(GREEN)
+  ¬  AREA(DYNAMIC) EXTEND(OFF)
+  ¨  TYPE(DATAOUT) INTENS(LOW)  COLOR(GREEN)
+  Ý  TYPE(DATAOUT) INTENS(HIGH)
+  ~  TYPE(PS)
 )BODY EXPAND(\\)
 +\-\(%RACFADM - Dataset Profiles+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
@@ -13,10 +15,10 @@
 +FILTER: $RFILTER
 +SELECT: ¬SELCMDS                                                              ¬
 %
-%S   Profile Name                            Type
+%S  ~Profile Name                           ~Type
 %-------------------------------------------------------------------------------
 )MODEL CLEAR(OPTA)
-_Z+ $Z                                      #Z
+_Z+ Z                                      Z
 )INIT
   .ZVARS   = '(OPTA DATASET TYPE)'
   .AUTOSEL = NO
@@ -29,4 +31,7 @@ _Z+ $Z                                      #Z
      VER (&OPTA,LIST,S,L,C,A,R)
   ELSE
      VER (&OPTA,LIST,S,L)
+)PNTS
+  FIELD(ZPS00001) VAR(ZCMD) VAL('SORT PROFILE')
+  FIELD(ZPS00002) VAR(ZCMD) VAL('SORT TYPE')
 )END

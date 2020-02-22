@@ -6,7 +6,6 @@
 %Tutorial+\-\(%RACFADM - RACF Parameters+)\-\%Tutorial
 %Command ===>_ZCMD                                                             +
 %
-+
 +System parameters:  Access Control CVT (CVTRAC)
 +
 +Current status of RACF parameters
@@ -25,6 +24,7 @@
 + Password attempts ................ 0
 + Password warning ................. 0
 + Password rules ...................
++ Password minimum length .......... 8
 )PROC
   &ZUP     = #RACPRMJ
 )END

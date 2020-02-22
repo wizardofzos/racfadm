@@ -20,11 +20,12 @@
 +
 +The following topics are presented in sequence, or may be selected by number:
 +
-+ %0 !Settings                %3 !Dataset Profiles         %6 !Publications
-+ %1 !User Profiles           %4 !General Resource
-+ %2 !Group Profiles          %5 !RACF Parameters
++  %0 !Settings           %3 !Dataset Profiles     %6 !DSN Access Authority
++  %1 !User Profiles      %4 !General Resource     %7 !Res Access Authority
++  %2 !Group Profiles     %5 !RACF Parameters      %8 !Publications
 )PROC
 &ZSEL = TRANS(&ZCMD  0,#RACPRM1  1,#RACUSR2  2,#RACGRP8  3,#RACDSN2
-                     4,#RACCLS9  5,#RACPRMJ  6,#RACPUBL  *,'?')
+                     4,#RACCLSR  5,#RACPRMJ  6,#RACDSNA  7,#RACCLSA
+                     8,#RACPUBL  *,'?')
 &ZUP  = #RACMENU
 )END

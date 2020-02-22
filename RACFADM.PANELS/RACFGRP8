@@ -4,10 +4,10 @@
    $ TYPE(OUTPUT)  INTENS(LOW)  JUST(LEFT) COLOR(TURQ)
    _ TYPE(INPUT)   INTENS(HIGH) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
    + TYPE(TEXT)    INTENS(LOW)  SKIP(ON)   COLOR(GREEN)
-   ~ TYPE(PS)
    ¬ AREA(DYNAMIC) EXTEND(OFF)
    ¨ TYPE(DATAOUT) INTENS(LOW)  COLOR(GREEN)
    Ý TYPE(DATAOUT) INTENS(HIGH)
+   ~ TYPE(PS)
 )BODY EXPAND(\\)
 +\-\(%RACFADM - Group Profiles+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+

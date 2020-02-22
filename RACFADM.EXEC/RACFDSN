@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AN  200222  RACFA    Added primary commands 'SORT'                */
 /* @AM  200221  RACFA    Added primary commands 'LOCATE'              */
 /* @AL  200221  RACFA    Added primary commands 'ONLY' and 'RESET'    */
 /* @AK  200221  RACFA    Removed "G = '(G)'", not referenced          */
@@ -65,6 +66,9 @@ PROFL:
   end
   /* profiles table display section */
   opta = ' '
+  sort = ''; fld_sort = 'DATASET'; dfl_sort = 'DATASET'       /* @AN */
+  CLRDATA = "TURQ";  CLRTYPE = "GREEN"   /* Col. colors */    /* @AN */
+  "TBSORT " tbla "FIELDS("dfl_sort")"                         /* @AN */
   "TBTOP  " tbla
   "TBDISPL" tbla "PANEL(RACFDSN2)"
   reta = rc
@@ -73,7 +77,7 @@ PROFL:
      xtdtop = ztdtop
      opta   = translate(opta) /* upper case */
      lparm  = ""                                              /* @AM */
-     PARSE VAR ZCMD ZCMD PARM                                 /* @AL */
+     PARSE VAR ZCMD ZCMD PARM SEQ                             /* @AN */
      Select                                                   /* @AL */
         When (abbrev("ONLY",zcmd,1) = 1) then do              /* @AL */
              find_str = translate(parm)                       /* @AL */
@@ -91,9 +95,26 @@ PROFL:
              end                                              /* @AL */
         END                                                   /* @AL */
         WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO             /* @AL */
+             fld_sort = 'DATASET,C,A'                         /* @AN */
              call create_table                                /* @AL */
              xtdtop   = 1                                     /* @AL */
         END                                                   /* @AL */
+        WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO              /* @AN */
+             xtdtop   = 1                                     /* @AN */
+             if (seq = 'A') | (seq = 'D') then                /* @AN */
+                nop                                           /* @AN */
+             else                                             /* @AN */
+                seq = 'A'                                     /* @AN */
+             SELECT                                           /* @AN */
+                when (PARM = 'RESET') then                    /* @AN */
+                     fld_sort = ''                            /* @AN */
+                when (PARM = 'PROFILE') then                  /* @AN */
+                     fld_sort = 'DATASET,C,A'seq              /* @AN */
+                when (PARM = 'TYPE') then                     /* @AN */
+                     fld_sort = 'TYPE,C,'seq                  /* @AN */
+                otherwise NOP                                 /* @AN */
+             END                                              /* @AN */
+        END                                                   /* @AN */
         WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN lparm = parm  /* @AM */
         otherwise NOP                                         /* @AM */
      END /* Select */                                         /* @AL */
@@ -120,9 +141,20 @@ PROFL:
         End
      end  /* Do while (reta < 4) */
      opta = ' '
+     if (fld_sort <> '') then DO                              /* @AN */
+        sort = fld_sort                                       /* @AN */
+        PARSE VAR FLD_SORT LOCARG "," .                       /* @AN */
+     END                                                      /* @AN */
+     else DO                                                  /* @AN */
+        sort   = dfl_sort                                     /* @AN */
+        LOCARG = DFL_SORT                                     /* @AN */
+     END                                                      /* @AN */
+     PARSE VAR FLD_SORT LOCARG "," .                          /* @AN */
+     CLRDATA = "GREEN"; CLRTYPE = "GREEN"                     /* @AN */
+     INTERPRET "CLR"SUBSTR(LOCARG,1,4)" = 'TURQ'"             /* @AN */
+     "TBSORT" tbla "FIELDS("sort")"                           /* @AN */
      "TBTOP  " tbla
      if (lparm <> '') then do                                 /* @AM */
-        locarg   = "DATASET"                                  /* @AM */
         ASTERICK = "*"                                        /* @AM */
         INTERPRET LOCARG" = lparm||ASTERICK"                  /* @AM */
         "TBTOP" tbla                                          /* @AM */

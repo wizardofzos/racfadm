@@ -6,7 +6,7 @@
 %Tutorial+\-\(%RACFADM - Settings - 1 of 3+)\-\%Tutorial
 %Command ===>_ZCMD                                                             +
 %
-%General:
++General:
 !  Administrator   +Specify full administrator authority,+providing more line
 +                  +commands: A Add, C Change, etc.%(YES or NO, NO=Default)
 +
