@@ -45,7 +45,6 @@
  RACFDSN7  Dataset        Add access
  RACFGRP1  Group          Set filter, menu option 2
  RACFGRP2  Group          Add group
- RACFGRP3  Group          List groups and access
  RACFGRP4  Group          Alter profile
  RACFGRP5  Group          List userids and access
  RACFGRP6  Group          Change connection
@@ -68,7 +67,7 @@
 
  Notes:
    - Class is 'General Resources'
-   - (Admin) = Administrator
+   - (admin) = Administrator
      * Line cmds: Show, Search, List, Chg, Add, Remove, Reset, Revoke
-   - (User)  = General user
+   - (user)  = General user
      * Line cmds: Show, Search, List

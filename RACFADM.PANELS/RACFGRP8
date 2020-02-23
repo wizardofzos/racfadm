@@ -27,6 +27,12 @@ _Z+ Z         Z
   IF (&SAMT = ' ')
       &SAMT = &ZSCED
 )PROC
+  &SROW = &Z
+  IF (&ZCMD = &Z)
+     IF (&ZTDSELS = 0)
+        &SROW = .CSRROW
+        IF (&SROW ^= 0)
+           &OPTA = S
   IF (&ERAADMN = YES)
      VER (&OPTA,LIST,S,L,C,A,R)
   ELSE

@@ -22,5 +22,11 @@ _Z+ $Z         #Z                                                              +
       &SAMT = &ZSCED
   &ZCMD = ' '
 )PROC
+  &SROW = &Z
+  IF (&ZCMD = &Z)
+     IF (&ZTDSELS = 0)
+        &SROW = .CSRROW
+        IF (&SROW ^= 0)
+           &OPTA = S
   VER (&OPTA,LIST,S)
 )END

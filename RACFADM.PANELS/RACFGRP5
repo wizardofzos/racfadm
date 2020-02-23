@@ -30,6 +30,12 @@ _Z+ $Z         #Z
       &SAMT = &ZSCED
   &ZCMD = ' '
 )PROC
+  &SROW = &Z
+  IF (&ZCMD = &Z)
+     IF (&ZTDSELS = 0)
+        &SROW = .CSRROW
+        IF (&SROW ^= 0)
+           &OPTB = S
   IF (&ERAADMN = YES)
      VER (&OPTB,LIST,S,L,C,A,R)
   ELSE

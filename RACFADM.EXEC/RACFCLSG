@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AI  200222  RACFA    Allow placing cursor on row and press ENTER  */
 /* @AH  200221  RACFA    Removed "G = '(G)'", not referenced          */
 /* @AG  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @AF  200220  RACFA    Fixed displaying all RACF commands           */
@@ -152,7 +153,11 @@ PROFL:
   do while (reta < 8)    /* tablea panel */
      "CONTROL DISPLAY SAVE"
      xtdtop = ztdtop
-     opta   = translate(opta) /* upper case */
+     IF (SROW <> "") & (SROW <> 0) THEN                       /* @AI */
+        IF (SROW > 0) THEN DO                                 /* @AI */
+           "TBTOP " TBLA                                      /* @AI */
+           "TBSKIP" TBLA "NUMBER("SROW")"                     /* @AI */
+        END                                                   /* @AI */
      Select
         when (opta= 'A') then call Addd
         when (opta= 'C') then call Chgd
@@ -167,7 +172,6 @@ PROFL:
         "TBDISPL" tbla
         reta = rc
         "CONTROL DISPLAY SAVE"
-        opta = translate(opta) /* upper case */
         Select
            when (opta= 'A') then call Addd
            when (opta= 'C') then call Chgd
@@ -330,7 +334,11 @@ DISM:
   retb = rc
   Do while (retb < 8)       /* tableb panel */
      "CONTROL DISPLAY SAVE"
-     optb = translate(optb)    /* upper case */
+     IF (SROW <> "") & (SROW <> 0) THEN                       /* @AI */
+        IF (SROW > 0) THEN DO                                 /* @AI */
+           "TBTOP " TBLB                                      /* @AI */
+           "TBSKIP" TBLB "NUMBER("SROW")"                     /* @AI */
+        END                                                   /* @AI */
      Select
         when (optb = 'A') then call Addm
         when (optb = 'R') then call Delm
@@ -341,7 +349,6 @@ DISM:
         "TBDISPL" tblb
         retb = rc
         "CONTROL DISPLAY SAVE"
-        optb = TRANSLATE(optb)
         Select
            when (optb = 'A') then call Addm
            when (optb = 'R') then call Delm
@@ -514,7 +521,11 @@ DISD:
      retb = rc
      Do while (retb < 8)    /* tableb panel */
         "CONTROL DISPLAY SAVE"
-        optb = translate(optb) /* upper case */
+        IF (SROW <> "") & (SROW <> 0) THEN                    /* @AI */
+           IF (SROW > 0) THEN DO                              /* @AI */
+              "TBTOP " TBLB                                   /* @AI */
+              "TBSKIP" TBLB "NUMBER("SROW")"                  /* @AI */
+           END                                                /* @AI */
         Select
            when (optb= 'A') then call Addp
            when (optb= 'C') then call Chgp
@@ -528,7 +539,6 @@ DISD:
            "TBDISPL" tblb
            retb = rc
            "CONTROL DISPLAY SAVE"
-           optb = TRANSLATE(optb)
            Select
               when (optb= 'A') then call Addp
               when (optb= 'C') then call Chgp

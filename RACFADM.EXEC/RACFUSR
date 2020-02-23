@@ -3,6 +3,9 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BI  200222  RACFA    Allowing abbreviating the column in SORT cmd */
+/* @BH  200222  RACFA    Removed translating OPTA/B, not needed       */
+/* @BG  200222  RACFA    Allow placing cursor on row and press ENTER  */
 /* @BF  200221  RACFA    Removed "G = '(G)'", not referenced          */
 /* @BE  200221  LBDYCK   Add ONLY primary command                     */
 /* @BD  200221  RACFA    Display '*Search' to right of userid         */
@@ -116,6 +119,11 @@ PROFL:
      PARSE VAR ZCMD ZCMD PARM SEQ                             /* @AQ */
      lparm  = ""                                              /* @A7 */
      xtdtop = ztdtop                                          /* @AS */
+     IF (SROW <> "") & (SROW <> 0) THEN                       /* @BG */
+        IF (SROW > 0) THEN DO                                 /* @BG */
+           "TBTOP " TBLA                                      /* @BG */
+           "TBSKIP" TBLA "NUMBER("SROW")"                     /* @BG */
+        END                                                   /* @BG */
      Select
         When (abbrev("ONLY",zcmd,1) = 1) then do              /* @BE */
              find_str = translate(parm)                       /* @BE */
@@ -145,27 +153,21 @@ PROFL:
               else                                            /* @AU */
                  seq = 'A'                                    /* @AU */
               SELECT                                          /* @A5 */
-                 when (PARM = 'RESET')   then                 /* @A5 */
-                      fld_sort = ''                           /* @AQ */
-                 when (PARM = 'SURNAME') then                 /* @A5 */
-                      fld_sort = 'NAME,C,'seq                 /* @AQ */
-                 when (PARM = 'NAME')    then                 /* @A5 */
-                      fld_sort = 'NAME,C,'seq                 /* @AQ */
-                 when (PARM = 'LOGON')   then                 /* @A5 */
-                      fld_sort = 'DATELGN,C,'seq              /* @AQ */
-                 when (PARM = 'GROUP')   then                 /* @A5 */
-                      fld_sort = 'DEFGRP,C,'seq               /* @AQ */
-                 when (PARM = 'REV')     then                 /* @A5 */
-                      fld_sort = 'REVOKED,C,'seq              /* @AQ */
-                 when (PARM = 'USERID')  then                 /* @A5 */
+                 when (ABBREV("USERID",PARM,1) = 1) then      /* @BI */
                       fld_sort = 'USER,C,'seq                 /* @AQ */
-                 when (PARM = 'OWNER')   then                 /* @A5 */
+                 when (ABBREV("NAME",PARM,1) = 1) then        /* @BI */
+                      fld_sort = 'NAME,C,'seq                 /* @AQ */
+                 when (ABBREV("GROUP",PARM,1) = 1) then       /* @BI */
+                      fld_sort = 'DEFGRP,C,'seq               /* @AQ */
+                 when (ABBREV("LOGON",PARM,1) = 1) then       /* @BI */
+                      fld_sort = 'DATELGN,C,'seq              /* @AQ */
+                 when (ABBREV("OWNER",PARM,1) = 1) then       /* @BI */
                       fld_sort = 'OWNER,C,'seq                /* @AQ */
-                 when (PARM = 'ATTR')    then                 /* @A5 */
+                 when (ABBREV("REV",PARN,1) = 1) then         /* @BI */
+                      fld_sort = 'REVOKED,C,'seq              /* @AQ */
+                 when (ABBREV("ATTR",ZCMD,1) = 1)  then       /* @BI */
                       fld_sort = 'ATTR,C,'seq                 /* @AQ */
-                 when (PARM = 'ATT')     then                 /* @A5 */
-                      fld_sort = 'ATTR,C,'seq                 /* @AQ */
-                 when (PARM = 'TSO')     then                 /* @A5 */
+                 when (ABBREV("TSO",PARM,1) = 1) then         /* @BI */
                       fld_sort = 'TSOUSER,C,'seq              /* @AQ */
                  otherwise NOP                                /* @A5 */
               END                                             /* @A5 */
@@ -175,7 +177,6 @@ PROFL:
          otherwise lparm = ''
      End /* Select */
      ZCMD = ""; PARM = ""                                     /* @A5 */
-     opta = translate(opta) /* upper case */
      Select
         when (opta = 'A')  then call Addd
         when (opta = 'C')  then call Chgd
@@ -198,7 +199,11 @@ PROFL:
         "TBDISPL" tbla
         reta = rc
         "CONTROL DISPLAY SAVE"
-        opta = translate(opta) /* upper case it */
+        IF (SROW <> "") & (SROW <> 0) THEN                    /* @BG */
+           IF (SROW > 0) THEN DO                              /* @BG */
+              "TBTOP " TBLA                                   /* @BG */
+              "TBSKIP" TBLA "NUMBER("SROW")"                  /* @BG */
+           END                                                /* @BG */
         Select
            when (opta = 'A')  then call Addd
            when (opta = 'C')  then call Chgd
@@ -582,7 +587,11 @@ DISD:
      retb = rc
      Do while (retb < 8)          /* tableb */
         "CONTROL DISPLAY SAVE"
-        optb = translate(optb)     /* upper case */
+        IF (SROW <> "") & (SROW <> 0) THEN                    /* @BG */
+           IF (SROW > 0) THEN DO                              /* @BG */
+              "TBTOP " TBLB                                   /* @BG */
+              "TBSKIP" TBLB "NUMBER("SROW")"                  /* @BG */
+           END                                                /* @BG */
         Select
            when (optb = 'A') then call Addp
            when (optb = 'C') then call Chgp
@@ -596,7 +605,6 @@ DISD:
            "TBDISPL" tblb
            retb = rc
            "CONTROL DISPLAY SAVE"
-           optb = TRANSLATE(optb)
            Select
               when (optb = 'A') then call Addp
               when (optb = 'C') then call Chgp

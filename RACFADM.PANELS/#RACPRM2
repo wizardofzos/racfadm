@@ -8,10 +8,10 @@
 %
 +General:
 !  RACF commands   +Enter%YES+to view each RACF command before it is
-+                  +issued,%NO+to hide all RACF commands
++                  +issued,%NO+to hide all RACF commands (default)
 +
 !  REXX trace      +Enter%YES+to trace the execution of the REXX exec,
-+                  %NO+to work without trace
++                  %NO+to work without trace (default)
 +
 +Adding TSO userid:
 !  Master catalog  +Specify the MVS master catalog

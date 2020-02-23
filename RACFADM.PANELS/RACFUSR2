@@ -35,6 +35,12 @@ _Z ^Z      Z       Z                   Z       œZ       	Z       †Z  Z  —Z
   IF (&SAMT = ' ')
       &SAMT = &ZSCED
 )PROC
+  &SROW = &Z
+  IF (&ZCMD = &Z)
+     IF (&ZTDSELS = 0)
+        &SROW = .CSRROW
+        IF (&SROW ^= 0)
+           &OPTA = S
   /* Line command: XR is not displayed (hidden) */
   IF (&ERAADMN = YES)
      VER (&OPTA,LIST,S,SE,L,C,A,R,RS,RV,XR)

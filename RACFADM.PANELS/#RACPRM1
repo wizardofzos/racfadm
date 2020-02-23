@@ -15,7 +15,7 @@
 +
 !  Status interval +The number of entries processed before displaying the
 +                  +progress status message%(0-9999, 0=Do not display,
-%                     1=Default)
+%                   100=Default)
 +
 !  Display files   +Display files in%BROWSE, EDIT or VIEW+mode when using the
 +                  +List line command and selecting menu option C, Changes

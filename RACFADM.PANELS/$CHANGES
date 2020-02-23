@@ -2,19 +2,38 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
-  23 Feb 2020 - V4R4
+  22 Feb 2020 - V4R5
+     - Main Menu
+       * Added version to menu title
+       * Added RACF and system information at the bottom of the menu
+         (RACF, Dbase, z/OS, Lpar, Plex, Id, Date, Jdate and Time)
+       * Changed the 'Status Interval' default number to 100, was 1
+     - Menu Option T (Tutoral)
+       * Added point-n-shoot fields to tutorials
+     - Tutorials
+       * Updated a few tutorial panels to reflect changes made
+     - Other Items
+       * Allow tabbing down to a row and just pressing ENTER to
+         to select it ('S'how)
+       * Allow abbreviating the column name when using the SORT
+         primary command
+       * Removed translating the contents of the row selector variable
+         to upper case in all the REXX programs, no longer needed
+       * Deleted panel RACFGRP3, not used
+
+  22 Feb 2020 - V4R4
      - Menu Option T (Tutoral)
        * Fixed tutorial menu, was invoking incorrect tutorial for
          option '3 Dataset profile'
 
-  23 Feb 2020 - V4R3
+  22 Feb 2020 - V4R3
      - Main Menu
        * Added point-n-shoot fields to menu options
      - Menu Option 3 (Dataset)
        * Added primary command 'SORT', updated tutorial
      - Menu Option T (Tutoral)
-       * Added/updated 'Dataset' and 'General Resource' Access
-         Authority tutorials
+       * Added/updated 'Dataset and General Resource Access
+         Authority' tutorials
 
   22 Feb 2020 - V4R2
      - Menu Option 3 (Dataset)

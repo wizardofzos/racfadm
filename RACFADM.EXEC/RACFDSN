@@ -3,6 +3,9 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AQ  200222  RACFA    Allowing abbreviating the column in SORT cmd */
+/* @AP  200222  RACFA    Removed translating OPTA/B, not needed       */
+/* @AO  200222  RACFA    Allow placing cursor on row and press ENTER  */
 /* @AN  200222  RACFA    Added primary commands 'SORT'                */
 /* @AM  200221  RACFA    Added primary commands 'LOCATE'              */
 /* @AL  200221  RACFA    Added primary commands 'ONLY' and 'RESET'    */
@@ -75,9 +78,13 @@ PROFL:
   do while (reta < 8)   /* tablea panel */
      "CONTROL DISPLAY SAVE"
      xtdtop = ztdtop
-     opta   = translate(opta) /* upper case */
      lparm  = ""                                              /* @AM */
      PARSE VAR ZCMD ZCMD PARM SEQ                             /* @AN */
+     IF (SROW <> "") & (SROW <> 0) THEN                       /* @AO */
+        IF (SROW > 0) THEN DO                                 /* @AO */
+           "TBTOP " TBLA                                      /* @AO */
+           "TBSKIP" TBLA "NUMBER("SROW")"                     /* @AO */
+        END                                                   /* @AO */
      Select                                                   /* @AL */
         When (abbrev("ONLY",zcmd,1) = 1) then do              /* @AL */
              find_str = translate(parm)                       /* @AL */
@@ -106,11 +113,9 @@ PROFL:
              else                                             /* @AN */
                 seq = 'A'                                     /* @AN */
              SELECT                                           /* @AN */
-                when (PARM = 'RESET') then                    /* @AN */
-                     fld_sort = ''                            /* @AN */
-                when (PARM = 'PROFILE') then                  /* @AN */
+                when (ABBREV("PROFILE",PARM,1) = 1) then      /* @AQ */
                      fld_sort = 'DATASET,C,A'seq              /* @AN */
-                when (PARM = 'TYPE') then                     /* @AN */
+                when (ABBREV("TYPE",PARM,1) = 1) then         /* @AQ */
                      fld_sort = 'TYPE,C,'seq                  /* @AN */
                 otherwise NOP                                 /* @AN */
              END                                              /* @AN */
@@ -131,7 +136,6 @@ PROFL:
         "TBDISPL" tbla
         reta = rc
         "CONTROL DISPLAY SAVE"
-        opta = translate(opta) /* upper case */
         Select
            when (opta = 'A') then call Addd
            when (opta = 'C') then call Chgd
@@ -382,7 +386,11 @@ DISD:
      retb = rc
      Do while (retb < 8)        /* tableb panel */
         "CONTROL DISPLAY SAVE"
-        optb = translate(optb)     /* upper case */
+        IF (SROW <> "") & (SROW <> 0) THEN                    /* @AO */
+           IF (SROW > 0) THEN DO                              /* @AO */
+              "TBTOP " TBLB                                   /* @AO */
+              "TBSKIP" TBLB "NUMBER("SROW")"                  /* @AO */
+           END                                                /* @AO */
         Select
            when (optb = 'A') then call Addp
            when (optb = 'C') then call Chgp
@@ -396,7 +404,6 @@ DISD:
            "TBDISPL" tblb
            retb = rc
            "CONTROL DISPLAY SAVE"
-           optb = TRANSLATE(optb)
            Select
               when (optb = 'A') then call Addp
               when (optb = 'C') then call Chgp

@@ -30,5 +30,11 @@ _Z+  $Z           +
 )REINIT
   .CURSOR = OPTB
 )PROC
+  &SROW = &Z
+  IF (&ZCMD = &Z)
+     IF (&ZTDSELS = 0)
+        &SROW = .CSRROW
+        IF (&SROW ^= 0)
+           &OPTB = A
   VER (&OPTB,LIST,A,R)
 )END

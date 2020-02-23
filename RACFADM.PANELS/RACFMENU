@@ -1,38 +1,65 @@
 )ATTR DEFAULT(%+_)
-  _ TYPE(INPUT) INTENS(HIGH) CAPS(ON) JUST(LEFT)   HILITE(USCORE)
-  ! TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(TURQ)
-  + TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(GREEN)
+  ! TYPE(OUTPUT) INTENS(HIGH) SKIP(ON) COLOR(TURQ)
+  _ TYPE(INPUT)  INTENS(HIGH) CAPS(ON) JUST(LEFT)   HILITE(USCORE)
+  + TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(GREEN)
   ~  TYPE(PS)
 )BODY EXPAND(\\)
-+\-\(%RACFADM - RACF Administration+)\-\
++\-\(%RACFADM - RACF Administration - V4R5+)\-\
 %Option ===>_ZCMD                                                              +
 %
-%0 ~Settings  +Customize options
-%1 ~User      +User profiles
-%2 ~Group     +Group profiles
-%3 ~Dataset   +Dataset profiles
-%4 ~General   +General resource _CLASS   +
-%5 ~RACFprms  +RACF parameters
-%C ~Changes   +Version/updates
-%T ~Tutorial  +Help
-%X ~Exit      +Terminate
+%   0 ~Settings +Customize options
+%   1 ~User     +User profiles
+%   2 ~Group    +Group profiles
+%   3 ~Dataset  +Dataset profiles
+%   4 ~General  +General resource _CLASS   +
+%   5 ~RACFprms +RACF parameters
+%   C ~Changes  +Version/updates
+%   T ~Tutorial +Help
+%   X ~Exit     +Terminate
++
++
++
++
++
++
++ ---------------------------------------------------------------------------
++   RACF:!RACFVER     +Dbase:!RACFDSN
++   z/OS:!ZOSVER      +Plex: !ZSYSPLEX    +Lpar:!ZSYSID    +Userid:!ZUSER
++   Date:!ZDATE       +Jdate:!ZJDATE      +Time:!ZTIME
++ ---------------------------------------------------------------------------
 )INIT
-  VGET (ERAADMN ERACONF ERASINT ERADISP ERASHOW ERATRACE) PROFILE
-  IF (&ERAADMN  = &Z)
-      &ERAADMN  = 'NO'
-  IF (&ERACONF  = &Z)
-      &ERACONF  = 'YES'
-  IF (&ERASINT  = &Z)
-      &ERASINT  = '1'
-  IF (&ERADISP  = &Z)
-      &ERADISP  = 'VIEW'
-  IF (&ERASHOW  = &Z)
-      &ERASHOW  = 'NO'
-  IF (&ERATRACE = &Z)
-      &ERATRACE = 'NO'
-  VPUT (ERAADMN ERACONF ERASINT ERADISP ERASHOW ERATRACE) PROFILE
   .CURSOR = ZCMD
   .HELP   = #RACMENU
+
+  VGET (ERAADMN ERASINT ERADISP ERACONF ERASHOW ERATRACE) PROFILE
+  IF (&ERAADMN  = &Z)        /*- Set default settings -*/
+      &ERAADMN  = 'NO'       /* Administrator   = NO   */
+  IF (&ERASINT  = &Z)
+      &ERASINT  = '100'      /* Status interval = 100  */
+  IF (&ERADISP  = &Z)
+      &ERADISP  = 'VIEW'     /* Display files   = VIEW */
+  IF (&ERACONF  = &Z)
+      &ERACONF  = 'YES'      /* Confirm panel   = YES  */
+  IF (&ERASHOW  = &Z)
+      &ERASHOW  = 'NO'       /* RACF commands   = NO   */
+  IF (&ERATRACE = &Z)
+      &ERATRACE = 'NO'       /* REXX trace      = NO   */
+  VPUT (ERAADMN ERASINT ERADISP ERACONF ERASHOW ERATRACE) PROFILE
+
+  &RACFVER = &Z              /*- Obtain RACF/Sys Info -*/
+  &RACFDSN = &Z
+  &ZOSVER  = &ZOS390RL
+  *REXX (RACFVER RACFDSN ZOSVER)
+    cvt       = c2x(storage(10,4))
+    cvtrac$   = d2x((x2d(cvt))+992)
+    cvtrac    = c2x(storage(cvtrac$,4))
+    rcvtstat$ = d2x((x2d(cvtrac))+616)
+    x         = storage(rcvtstat$,4)
+    RACFVER   = 'V'substr(x,1,1)'R'substr(x,2,2)'M'substr(x,4,1)
+    rcvtsta$  = d2x((x2d(cvtrac))+56)
+    RACFDSN   = storage(rcvtsta$,44)
+    parse var zosver . "z/OS" ZOSVER .
+  *ENDREXX
 )PROC
   VER (&CLASS,NAME)
   &ZSEL=TRANS(TRUNC(&ZCMD,'.')

@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AA  200222  RACFA    Removed translating OPTA/B, not needed       */
+/* @A9  200222  RACFA    Allow placing cursor on row and press ENTER  */
 /* @A8  200221  RACFA    Removed "G = '(G)'", not referenced          */
 /* @A7  200221  RACFA    Get ERASHOW, to display RACF cmds            */
 /* @A6  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
@@ -63,7 +65,11 @@ DISPLAY_TABLE_PERMIT:
  do while (rc < 8)  /* tablea */
     "CONTROL DISPLAY SAVE"
     xtdtop = ztdtop
-    opta   = translate(opta) /* upper case */
+    IF (SROW <> "") & (SROW <> 0) THEN                        /* @A9 */
+       IF (SROW > 0) THEN DO                                  /* @A9 */
+          "TBTOP " TBLB                                       /* @A9 */
+          "TBSKIP" TBLB "NUMBER("SROW")"                      /* @A9 */
+       END                                                    /* @A9 */
     Select
        when (subword(ZCMD,1,1)  = 'LOCATE' |,
              subword(ZCMD,1,1)  = 'L') &,
@@ -91,7 +97,6 @@ DISPLAY_TABLE_PERMIT:
        "TBDISPL" tblb
        reta = rc
        "CONTROL DISPLAY SAVE"
-       opta = translate(opta) /* upper case */
        Select
           when (opta = 'S') then
                x = RACFAUTH(class profile user)
@@ -184,6 +189,11 @@ DISPLAY_TABLE:
   Do while ^selection & (reta < 8)
      action = ''
      "CONTROL DISPLAY SAVE"
+     IF (SROW <> "") & (SROW <> 0) THEN                       /* @A9 */
+        IF (SROW > 0) THEN DO                                 /* @A9 */
+           "TBTOP " TBLA                                      /* @A9 */
+           "TBSKIP" TBLA "NUMBER("SROW")"                     /* @A9 */
+        END                                                   /* @A9 */
      Select
         when (subword(ZCMD,1,1) = 'LOCATE') |,
              (subword(ZCMD,1,1) = 'L') then
@@ -191,7 +201,6 @@ DISPLAY_TABLE:
         otherwise lclass = ''
      End
      xtdtop = ztdtop
-     opta   = translate(opta) /* upper case */
      select
         when (opta = 'S') then do
              rc = get_permits(class,user) /*get permits*/
@@ -204,7 +213,6 @@ DISPLAY_TABLE:
         "TBDISPL" tbla
         reta = rc
         "CONTROL DISPLAY SAVE"
-        opta = translate(opta) /* upper case */
         Select
            when (opta = 'S') then
                 rc = get_permits(class,user) /*get permits*/
