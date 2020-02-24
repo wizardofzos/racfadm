@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AV  200124  RACFA    Standardize quotes, chg single to double     */
+/* @AU  200124  RACFA    Place panels at top of REXX in variables     */
 /* @AT  200223  RACFA    Fixed SORTed color column                    */
 /* @AS  200223  RACFA    Fixed SORT DATASET                           */
 /* @AR  200223  RACFA    Simplified SORT, removed FLD/DFL_SORT vars   */
@@ -34,6 +36,16 @@
 /* @A1  200110  RACFA    Added line command 'L' to list dataset       */
 /* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
 /*====================================================================*/
+PANEL01 = "RACFDSN1"    /* Set filter, menu option 3       */ /* @AU */
+PANEL02 = "RACFDSN2"    /* List profiles and types         */ /* @AU */
+PANEL03 = "RACFDSN3"    /* Add profile                     */ /* @AU */
+PANEL04 = "RACFDSN4"    /* Change profile                  */ /* @AU */
+PANEL05 = "RACFDSN5"    /* Show groups and access          */ /* @AU */
+PANEL06 = "RACFDSN6"    /* Change access                   */ /* @AU */
+PANEL07 = "RACFDSN7"    /* Add access                      */ /* @AU */
+PANELM1 = "RACFMSG1"    /* Confirm Request (pop-up)        */ /* @AU */
+PANELM2 = "RACFMSG2"    /* Execute RACF Command (pop-up)   */ /* @AU */
+
 ADDRESS ISPEXEC                                               /* @AJ */
   Rclass = 'DATASET'
   "VGET (ZSCREEN ERASHOW ERATRACE ERAFLTR",                   /* @AD */
@@ -48,10 +60,10 @@ ADDRESS ISPEXEC                                               /* @AJ */
   address TSO "PROFILE NOPREFIX MSGID"
   rlv = SYSVAR('SYSLRACF')
   chgsmade = 'N'                                              /* @A3 */
-  "DISPLAY PANEL(RACFDSN1)"
+  "DISPLAY PANEL("PANEL01")"                                  /* @AU */
   Do while (rc = 0)
      call Profl
-     "DISPLAY PANEL(RACFDSN1)"
+     "DISPLAY PANEL("PANEL01")"                               /* @AU */
   End
   If (chgsmade = "Y") then Do                                 /* @A3 */
      msg='You are about to refresh the generic class: 'rclass /* @A3 */
@@ -76,7 +88,7 @@ PROFL:
   CLRDATA = "TURQ";  CLRTYPE = "GREEN"   /* Col. colors */    /* @AN */
   "TBSORT " tbla "FIELDS("sort")"                             /* @AR */
   "TBTOP  " tbla
-  "TBDISPL" tbla "PANEL(RACFDSN2)"
+  "TBDISPL" tbla "PANEL("PANEL02")"                           /* @AU */
   reta = rc
   do while (reta < 8)   /* tablea panel */
      "CONTROL DISPLAY SAVE"
@@ -169,7 +181,7 @@ PROFL:
      else                                                     /* @AM */
         "TBSKIP" tbla "NUMBER("XTDTOP")"
      "CONTROL DISPLAY RESTORE"
-     "TBDISPL" tbla "PANEL(RACFDSN2)"
+     "TBDISPL" tbla "PANEL("PANEL02")"                        /* @AU */
      reta = rc
   end  /* Do while (reta < 8) */
 RETURN
@@ -183,7 +195,7 @@ ADDD:
      new = 'YES'
   else
      CALL Getd
-  "DISPLAY PANEL(RACFDSN3)"
+  "DISPLAY PANEL("PANEL03")"                                  /* @AU */
   if (rc > 0) then
      return
   if (type = 'DISCRETE') then
@@ -236,7 +248,7 @@ CHGD:
   if (dataset = 'NONE') then
      return
   CALL Getd
-  "DISPLAY PANEL(RACFDSN4)"
+  "DISPLAY PANEL("PANEL04")"                                  /* @AU */
   if (rc > 0) then return
   if (type = 'DISCRETE') then
      type = ' '
@@ -378,7 +390,7 @@ DISD:
      rb   = 'NO'
      optb = ' '
      "TBTOP  " tblb
-     "TBDISPL" tblb "PANEL(RACFDSN5)"
+     "TBDISPL" tblb "PANEL("PANEL05")"                        /* @AU */
      retb = rc
      Do while (retb < 8)        /* tableb panel */
         "CONTROL DISPLAY SAVE"
@@ -416,7 +428,7 @@ DISD:
         if (rb = "YES") then
            retb = 12         /* rebuild table required */
         else do
-           "TBDISPL" tblb "PANEL(RACFDSN5)"
+           "TBDISPL" tblb "PANEL("PANEL05")"                  /* @AU */
            retb = rc
         end
      end  /* While retb< 8 */
@@ -491,7 +503,7 @@ RETURN
 CHGP:
   If (id = 'NONE') then
      return
-  "DISPLAY PANEL(RACFDSN6)"
+  "DISPLAY PANEL("PANEL06")"                                  /* @AU */
   if (rc > 0) then
      return
   if (type = 'DISCRETE') then
@@ -513,7 +525,7 @@ ADDP:
   if (id = 'NONE') then
      new = 'YES'
   from = ' '
-  "DISPLAY PANEL(RACFDSN7)"
+  "DISPLAY PANEL("PANEL07")"                                  /* @AU */
   if (rc > 0) then
      return
   if (type = 'DISCRETE') then
@@ -615,10 +627,10 @@ CONFIRM_REQUEST:
   answer  = 'NO'
   zwinttl = 'CONFIRM REQUEST'
   Do until (ckey = 'PF03') | (ckey = 'ENTER')
-     'CONTROL NOCMD'
-     'ADDPOP'
-     'DISPLAY PANEL(RACFMSG1)'
-     'REMPOP'
+     "CONTROL NOCMD"                                          /* @AV */
+     "ADDPOP"                                                 /* @AV */
+     "DISPLAY PANEL("PANELM1")"                               /* @AU */
+     "REMPOP"                                                 /* @AV */
   end
   select
      when (ckey = 'PF03')  then answer = 'NO'
@@ -723,9 +735,9 @@ RETURN                                                        /* @A5 */
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @AI */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @AI */
-  'ADDPOP ROW(6) COLUMN(4)'                                   /* @AI */
-  'DISPLAY PANEL(RACFMSG2)'                                   /* @AI */
-  'REMPOP'                                                    /* @AI */
+  "ADDPOP ROW(6) COLUMN(4)"                                   /* @AV */
+  "DISPLAY PANEL("PANELM2")"                                  /* @AU */
+  "REMPOP"                                                    /* @AV */
 RETURN                                                        /* @AI */
 /*--------------------------------------------------------------------*/
 /*  Create table                                                  @AL */

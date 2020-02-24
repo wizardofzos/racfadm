@@ -3,12 +3,15 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A5  200124  RACFA    Place panels at top of REXX in variables     */
 /* @A4  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @A3  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A2  200120  TRIDJK   Add multi factor authentication (rcvtsmfa)   */
 /* @A1  200119  RACFA    Standardized/reduced lines of code           */
 /* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
 /*====================================================================*/
+PANEL19 = "RACFPRMJ"    /* RACF parameters, menu option 5  */ /* @A5 */
+
 ADDRESS ISPEXEC                                               /* @A4 */
   "VGET (ERATRACE) ASIS"                                      /* @A3 */
   If (eratrace = 'YES') then Trace r                          /* @A3 */
@@ -28,7 +31,7 @@ ADDRESS ISPEXEC                                               /* @A4 */
   call Racf_terminal_options
   call Racf_tape_options
   call Racf_statistics
-  'display panel(RACFPRMJ)'
+  'display panel('PANEL19')'                                  /* @A5 */
 
 RETURN 0000                                 /* exit                   */
 /*--------------------------------------------------------------------*/

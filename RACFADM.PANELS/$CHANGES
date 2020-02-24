@@ -2,10 +2,22 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  24 Feb 2020 - V4R8
+     - Settings (Menu Option 0)
+       * Fixed 'Status Interval', allow user to type in a 4 digit
+         number
+     - General resources (Menu option 4)
+       * Fixed displaying PROFILE/CLASS when displaying group/ids,
+         was input fields, needed to be output fields
+     - Other Items
+       * Updated panel $DIR mbr, added back #RACCLSA
+       * Placed panel names in variables at the top of the REXX
+         programs, making it easier to maintain
+
   23 Feb 2020 - V4R7
      - Tutorials
-       -- Had to restore the deleted panel #RACFCLS, turns out, it is
-          used by several panels
+       -- Restored deleted panel #RACCLSA, used by several panels,
+          not associated with the RACFCLSA panel
 
   23 Feb 2020 - V4R6
      - Menu Option 1 (User)

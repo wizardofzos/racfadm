@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AN  200124  RACFA    Standardize quotes, chg single to double     */
+/* @AM  200124  RACFA    Place panels at top of REXX in variables     */
 /* @AL  200223  RACFA    Deleted panel RACFCLS9, no longer needed     */
 /* @AK  200223  RACFA    Added primary cmds SORT, LOCATE, ONLY, RESET */
 /* @AJ  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
@@ -26,15 +28,27 @@
 /* @A1  200118  RACFA    Added line command L-List to execute RLIST   */
 /* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
 /*====================================================================*/
+PANEL01 = "RACFCLS1"    /* Set filter, menu option 4       */ /* @AM */
+PANEL03 = "RACFCLS3"    /* Add class                       */ /* @AM */
+PANEL04 = "RACFCLS4"    /* Change class                    */ /* @AM */
+PANEL05 = "RACFCLS5"    /* List group/ids and access       */ /* @AM */
+PANEL06 = "RACFCLS6"    /* Change access                   */ /* @AM */
+PANEL07 = "RACFCLS7"    /* Add access                      */ /* @AM */
+PANEL09 = "RACFCLS9"    /* List profiles and descriptions  */ /* @AM */
+PANEL12 = "RACFCLSB"    /* List members                    */ /* @AM */
+PANEL13 = "RACFCLSC"    /* Add class                       */ /* @AM */
+PANELM1 = "RACFMSG1"    /* Confirm Request (pop-up)        */ /* @AM */
+PANELM2 = "RACFMSG2"    /* Execute RACF Command (pop-up)   */ /* @AM */
+
 ADDRESS ISPEXEC                                               /* @AG */
   Arg Rclass Rfilter Rdisp
   If (Rfilter = '') Then Do                                   /* @A9 */
      "VGET (ERAFLTR) ASIS"                                    /* @A9 */
      Rfilter = ERAFLTR                                        /* @A9 */
   end                                                         /* @A9 */
-  Raclist = 'NO'
-  Pnl_list_prof='RACFCLS9'
-  Rclass  = strip(rclass)
+  Raclist       = 'NO'
+  Pnl_list_prof = PANEL09                                     /* @AM */
+  Rclass        = strip(rclass)
   "VGET (ZSCREEN ERASHOW ERATRACE ERACONF",                   /* @AA */
         "ERASINT ERAADMN ERADISP) ASIS"                       /* @AC */
   If (eratrace = 'YES') then Trace r                          /* @AE */
@@ -46,12 +60,12 @@ ADDRESS ISPEXEC                                               /* @AG */
   called = SYSVAR('SYSNEST')
   If (called = 'YES') & (rdisp <> 'YES') then
      "CONTROL NONDISPL ENTER"
-  "DISPLAY PANEL(RACFCLS1)"
+  "DISPLAY PANEL("PANEL01")"                                  /* @AM */
   Do while (rc = 0)
      Call create_table
      call Profl
      if (called <> 'YES') | (rdisp = 'YES') then do
-        "DISPLAY PANEL(RACFCLS1)"
+        "DISPLAY PANEL("PANEL01")"                            /* @AM */
         ret_code = rc
      end
   end
@@ -184,7 +198,7 @@ ADDD:
      new = 'YES'
   else
      CALL Getd
-  "DISPLAY PANEL(RACFCLS3)"
+  "DISPLAY PANEL("PANEL03")"                                  /* @AM */
   if (rc > 0) then
      return
   if (type = 'DISCRETE') then
@@ -237,7 +251,7 @@ CHGD:
   if (profile = 'NONE') then
      return
   CALL Getd
-  "DISPLAY PANEL(RACFCLS4)"
+  "DISPLAY PANEL("PANEL04")"                                  /* @AM */
   if (rc > 0) then return
   own = ' '
   if (owner <> ' ') then
@@ -314,7 +328,7 @@ DISM:
   If (profile||rclass <> Real_profile) then Profchg = 'YES'
   "TBSORT " tblb "FIELDS(ID)"
   "TBTOP  " tblb
-  "TBDISPL" tblb "PANEL(RACFCLSB)"
+  "TBDISPL" tblb "PANEL("PANEL12")"                           /* @AM */
   retb = rc
   Do while (retb < 8)       /* tableb panel */
      "CONTROL DISPLAY SAVE"
@@ -347,7 +361,7 @@ DISM:
      if (rb = "YES") then
         retb = 12         /* rebuild table required */
      else do
-        "TBDISPL" tblb "PANEL(RACFCLSB)"
+        "TBDISPL" tblb "PANEL("PANEL12")"                     /* @AM */
         retb = rc
      end
   end  /* While retb< 8 */
@@ -360,7 +374,7 @@ ADDM:
   new = 'NO'
   if (id = 'NONE') then
      new = 'YES'
-  "DISPLAY PANEL(RACFCLSC)"
+  "DISPLAY PANEL("PANEL13")"                                  /* @AM */
   if (rc > 0) then return
   addmem = 'ADDMEM('id')'
   call EXCMD "RALTER "RCLASS PROFILE ADDMEM
@@ -500,7 +514,7 @@ DISD:
      /* ability to perform actions on different profile */
      Real_profile = profile||rclass
      Profchg      ='NO'
-     "TBDISPL" tblb "PANEL(RACFCLS5)"
+     "TBDISPL" tblb "PANEL("PANEL05")"                        /* @AM */
      If (profile||rclass <> Real_profile) then Profchg = 'YES'
      retb = rc
      Do while (retb < 8)    /* tableb panel */
@@ -540,7 +554,7 @@ DISD:
         if (rb = "YES") then
            retb = 12         /* rebuild table required */
         else do
-           "TBDISPL" tblb "PANEL(RACFCLS5)"
+           "TBDISPL" tblb "PANEL("PANEL05")"                  /* @AM */
            retb = rc
         end
      end  /* While retb< 8 */
@@ -625,7 +639,7 @@ RETURN
 CHGP:
   If (id = 'NONE') then
      return
-  "DISPLAY PANEL(RACFCLS6)"
+  "DISPLAY PANEL("PANEL06")"                                  /* @AM */
   if (rc > 0) then
      return
   if (type = 'DISCRETE') then
@@ -664,7 +678,7 @@ ADDP:
   if (id = 'NONE') then
      new = 'YES'
   from = ' '
-  "DISPLAY PANEL(RACFCLS7)"
+  "DISPLAY PANEL("PANEL07")"                                  /* @AM */
   if (rc > 0) then
      return
   if (type = 'DISCRETE') then
@@ -758,10 +772,10 @@ CONFIRM_REQUEST:
   ckey    = ''
   if (ERACONF ='NO') then ckey = 'ENTER'
   Do while (ckey <> 'PF03') & (ckey <> 'ENTER')
-     'CONTROL NOCMD'
-     'ADDPOP'
-     'DISPLAY PANEL(RACFMSG1)'
-     'REMPOP'
+     "CONTROL NOCMD"                                          /* @AN */
+     "ADDPOP"                                                 /* @AN */
+     "DISPLAY PANEL("PANELM1")"                               /* @AM */
+     "REMPOP"                                                 /* @AN */
   end
   Select
      when (ckey = 'PF03')  then answer = 'NO'
@@ -897,9 +911,9 @@ RETURN                                                        /* @A2 */
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @AF */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @AF */
-  'ADDPOP ROW(6) COLUMN(4)'                                   /* @AF */
-  'DISPLAY PANEL(RACFMSG2)'                                   /* @AF */
-  'REMPOP'                                                    /* @AF */
+  "ADDPOP ROW(6) COLUMN(4)"                                   /* @AN */
+  "DISPLAY PANEL("PANELM2")"                                  /* @AM */
+  "REMPOP"                                                    /* @AN */
 RETURN                                                        /* @AF */
 /*--------------------------------------------------------------------*/
 /*  Create Table                                                  @AK */

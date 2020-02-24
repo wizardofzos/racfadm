@@ -6,6 +6,7 @@
  --------  -------------  --------------------------------------------
  $CHANGES  Updates        Document all changes
  $DIR      Directory      Document members
+ #RACCLSA  Tutorial       Add/Change class profile
  #RACCLSR  Tutorial       List classes (show, refresh)
  #RACCLSS  Tutorial       List classes (show)
  #RACCLS8  Tutorial       List classes and profiles

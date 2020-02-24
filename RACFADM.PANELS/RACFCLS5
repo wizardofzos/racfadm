@@ -11,8 +11,8 @@
 +\-\(%RACFADM - General Resource+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
 %
-+PROFILE:_PROFILE                                         +$TYPE
-+CLASS:  _RCLASS   +
++PROFILE:$PROFILE                                         +$TYPE
++CLASS:  $RCLASS   +
 +UACC:   $UACC    { (Default access)     +OWNER: $OWNER   { (Owner of profile)
 +WARNING:$WARN    { (YES/NO)             +AUDIT: $AUDIT
 +DATA:   $DATA

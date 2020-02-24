@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AH  200124  RACFA    Standardize quotes, chg single to double     */
+/* @AG  200124  RACFA    Place panels at top of REXX in variables     */
 /* @AF  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
 /* @AE  200223  RACFA    Reduced code when LOCATEing, not necessary   */
 /* @AD  200223  RACFA    Reduced code when SORTing, not necessary     */
@@ -20,6 +22,10 @@
 /* @A1  200120  RACFA    Added comment box above procedures           */
 /* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
 /*====================================================================*/
+PANEL01 = "RACFCLS8"    /* List classes and profiles       */ /* @AG */
+PANEL13 = "RACFCLSD"    /* Add class                       */ /* @AG */
+PANELM2 = "RACFMSG2"    /* Execute RACF Command (pop-up)   */ /* @AG */
+
 ADDRESS ISPEXEC                                               /* @A6 */
   Arg user
   selection = 0  /* something selected */
@@ -64,7 +70,7 @@ DISPLAY_TABLE_PERMIT:
   opta = ' '
   "TBSORT  "tblb" FIELDS(CLASS,C,A,PROFILE,C,A)"
   "TBTOP   "tblb
-  "TBDISPL "tblb "PANEL(RACFCLS8)"                            /* @A3 */
+  "TBDISPL "tblb "PANEL("PANEL08")"                           /* @AG */
   reta = rc
   do while (rc < 8)  /* tablea */
      "CONTROL DISPLAY SAVE"
@@ -120,7 +126,7 @@ DISPLAY_TABLE_PERMIT:
         "TBSKIP" tblb "NUMBER("XTDTOP")"
      end
      "CONTROL DISPLAY RESTORE"
-     "TBDISPL" tblb "PANEL(RACFCLS8)"                         /* @A3 */
+     "TBDISPL" tblb "PANEL("PANEL08")"                        /* @AG */
      reta = rc
   end  /* Do while (reta < 8) */
 RETURN 0
@@ -189,7 +195,7 @@ DISPLAY_TABLE:
   sort = 'CLASS,C,A'                                          /* @AD */
   "TBSORT " tbla "FIELDS("sort")"                             /* @AD */
   "TBTOP  " tbla
-  "TBDISPL" tbla "PANEL(RACFCLSD)"                            /* @AC */
+  "TBDISPL" tbla "PANEL("PANEL13")"                           /* @AG */
   reta = rc
   Do while ^selection & (reta < 8)
      "CONTROL DISPLAY SAVE"
@@ -271,7 +277,7 @@ DISPLAY_TABLE:
         "TBSKIP" tbla "NUMBER("XTDTOP")"
      "CONTROL DISPLAY RESTORE"
      if ^selection then do
-        "TBDISPL" tbla "PANEL(RACFCLSD)"                      /* @AC */
+        "TBDISPL" tbla "PANEL("PANEL13")"                     /* @AG */
         reta = rc
      end
   end  /* Do while (reta < 8) */
@@ -287,7 +293,7 @@ EXIT
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @A5 */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @A5 */
-  'ADDPOP ROW(6) COLUMN(4)'                                   /* @A5 */
-  'DISPLAY PANEL(RACFMSG2)'                                   /* @A5 */
-  'REMPOP'                                                    /* @A5 */
+  "ADDPOP ROW(6) COLUMN(4)"                                   /* @AH */
+  "DISPLAY PANEL("PANELM2")"                                  /* @AG */
+  "REMPOP"                                                    /* @AH */
 RETURN                                                        /* @A5 */

@@ -3,12 +3,15 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A2  200124  RACFA    Place panels at top of REXX in variables     */
 /* @A1  200120  LBD      Added code for sites using qual. PLIB/MLIB   */
 /* @A0  200120  LBD      Created REXX                                 */
 /*====================================================================*/
+PANEL01 = "RACFMENU"    /* RACF Main Menu                  */ /* @A2 */
+
 ADDRESS ISPEXEC
   call Setup
-  'Select Panel(racfmenu)'
+  'Select Panel('PANEL01')'
   'libdef ispmlib'
   'libdef ispplib'
 
