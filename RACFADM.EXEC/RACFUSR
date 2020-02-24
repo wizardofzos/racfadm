@@ -155,8 +155,8 @@ PROFL:
                      sort = 'DATELGN,C,'seq                   /* @BJ */
                 when (ABBREV("OWNER",PARM,1) = 1) then        /* @BI */
                      sort = 'OWNER,C,'seq                     /* @BJ */
-                when (ABBREV("REV",PARN,1) = 1) then          /* @BI */
-                     sort = 'REVOKED,C,'seq                   /* @BJ */
+                when (ABBREV("REV",PARM,1) = 1) then          /* @XX */
+                     sort = 'REVOKED,C,'seq                   /* @XX */
                 when (ABBREV("ATTR",ZCMD,1) = 1) then         /* @BI */
                      sort = 'ATTR,C,'seq                      /* @BJ */
                 when (ABBREV("TSO",PARM,1) = 1) then          /* @BI */

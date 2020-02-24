@@ -2,17 +2,25 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  24 Feb 2020 - V5R0
+     - User (Option 1)
+       * Fixed SORT REV, when displaing userid, typo
+     - General Resources (Option 4)
+       * Fixed displaying PROFILE/CLASS when displaying group/ids
+         and access, was input fields, needed to be output fields
+         (panel = RACFAUT2)
+
   24 Feb 2020 - V4R9
-     - User (Menu Option 1)
+     - User (Option 1)
        * Fixed displaying profiles when selecting a class to SEarch
 
   24 Feb 2020 - V4R8
-     - Settings (Menu Option 0)
+     - Settings (Option 0)
        * Fixed 'Status Interval', allow user to type in a 4 digit
          number
-     - General resources (Menu option 4)
+     - General Resources (Option 4)
        * Fixed displaying PROFILE/CLASS when displaying group/ids,
-         was input fields, needed to be output fields
+         was input fields, needed to be output fields (panel=RACFCLS5)
      - Other Items
        * Updated panel $DIR mbr, added back #RACCLSA
        * Placed panel names in variables at the top of the REXX
@@ -24,7 +32,7 @@
           not associated with the RACFCLSA panel
 
   23 Feb 2020 - V4R6
-     - Menu Option 1 (User)
+     - User (Option 1)
        * Added primary commands SORT, LOCATE, ONLY and RESET when
          SEarching a userid, prior was only locate
        * Changed 'SEarch' panel, so it just displays CLASS column, not
@@ -33,14 +41,14 @@
            not CLASS since it's the same on each row, instead place
            the CLASS to the right of USER field at the top of panel
            (RACFCLSD, new panel)
-     - Menu Option 4 (General Resources)
+     - General Resources (Option 4)
        * Only display line command 'R, Refresh' when 'Administrator=YES'
          in 'Settings' (Menu option 0)
        * Added primary command SORT
        * When 'S'howing a class's dataset
          o Added primary commands SORT, LOCATE, ONLY, RESET
          o Deleted panels RACFCLSA and #RACCLSA, no longer needed
-     - Menu Option 1/2/3/4 (User/group/Dataset/General Resource)
+     - User/Group/Dataset/General Resource (Options 1/2/3/4)
        * Simplified the SORTing code in the REXX programs, making it
          easier to read/maintain
        * Changed 'Profile Name' to 'Profile' on column headers of
@@ -49,7 +57,7 @@
          is needed
        * Removed 'address TSO "PROFILE MSGID"' from all REXX programs
          do not believe it is needed
-     - Tutorials
+     - Tutorials (Option T)
        * Fixed several panels, the &ZUP/&ZCONT variable had incorrect
          panel name defined
        * Changed text in panels for line command 'S' to Show, was
@@ -62,9 +70,8 @@
        * Added RACF and system information at the bottom of the menu
          (RACF, Dbase, z/OS, Lpar, Plex, Id, Date, Jdate and Time)
        * Changed the 'Status Interval' default number to 100, was 1
-     - Menu Option T (Tutoral)
+     - Tutorial (Option T)
        * Added point-n-shoot fields to tutorials
-     - Tutorials
        * Updated a tutorial panels to reflect changes made
      - Other Items
        * Allow tabbing down to a row and just pressing ENTER to
@@ -76,21 +83,21 @@
        * Deleted panel RACFGRP3, not used
 
   22 Feb 2020 - V4R4
-     - Menu Option T (Tutoral)
+     - Tutorial (Option T)
        * Fixed tutorial menu, was invoking incorrect tutorial for
          option '3 Dataset profile'
 
   22 Feb 2020 - V4R3
      - Main Menu
        * Added point-n-shoot fields to menu options
-     - Menu Option 3 (Dataset)
+     - Dataset (Option 3)
        * Added primary command 'SORT', updated tutorial
-     - Menu Option T (Tutoral)
+     - Tutorial (Option T)
        * Added/updated 'Dataset and General Resource Access
          Authority' tutorials
 
   22 Feb 2020 - V4R2
-     - Menu Option 3 (Dataset)
+     - Dataset (Option 3)
        * Fixed typing in a 'L' next to a group/id a general user
          (panel = RACFDSN5)
      - Other Items
@@ -98,11 +105,11 @@
        * Updated all panels to only validate uppercase line commands
 
   22 Feb 2020 - V4R1
-     - Menu Option 1/2/3/4 (User/Group/Dataset/General Resource)
+     - User/Group/Dataset/General Resource (Options 1/2/3/4)
        * Added 'ONLY' primary command
-     - Menu Option 3 (Dataset)
+     - Dataset (Option 3)
        * Added 'RESET' and LOCATE' primary commands
-     - Menu Option 4 (General Resource)
+     - General Resource (Option 4)
        * Added 'RESET' primary command, updated tutorial
        * Allow abbreviating the 'LOCATE' primary command
      - Other Items
@@ -116,7 +123,7 @@
          'SE'earch
 
   21 Feb 2020 - V3R9
-     - Menu Option 1 (User)
+     - User (Option 1)
        * After SEarching on a userid, place '*Search' message to the
          right of the userid
      - Other Items
@@ -128,7 +135,7 @@
            ISPF command lines
 
   20 Feb 2020 - V3R8
-     - Menu Opton 0 (Settings)
+     - Settings (Option 0)
        * Fixed tracing REXX programs when 'REXX trace = YES'
        * Fixed displaying RACF commands prior to execution when
          'RACF commands = YES'
@@ -138,21 +145,21 @@
          in several modules
 
   20 Feb 2020 - V3R7
-     - Menu Opton 1 (User)
+     - User (Opton 1)
        * When general user (Administrator=NO), do not display SE
          (Search) line command when displaying the Groups connected/
          associated to the userid, prior fix installed, was only for
          administrators, not general user
 
   20 Feb 2020 - V3R6
-     - Menu Opton 0 (Settings)
+     - Settings (Opton 0)
        * Added 'Display file' field, Display files in BROWSE, EDIT or
          VIEW mode when using the List line command and selecting menu
          option C, Changes (VIEW=Default)
        * Fixed coding issue with edit macro, when editing/viewing file
 
   20 Feb 2020 - V3R5
-     - Menu Option 1 (User)
+     - User (Option 1)
        * When selecting userid (S-Show), do not display the line
          command 'SE' (Search) when displaying the Groups connected/
          associated to the userid
@@ -170,31 +177,31 @@
          to RACFUSRT and updated $DIR members
 
   19 Feb 2020 - V3R3
-     - Menu Option 1 (User)
+     - User (Option 1)
        * Documented the 'SE' line command in the tutorial
 
   19 Feb 2020 - V3R2
-     - Menu Option 1 (User)
+     - User (Option 1)
        * Added line command SE (Search), Analyze user access to
          general resource profiles
          o Prior was only available when Setting's 'Administrator=YES'
            and was not displayed on the panel (hidden)
 
   19 Feb 2020 - V3R1
-     - Menu Option 0 (Settings)
+     - Settings (Option 0)
        * Increased size of 'Status Interval' field to 3 characters,
          was 4 characters
-     - Menu Option 1 (User)
+     - User (Option 1)
        * When typing an 'S' next to a userid to show information,
          display the 'ATTRIButes' in the header of the panel, prior
          it displayed the 'DATA' field
-     - Menu Option 2 (Group)
+     - Group (Option 2)
        * Reduced the number of rows to display the DATA (description)
          in the header of the panel, allowing to display more userids
-     - Menu Option 3 (Dataset)
+     - Dataset (Option 3)
        * Removed displaying 'DATA' in the header, allowing to display
          more groups/userids
-     - Menu Option 4 (General Resources)
+     - General Resources (Option 4)
        * When typing 'S' next to a 'Profile Name' to display
          information, fixed the color of the OWNER/AUDIT field names,
          (changed to green, was white)
@@ -209,12 +216,12 @@
            X  Exit      Terminate
 
   18 Feb 2020 - V2R9
-     - Menu Option 0 (Settings)
+     - Settings (Option 0)
        * Re-arranged the input fields by subject (General/TSO)
        * Added 'Status Interval' field, allows specifying how often
          the progress message should be displayed when listing
          userids, groups and datasets (0-999, 0=Do not display)
-     - Menu Option 1/2/3/4 (User, Dataset, Group, General Resource)
+     - User, Dataset, Group, General Resource (Options 1/2/3/4)
        * When a general user, the default, only display/execute
          line commands:
            S-Show and L-List
@@ -223,37 +230,37 @@
          in 'Yes' in the 'Administrator' field
 
   10 Feb 20 - V2R8
-     - Menu Option 1 (User)
+     - User (Option 1)
        * Fixed locate command
-     - Menu Option 1 and 2 (User and Group)
+     - User and Group (Options 1/2)
        * Column headers are now point-n-shoot, to sort the columns,
          updated tutorial
 
   05 Feb 20 - V2R7
      - Main Menu
        * Updated tutorial to include links to RACF manuals
-     - Menu Option 1 and 2 (User and Group)
+     - User and Group (Options 1/2)
        * Added the capability to SORT the columns ascending or
          descending, updated tutorial, syntax is:
            ==> SORT Ýcolumn¨ ÝA|D¨
 
   03 Feb 20 - V2R6
-     - Menu Option 1 (User)
+     - User (Option 1)
        * Fixed displaying logon date for digital certificate userids,
          prior the field was blank
 
   27 Jan 20 - V2R5
-     - Menu Option 0 (Settings)
+     - Settings (Option 0)
        * Added default 'Search Filter'
-     - Menu Option 1 (User)
+     - User (Option 1)
        * Changed 'Logon' date to YY/MM/DD, was YY.JJJ
      - Other Items
        * Several fixes to the code and panels
 
   21 Jan 20 - V2R4
-     - Menu Option 1 (User)
+     - User (Option 1)
        * Fixed displaying 'Logon' date when displaying userids
-     - Menu Option 3 (Dataset)
+     - Dataset (Option 3)
        * Fixed displaying 'WARNING' field when changing/adding
          a dataset profile
      - Other Items
