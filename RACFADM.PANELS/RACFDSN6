@@ -7,7 +7,7 @@
 +\-\(%RACFADM - Dataset Profiles+)\-\
 %Command ===>_ZCMD
 %
-+Change RACF%DATSET+permit: %PERMIT+command
++Change RACF%DATASET+permit: %PERMIT+command
 +
 {Changing the%ACCESS{will alter the access right of the ID shown.
 +

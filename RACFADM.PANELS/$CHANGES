@@ -2,6 +2,11 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  24 Feb 2020 - V5R1
+     - Dataset (Option 3)
+       * Updated two panels (RACFDSN6/7), mis-spelled 'DATSET',
+         changed to 'DATASET'
+
   24 Feb 2020 - V5R0
      - User (Option 1)
        * Fixed SORT REV, when displaing userid, typo
