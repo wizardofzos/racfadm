@@ -2,6 +2,10 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  24 Feb 2020 - V4R9
+     - User (Menu Option 1)
+       * Fixed displaying profiles when selecting a class to SEarch
+
   24 Feb 2020 - V4R8
      - Settings (Menu Option 0)
        * Fixed 'Status Interval', allow user to type in a 4 digit

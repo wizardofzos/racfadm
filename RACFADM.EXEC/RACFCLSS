@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AI  200124  RACFA    Fixed PANEL08, typo in defining variable     */
 /* @AH  200124  RACFA    Standardize quotes, chg single to double     */
 /* @AG  200124  RACFA    Place panels at top of REXX in variables     */
 /* @AF  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
@@ -22,7 +23,7 @@
 /* @A1  200120  RACFA    Added comment box above procedures           */
 /* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
 /*====================================================================*/
-PANEL01 = "RACFCLS8"    /* List classes and profiles       */ /* @AG */
+PANEL08 = "RACFCLS8"    /* List classes and profiles       */ /* @XX */
 PANEL13 = "RACFCLSD"    /* Add class                       */ /* @AG */
 PANELM2 = "RACFMSG2"    /* Execute RACF Command (pop-up)   */ /* @AG */
 
