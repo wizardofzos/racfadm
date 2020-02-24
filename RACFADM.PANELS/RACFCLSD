@@ -1,21 +1,21 @@
 )ATTR DEFAULT(%+_)
   _ TYPE(INPUT)  INTENS(HIGH) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
-  # TYPE(OUTPUT) INTENS(LOW)  JUST(LEFT) COLOR(GREEN)
   $ TYPE(OUTPUT) INTENS(LOW)  JUST(LEFT) COLOR(TURQ)
+  # TYPE(OUTPUT) INTENS(LOW)  JUST(LEFT) COLOR(GREEN)
   + TYPE(TEXT)   INTENS(LOW)  SKIP(ON)   COLOR(GREEN)
 )BODY EXPAND(\\)
 +\-\(%RACFADM - RACF Administration+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
 %
-+USER:   $USER    + CLASS: $DISPCLS
++USER:   $USER    +
 +SELECT: %S+Show
 %
-%S   Profile
+%S   Class
 %-------------------------------------------------------------------------------
 )MODEL CLEAR(OPTA)
 _Z+ $Z                                                                         +
 )INIT
-  .ZVARS   = '(OPTA PROFILE)'
+  .ZVARS   = '(OPTA CLASS)'
   .HELP    = #RACCLS8
   IF (&SAMT = ' ')
       &SAMT = &ZSCED

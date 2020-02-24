@@ -3,6 +3,11 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AF  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
+/* @AE  200223  RACFA    Reduced code when LOCATEing, not necessary   */
+/* @AD  200223  RACFA    Reduced code when SORTing, not necessary     */
+/* @AC  200223  RACFA    Created RACFCLSD (only Class, no profile col)*/
+/* @AB  200223  RACFA    Added primary cmds: SORT, LOCATE, ONLY, RESET*/
 /* @AA  200222  RACFA    Removed translating OPTA/B, not needed       */
 /* @A9  200222  RACFA    Allow placing cursor on row and press ENTER  */
 /* @A8  200221  RACFA    Removed "G = '(G)'", not referenced          */
@@ -20,7 +25,6 @@ ADDRESS ISPEXEC                                               /* @A6 */
   selection = 0  /* something selected */
   "VGET (ZSCREEN ERATRACE ERASHOW) ASIS"                      /* @A7 */
   If (eratrace = 'YES') then Trace r                          /* @A4 */
-  address TSO "PROFILE MSGID"
   address TSO "PROFILE PREF("USERID()")"
   rlv = SYSVAR('SYSLRACF')
 
@@ -57,77 +61,73 @@ RETURN 0
 /*  Display permit table                                              */
 /*--------------------------------------------------------------------*/
 DISPLAY_TABLE_PERMIT:
- opta = ' '
- "TBSORT  "tblb" FIELDS(CLASS,C,A,PROFILE,C,A)"
- "TBTOP   "tblb
- "TBDISPL "tblb "PANEL(RACFCLS8)"                             /* @A3 */
- reta = rc
- do while (rc < 8)  /* tablea */
-    "CONTROL DISPLAY SAVE"
-    xtdtop = ztdtop
-    IF (SROW <> "") & (SROW <> 0) THEN                        /* @A9 */
-       IF (SROW > 0) THEN DO                                  /* @A9 */
-          "TBTOP " TBLB                                       /* @A9 */
-          "TBSKIP" TBLB "NUMBER("SROW")"                      /* @A9 */
-       END                                                    /* @A9 */
-    Select
-       when (subword(ZCMD,1,1)  = 'LOCATE' |,
-             subword(ZCMD,1,1)  = 'L') &,
-             (subword(ZCMD,2,1) ='CLASS' |,
-              subword(ZCMD,2,1) ='C') then do
-              locvar  = 'CLASS'
-              profile = ' '
-              locval  = subword(ZCMD,3,1)
-       end
-       when (subword(ZCMD,1,1)  = 'LOCATE' |,
-             subword(ZCMD,1,1)  = 'L') &,
-             (subword(ZCMD,2,1) ='PROFILE' |,
-              subword(ZCMD,2,1) ='P') then do
-              locvar = 'PROFILE'
-              locval = subword(ZCMD,3,1)
-       end
-       otherwise locvar=''
-    End
-    Select
-       when (opta = 'S') then x = RACFAUTH(class profile user)
-       otherwise nop
-    End
-    Do while (reta = 4)   /* process multi selection */
-       "CONTROL DISPLAY RESTORE"
-       "TBDISPL" tblb
-       reta = rc
-       "CONTROL DISPLAY SAVE"
-       Select
-          when (opta = 'S') then
-               x = RACFAUTH(class profile user)
-          otherwise nop
-       End
-    end
-    opta = ' '
-    "TBSORT "tblb" FIELDS(CLASS,C,A,PROFILE,C,A)"
-    if (locvar <> '') then do
-       interpret locvar'='locval
-       "TBTOP " tblb
-       "TBSARG" tblb "NEXT NAMECOND(CLASS,GE,PROFILE,GE)"
-       "TBSCAN" tblb
-    end
-    else do
-       "TBTOP " tblb
-       "TBSKIP" tblb "NUMBER("XTDTOP")"
-    end
-    "CONTROL DISPLAY RESTORE"
-    "TBDISPL" tblb "PANEL(RACFCLS8)"                          /* @A3 */
-    reta = rc
- end  /* Do while (reta < 8) */
+  opta = ' '
+  "TBSORT  "tblb" FIELDS(CLASS,C,A,PROFILE,C,A)"
+  "TBTOP   "tblb
+  "TBDISPL "tblb "PANEL(RACFCLS8)"                            /* @A3 */
+  reta = rc
+  do while (rc < 8)  /* tablea */
+     "CONTROL DISPLAY SAVE"
+     xtdtop = ztdtop
+     IF (SROW <> "") & (SROW <> 0) THEN                       /* @A9 */
+        IF (SROW > 0) THEN DO                                 /* @A9 */
+           "TBTOP " TBLB                                      /* @A9 */
+           "TBSKIP" TBLB "NUMBER("SROW")"                     /* @A9 */
+        END                                                   /* @A9 */
+     Select
+        when (subword(ZCMD,1,1)  = 'LOCATE' |,
+              subword(ZCMD,1,1)  = 'L') &,
+              (subword(ZCMD,2,1) ='CLASS' |,
+               subword(ZCMD,2,1) ='C') then do
+               locvar  = 'CLASS'
+               profile = ' '
+               locval  = subword(ZCMD,3,1)
+        end
+        when (subword(ZCMD,1,1)  = 'LOCATE' |,
+              subword(ZCMD,1,1)  = 'L') &,
+              (subword(ZCMD,2,1) ='PROFILE' |,
+               subword(ZCMD,2,1) ='P') then do
+               locvar = 'PROFILE'
+               locval = subword(ZCMD,3,1)
+        end
+        otherwise locvar=''
+     End
+     Select
+        when (opta = 'S') then x = RACFAUTH(class profile user)
+        otherwise nop
+     End
+     Do while (reta = 4)   /* process multi selection */
+        "CONTROL DISPLAY RESTORE"
+        "TBDISPL" tblb
+        reta = rc
+        "CONTROL DISPLAY SAVE"
+        Select
+           when (opta = 'S') then
+                x = RACFAUTH(class profile user)
+           otherwise nop
+        End
+     end
+     opta = ' '
+     "TBSORT "tblb" FIELDS(PROFILE,C,A)"
+     if (locvar <> '') then do
+        interpret locvar'='locval
+        "TBTOP " tblb
+        "TBSARG" tblb "NEXT NAMECOND(CLASS,GE,PROFILE,GE)"
+        "TBSCAN" tblb
+     end
+     else do
+        "TBTOP " tblb
+        "TBSKIP" tblb "NUMBER("XTDTOP")"
+     end
+     "CONTROL DISPLAY RESTORE"
+     "TBDISPL" tblb "PANEL(RACFCLS8)"                         /* @A3 */
+     reta = rc
+  end  /* Do while (reta < 8) */
 RETURN 0
 /*--------------------------------------------------------------------*/
 /*  Select class                                                      */
 /*--------------------------------------------------------------------*/
 SELECT_CLASS:
-  seconds = time('S')
-  tbla    = 'TA'ZSCREEN||SECONDS  /* table name unique */
-  "TBCREATE" TBLA "KEYS(CLASS)",
-                  "NAMES(ACTION) REPLACE NOWRITE"
   call get_act_class
   rc = display_table()
   "TBEND" tbla
@@ -136,7 +136,11 @@ RETURN
 /*  Display profile permits                                           */
 /*--------------------------------------------------------------------*/
 GET_ACT_CLASS:
-  Scan = 'OFF'
+  seconds = time('S')                                         /* @AB */
+  tbla    = 'TA'ZSCREEN||SECONDS  /* table name unique */     /* @AB */
+  "TBCREATE" TBLA "KEYS(CLASS)",                              /* @AB */
+                  "NAMES(ACTION) REPLACE NOWRITE"             /* @AB */
+  Scan = 'OFF'                                                /* @AB */
   cmd  = "SETROPTS LIST"                                      /* @A5 */
   if (erashow = 'YES') then                                   /* @A5 */
      call SHOWCMD                                             /* @A5 */
@@ -182,27 +186,63 @@ RETURN
 /*--------------------------------------------------------------------*/
 DISPLAY_TABLE:
   opta = ' '
-  "TBSORT " tbla "FIELDS(CLASS)"
+  sort = 'CLASS,C,A'                                          /* @AD */
+  "TBSORT " tbla "FIELDS("sort")"                             /* @AD */
   "TBTOP  " tbla
-  "TBDISPL" tbla "PANEL(RACFCLS8)"                            /* @A3 */
+  "TBDISPL" tbla "PANEL(RACFCLSD)"                            /* @AC */
   reta = rc
   Do while ^selection & (reta < 8)
-     action = ''
      "CONTROL DISPLAY SAVE"
+     action = ''
+     lclass = ''                                              /* @AE */
+     xtdtop = ztdtop
+     lparm  = ""                                              /* @AB */
+     PARSE VAR ZCMD ZCMD PARM SEQ                             /* @AB */
      IF (SROW <> "") & (SROW <> 0) THEN                       /* @A9 */
         IF (SROW > 0) THEN DO                                 /* @A9 */
            "TBTOP " TBLA                                      /* @A9 */
            "TBSKIP" TBLA "NUMBER("SROW")"                     /* @A9 */
         END                                                   /* @A9 */
-     Select
-        when (subword(ZCMD,1,1) = 'LOCATE') |,
-             (subword(ZCMD,1,1) = 'L') then
-             lclass = subword(ZCMD,2,1)
-        otherwise lclass = ''
-     End
-     xtdtop = ztdtop
+     Select                                                   /* @AB */
+        WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO              /* @AB */
+             xtdtop   = 1                                     /* @AB */
+             if (seq = 'A') | (seq = 'D') then                /* @AB */
+                nop                                           /* @AB */
+             else                                             /* @AB */
+                seq = 'A'                                     /* @AB */
+             SELECT                                           /* @AB */
+                when (ABBREV("CLASS",PARM,1) = 1) then        /* @AB */
+                     sort = 'CLASS,C,'seq                     /* @AD */
+                otherwise NOP                                 /* @AB */
+             END                                              /* @AB */
+        END                                                   /* @AB */
+        WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @AB */
+             lclass = parm                                    /* @AE */
+        When (abbrev("ONLY",zcmd,1) = 1) then do              /* @AB */
+             find_str = translate(parm)                       /* @AB */
+             'tbtop ' tbla                                    /* @AB */
+             'tbskip' tbla                                    /* @AB */
+             do forever                                       /* @AB */
+                str = translate(class)                        /* @AB */
+                if (pos(find_str,str) > 0) then nop           /* @AB */
+                else 'tbdelete' tbla                          /* @AB */
+                'tbskip' tbla                                 /* @AB */
+                if (rc > 0) then do                           /* @AB */
+                   'tbtop' tbla                               /* @AB */
+                   leave                                      /* @AB */
+                end                                           /* @AB */
+             end                                              /* @AB */
+        END                                                   /* @AB */
+        WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO             /* @AB */
+             call get_act_class                               /* @AB */
+             sort = 'CLASS,C,A'                               /* @AD */
+             xtdtop   = 1                                     /* @AB */
+        END                                                   /* @AB */
+        otherwise NOP                                         /* @AB */
+     END /* Select */                                         /* @AB */
      select
         when (opta = 'S') then do
+             DISPCLS = CLASS                                  /* @AC */
              rc = get_permits(class,user) /*get permits*/
              selection = 1
         end
@@ -220,18 +260,18 @@ DISPLAY_TABLE:
         End
      end
      opta = ' '
-     "TBSORT" tbla "FIELDS(CLASS)"
-     "TBTOP " tbla
-     if (lclass <> '') then do
-        class = lclass
-        "TBSARG" TBLA "NEXT NAMECOND(CLASS,GE)"
-        "TBSCAN" TBLA "NOREAD"
-     end
-     else
+     "TBSORT" tbla "FIELDS("sort")"                           /* @AB */
+     "TBTOP  " tbla
+     if (lclass <> '') then do                                /* @AE */
+        class = lclass                                        /* @AE */
+        "TBSARG" TBLA "NEXT NAMECOND(CLASS,GE)"               /* @AE */
+        "TBSCAN" TBLA "NOREAD"                                /* @AE */
+     end                                                      /* @AE */
+     else                                                     /* @AB */
         "TBSKIP" tbla "NUMBER("XTDTOP")"
      "CONTROL DISPLAY RESTORE"
      if ^selection then do
-        "TBDISPL" tbla "PANEL(RACFCLS8)"                      /* @A3 */
+        "TBDISPL" tbla "PANEL(RACFCLSD)"                      /* @AC */
         reta = rc
      end
   end  /* Do while (reta < 8) */

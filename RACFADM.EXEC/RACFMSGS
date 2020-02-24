@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A5  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
 /* @A4  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @A3  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A2  200218  RACFA    Condense VGETs into one line                 */
@@ -11,9 +12,8 @@
 /*====================================================================*/
 ADDRESS ISPEXEC                                               /* @A4 */
   Arg code
-  "VGET (ZSCREEN ERASHOW ERATRACE) ASIS"                      /* @A2 */
+  "VGET (ERATRACE) ASIS"                                      /* @A2 */
   If (eratrace = 'YES') then Trace r                          /* @A3 */
-  address TSO "PROFILE MSGID"
 
   Select
      when (code = 'ERR01') then

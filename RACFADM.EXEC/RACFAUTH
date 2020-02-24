@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A7  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
 /* @A6  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @A5  200220  RACFA    Fixed displaying all RACF commands           */
 /* @A4  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
@@ -16,7 +17,6 @@ ADDRESS ISPEXEC                                               /* @A6 */
   "VGET (ZSCREEN ERASHOW ERATRACE) ASIS"                      /* @A3 */
   If (eratrace = 'YES') then Trace r                          /* @A4 */
 
-  address TSO "PROFILE MSGID"
   rlv    = SYSVAR('SYSLRACF')
   called = SYSVAR('SYSNEST')
   If (called = 'YES') then

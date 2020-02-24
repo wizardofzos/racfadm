@@ -12,7 +12,7 @@
 +    or move as near as possible to it. (Ex.%L BMC% or%LOCATE BMC)
 +
 +Line Commands
-%  S !Select +Select one or more classes to search from the list
+%  S !Show   +Select one or more classes to search from the list
 )PROC
-  &ZUP     = #RACSET2
+  &ZUP     = #RACCLSS
 )END

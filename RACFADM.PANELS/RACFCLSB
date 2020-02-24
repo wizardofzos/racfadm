@@ -22,7 +22,6 @@ _Z+  $Z           +
 )INIT
   .ZVARS   = '(OPTB ID)'
   .CURSOR  = OPTB
-  .AUTOSEL = NO
   .HELP    = #RACMENU
   &ZCMD    = ' '
   IF (&SAMT = ' ')

@@ -1,8 +1,8 @@
 )ATTR DEFAULT(%+_)
+  _  TYPE(INPUT)   INTENS(HIGH) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
   01 TYPE(OUTPUT)  INTENS(LOW)  SKIP(ON)   COLOR(&CLRDATA)
   02 TYPE(OUTPUT)  INTENS(LOW)  SKIP(ON)   COLOR(&CLRTYPE)
-  $  TYPE(OUTPUT) INTENS(LOW)  JUST(LEFT) COLOR(TURQ)
-  _  TYPE(INPUT)   INTENS(HIGH) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  $  TYPE(OUTPUT)  INTENS(LOW)  JUST(LEFT) COLOR(TURQ)
   +  TYPE(TEXT)    INTENS(LOW)  SKIP(ON)   COLOR(GREEN)
   ¬  AREA(DYNAMIC) EXTEND(OFF)
   ¨  TYPE(DATAOUT) INTENS(LOW)  COLOR(GREEN)
@@ -15,13 +15,12 @@
 +FILTER: $RFILTER
 +SELECT: ¬SELCMDS                                                              ¬
 %
-%S  ~Profile Name                           ~Type
+%S  ~Profile                                ~Type
 %-------------------------------------------------------------------------------
 )MODEL CLEAR(OPTA)
 _Z+ Z                                      Z
 )INIT
   .ZVARS   = '(OPTA DATASET TYPE)'
-  .AUTOSEL = NO
   .HELP    = #RACDSN2
   &ZCMD    = ' '
   IF (&SAMT = ' ')

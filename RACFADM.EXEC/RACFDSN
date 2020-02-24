@@ -3,6 +3,9 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AT  200223  RACFA    Fixed SORTed color column                    */
+/* @AS  200223  RACFA    Fixed SORT DATASET                           */
+/* @AR  200223  RACFA    Simplified SORT, removed FLD/DFL_SORT vars   */
 /* @AQ  200222  RACFA    Allowing abbreviating the column in SORT cmd */
 /* @AP  200222  RACFA    Removed translating OPTA/B, not needed       */
 /* @AO  200222  RACFA    Allow placing cursor on row and press ENTER  */
@@ -69,9 +72,9 @@ PROFL:
   end
   /* profiles table display section */
   opta = ' '
-  sort = ''; fld_sort = 'DATASET'; dfl_sort = 'DATASET'       /* @AN */
+  sort = 'DATASET,C,A'                                        /* @AR */
   CLRDATA = "TURQ";  CLRTYPE = "GREEN"   /* Col. colors */    /* @AN */
-  "TBSORT " tbla "FIELDS("dfl_sort")"                         /* @AN */
+  "TBSORT " tbla "FIELDS("sort")"                             /* @AR */
   "TBTOP  " tbla
   "TBDISPL" tbla "PANEL(RACFDSN2)"
   reta = rc
@@ -86,6 +89,22 @@ PROFL:
            "TBSKIP" TBLA "NUMBER("SROW")"                     /* @AO */
         END                                                   /* @AO */
      Select                                                   /* @AL */
+        WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO              /* @AN */
+             xtdtop   = 1                                     /* @AN */
+             if (seq = 'A') | (seq = 'D') then                /* @AN */
+                nop                                           /* @AN */
+             else                                             /* @AN */
+                seq = 'A'                                     /* @AN */
+             SELECT                                           /* @AN */
+                when (ABBREV("PROFILE",PARM,1) = 1) then      /* @AQ */
+                     sort = 'DATASET,C,'seq                   /* @AS */
+                when (ABBREV("TYPE",PARM,1) = 1) then         /* @AQ */
+                     sort = 'TYPE,C,'seq                      /* @AR */
+                otherwise NOP                                 /* @AN */
+             END                                              /* @AN */
+        END                                                   /* @AN */
+        WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @AM */
+             lparm = parm                                     /* @AM */
         When (abbrev("ONLY",zcmd,1) = 1) then do              /* @AL */
              find_str = translate(parm)                       /* @AL */
              'tbtop ' tbla                                    /* @AL */
@@ -102,25 +121,10 @@ PROFL:
              end                                              /* @AL */
         END                                                   /* @AL */
         WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO             /* @AL */
-             fld_sort = 'DATASET,C,A'                         /* @AN */
+             sort = 'DATASET,C,A'                             /* @AR */
              call create_table                                /* @AL */
              xtdtop   = 1                                     /* @AL */
         END                                                   /* @AL */
-        WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO              /* @AN */
-             xtdtop   = 1                                     /* @AN */
-             if (seq = 'A') | (seq = 'D') then                /* @AN */
-                nop                                           /* @AN */
-             else                                             /* @AN */
-                seq = 'A'                                     /* @AN */
-             SELECT                                           /* @AN */
-                when (ABBREV("PROFILE",PARM,1) = 1) then      /* @AQ */
-                     fld_sort = 'DATASET,C,A'seq              /* @AN */
-                when (ABBREV("TYPE",PARM,1) = 1) then         /* @AQ */
-                     fld_sort = 'TYPE,C,'seq                  /* @AN */
-                otherwise NOP                                 /* @AN */
-             END                                              /* @AN */
-        END                                                   /* @AN */
-        WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN lparm = parm  /* @AM */
         otherwise NOP                                         /* @AM */
      END /* Select */                                         /* @AL */
      Select
@@ -145,24 +149,16 @@ PROFL:
         End
      end  /* Do while (reta < 4) */
      opta = ' '
-     if (fld_sort <> '') then DO                              /* @AN */
-        sort = fld_sort                                       /* @AN */
-        PARSE VAR FLD_SORT LOCARG "," .                       /* @AN */
-     END                                                      /* @AN */
-     else DO                                                  /* @AN */
-        sort   = dfl_sort                                     /* @AN */
-        LOCARG = DFL_SORT                                     /* @AN */
-     END                                                      /* @AN */
-     PARSE VAR FLD_SORT LOCARG "," .                          /* @AN */
-     CLRDATA = "GREEN"; CLRTYPE = "GREEN"                     /* @AN */
+     PARSE VAR SORT LOCARG "," .                              /* @AR */
+     CLRDATA = "GREEN"; CLRTYPE = "GREEN"                     /* @AT */
      INTERPRET "CLR"SUBSTR(LOCARG,1,4)" = 'TURQ'"             /* @AN */
      "TBSORT" tbla "FIELDS("sort")"                           /* @AN */
-     "TBTOP  " tbla
+     "TBTOP " tbla
      if (lparm <> '') then do                                 /* @AM */
         ASTERICK = "*"                                        /* @AM */
         INTERPRET LOCARG" = lparm||ASTERICK"                  /* @AM */
         "TBTOP" tbla                                          /* @AM */
-        PARSE VAR FLD_SORT . "," . "," SEQ                    /* @AM */
+        PARSE VAR SORT . "," . "," SEQ                        /* @AR */
         IF (SEQ = "D") THEN                                   /* @AM */
            CONDLIST = "LE"                                    /* @AM */
         ELSE                                                  /* @AM */

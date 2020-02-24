@@ -2,7 +2,6 @@
   _ TYPE(INPUT) INTENS(HIGH) CAPS(ON) JUST(LEFT) HILITE(USCORE)
   ! TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(TURQ)
   + TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(GREEN)
-  ~ TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(RED)
 )BODY EXPAND(\\)
 %Tutorial+\-\(%RACFADM - Group Profiles+)\-\%Tutorial
 %Command ===>_ZCMD                                                             +

@@ -1,11 +1,14 @@
 )ATTR DEFAULT(%+_)
-  $ TYPE(OUTPUT)  INTENS(LOW)  JUST(LEFT) COLOR(TURQ)
-  # TYPE(OUTPUT)  INTENS(LOW)  JUST(LEFT) COLOR(GREEN)
-  _ TYPE(INPUT)   INTENS(HIGH) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
-  + TYPE(TEXT)    INTENS(LOW)  SKIP(ON)   COLOR(GREEN)
-  ¬ AREA(DYNAMIC) EXTEND(OFF)
-  ¨ TYPE(DATAOUT) INTENS(LOW)  COLOR(GREEN)
-  Ý TYPE(DATAOUT) INTENS(HIGH)
+  _  TYPE(INPUT)   INTENS(HIGH) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  01 TYPE(OUTPUT)  INTENS(LOW)  SKIP(ON)   COLOR(&CLRPROF)
+  02 TYPE(OUTPUT)  INTENS(LOW)  SKIP(ON)   COLOR(&CLRDATA)
+  $  TYPE(OUTPUT)  INTENS(LOW)  JUST(LEFT) COLOR(TURQ)
+  #  TYPE(OUTPUT)  INTENS(LOW)  JUST(LEFT) COLOR(GREEN)
+  +  TYPE(TEXT)    INTENS(LOW)  SKIP(ON)   COLOR(GREEN)
+  ¬  AREA(DYNAMIC) EXTEND(OFF)
+  ¨  TYPE(DATAOUT) INTENS(LOW)  COLOR(GREEN)
+  Ý  TYPE(DATAOUT) INTENS(HIGH)
+  ~  TYPE(PS)
 )BODY EXPAND(\\)
 +\-\(%RACFADM - General Resource+)\-\
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
@@ -14,13 +17,12 @@
 +FILTER: $RFILTER
 +SELECT: ¬SELCMDS                                                              ¬
 %
-%S   Profile Name                            Description
+%S  ~Profile                                ~Description
 %-------------------------------------------------------------------------------
 )MODEL CLEAR(OPTA)
-_Z+ $Z                                      #Z
+_Z+ Z                                      Z
 )INIT
   .ZVARS   = '(OPTA PROFILE DATA)'
-  .AUTOSEL = NO
   .HELP    = #RACCLS9
   &ZCMD    = ' '
   IF (&SAMT = ' ')
@@ -33,7 +35,10 @@ _Z+ $Z                                      #Z
         IF (&SROW ^= 0)
            &OPTA = S
   IF (&ERAADMN = YES)
-     VER (&OPTA,LIST,S,L,C,A,R)
+     VER (&OPTA,LIST,S,L,C,A,R,M)
   ELSE
      VER (&OPTA,LIST,S,L)
+)PNTS
+  FIELD(ZPS00001) VAR(ZCMD) VAL('SORT PROFILE')
+  FIELD(ZPS00002) VAR(ZCMD) VAL('SORT DESC')
 )END

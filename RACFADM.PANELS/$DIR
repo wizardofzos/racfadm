@@ -6,7 +6,6 @@
  --------  -------------  --------------------------------------------
  $CHANGES  Updates        Document all changes
  $DIR      Directory      Document members
- #RACCLSA  Tutorial       Add/Change class profile
  #RACCLSR  Tutorial       List classes (show, refresh)
  #RACCLSS  Tutorial       List classes (show)
  #RACCLS8  Tutorial       List classes and profiles
@@ -23,9 +22,9 @@
  #RACUSR2  Tutorial       User profile
  RACFAUT1  Authorization  Enter profile/class/user
  RACFAUT2  Authorization  List group/ids and access
- RACFCLSA  Class          List profiles and description
  RACFCLSB  Class          List members
  RACFCLSC  Class          Add class
+ RACFCLSD  Class          List class profiles
  RACFCLSR  Class          List classes (show, refresh), menu option 4
  RACFCLSS  Class          List classes (show)
  RACFCLS1  Class          Set filter

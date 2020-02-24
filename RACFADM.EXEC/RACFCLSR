@@ -3,6 +3,9 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AE  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
+/* @AD  200223  RACFA    Added primary command SORT                   */
+/* @AC  200223  RACFA    Use dynamic area to display SELECT commands  */
 /* @AB  200222  RACFA    Removed translating OPTA/B, not needed       */
 /* @AA  200222  RACFA    Allow placing cursor on row and press ENTER  */
 /* @A9  200221  RACFA    Added primary commands 'ONLY' and 'RESET'    */
@@ -18,10 +21,13 @@
 /*====================================================================*/
 ADDRESS ISPEXEC                                               /* @A7 */
   Arg class
-  "VGET (ZSCREEN ERASHOW ERATRACE) ASIS"                      /* @A4 */
+  "VGET (ZSCREEN ERAADMN ERASHOW ERATRACE) ASIS"              /* @AC */
   If (eratrace = 'YES') then Trace r                          /* @A5 */
+  If (ERAADMN = "YES") then                                   /* @AC */
+      SELCMDS = "ÝS¨Show,ÝR¨Refresh"                          /* @AC */
+  else                                                        /* @AC */
+      SELCMDS = "ÝS¨Show"                                     /* @AC */
 
-  address TSO "PROFILE MSGID"
   rlv = SYSVAR('SYSLRACF')
   if (class = '') then DO                                     /* @A9 */
      call Select_class
@@ -91,7 +97,8 @@ RETURN
 /*--------------------------------------------------------------------*/
 DISPLAY_TABLE:
   opta = ' '
-  "TBSORT " tbla "FIELDS(CLASS)"
+  sort = 'CLASS,C,A'                                          /* @AD */
+  "TBSORT " tbla "FIELDS("sort")"                             /* @AD */
   "TBTOP  " tbla
   "TBDISPL" tbla "PANEL(RACFCLSR)"
   reta = rc
@@ -100,14 +107,28 @@ DISPLAY_TABLE:
      "CONTROL DISPLAY SAVE"
      xtdtop = ztdtop                                          /* @A9 */
      lclass = ''                                              /* @A9 */
-     PARSE VAR ZCMD ZCMD PARM                                 /* @A8 */
+     PARSE VAR ZCMD ZCMD PARM SEQ                             /* @AD */
      IF (SROW <> "") & (SROW <> 0) THEN                       /* @AA */
         IF (SROW > 0) THEN DO                                 /* @AA */
            "TBTOP " TBLA                                      /* @AA */
            "TBSKIP" TBLA "NUMBER("SROW")"                     /* @AA */
         END                                                   /* @AA */
      Select
-        When (abbrev("ONLY",zcmd,1) = 1) then do              /* @A9 */
+        WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO              /* @AD */
+             xtdtop   = 1                                     /* @AD */
+             if (seq = 'A') | (seq = 'D') then                /* @AD */
+                nop                                           /* @AD */
+             else                                             /* @AD */
+                seq = 'A'                                     /* @AD */
+             SELECT                                           /* @AD */
+                when (ABBREV("CLASS",PARM,1) = 1) then        /* @AD */
+                     sort = 'CLASS,C,'seq                     /* @AD */
+                otherwise NOP                                 /* @AD */
+             END                                              /* @AD */
+        END                                                   /* @AD */
+        WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @A8 */
+             lclass = parm                                    /* @A8 */
+        WHEN (abbrev("ONLY",zcmd,1) = 1) then do              /* @A9 */
              find_str = translate(parm)                       /* @A9 */
              'tbtop ' tbla                                    /* @A9 */
              'tbskip' tbla                                    /* @A9 */
@@ -124,11 +145,9 @@ DISPLAY_TABLE:
         END                                                   /* @A9 */
         WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO             /* @A9 */
              call select_class                                /* @A9 */
-             fld_sort = 'CLASS,C,A'                           /* @A9 */
+             sort = 'CLASS,C,A'                               /* @AD */
              xtdtop   = 1                                     /* @A9 */
         END                                                   /* @A9 */
-        WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @A8 */
-             lclass = parm                                    /* @A8 */
         OTHERWISE NOP                                         /* @A8 */
      End
      Select
@@ -150,7 +169,7 @@ DISPLAY_TABLE:
         End
      end
      opta = ' '
-     "TBSORT" tbla "FIELDS(CLASS)"
+     "TBSORT" tbla "FIELDS("sort")"
      "TBTOP " tbla
      if (lclass <> '') then do
         class = lclass

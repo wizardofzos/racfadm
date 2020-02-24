@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BK  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
+/* @BJ  200223  RACFA    Simplified SORT, removed FLD/DFL_SORT vars   */
 /* @BI  200222  RACFA    Allowing abbreviating the column in SORT cmd */
 /* @BH  200222  RACFA    Removed translating OPTA/B, not needed       */
 /* @BG  200222  RACFA    Allow placing cursor on row and press ENTER  */
@@ -78,7 +80,6 @@ ADDRESS ISPEXEC                                               /* @BC */
       SELCMDS2 = "ÝS¨Show,ÝSE¨Search,ÝL¨list"                 /* @B4 */
       SELCMDS3 = "ÝS¨Show,ÝL¨list"                            /* @B8 */
   end
-  address TSO "PROFILE MSGID"
   rlv       = SYSVAR('SYSLRACF')
   called    = SYSVAR('SYSNEST')
   if (called = 'YES') then
@@ -105,12 +106,12 @@ PROFL:
   end
   /* profiles table display section */
   opta = ' '
-  sort = ''; fld_sort = 'USER'; dfl_sort = 'USER'             /* @AU */
+  sort = 'USER,C,A'                                           /* @BJ */
   CLRUSER = "TURQ" ; CLRNAME = "GREEN"    /* Col. colors */   /* @AY */
   CLRDEFG = "GREEN"; CLRDATE = "GREEN"                        /* @AY */
   CLROWNE = "GREEN"; CLRREVO = "GREEN"                        /* @AY */
-  CLRATTR = "GREEN"; CLRTSOU = "GREEN"                        /* @AY */
-  "TBSORT " tbla "FIELDS("dfl_sort")"
+  CLRATTR = "GREEN"; CLRTSOU = "GREEN"                        /* @BJ */
+  "TBSORT " tbla "FIELDS("sort")"
   "TBTOP  " tbla
   "TBDISPL" tbla "PANEL(RACFUSR2)"                            /* @B3 */
   reta = rc
@@ -125,6 +126,34 @@ PROFL:
            "TBSKIP" TBLA "NUMBER("SROW")"                     /* @BG */
         END                                                   /* @BG */
      Select
+        WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO              /* @AT */
+             xtdtop   = 1                                     /* @AT */
+             if (seq = 'A') | (seq = 'D') then                /* @AU */
+                nop                                           /* @AU */
+             else                                             /* @AU */
+                seq = 'A'                                     /* @AU */
+             SELECT                                           /* @A5 */
+                when (ABBREV("USERID",PARM,1) = 1) then       /* @BI */
+                     sort = 'USER,C,'seq                      /* @BJ */
+                when (ABBREV("NAME",PARM,1) = 1) then         /* @BI */
+                     sort = 'NAME,C,'seq                      /* @BJ */
+                when (ABBREV("GROUP",PARM,1) = 1) then        /* @BI */
+                     sort = 'DEFGRP,C,'seq                    /* @BJ */
+                when (ABBREV("LOGON",PARM,1) = 1) then        /* @BI */
+                     sort = 'DATELGN,C,'seq                   /* @BJ */
+                when (ABBREV("OWNER",PARM,1) = 1) then        /* @BI */
+                     sort = 'OWNER,C,'seq                     /* @BJ */
+                when (ABBREV("REV",PARN,1) = 1) then          /* @BI */
+                     sort = 'REVOKED,C,'seq                   /* @BJ */
+                when (ABBREV("ATTR",ZCMD,1) = 1) then         /* @BI */
+                     sort = 'ATTR,C,'seq                      /* @BJ */
+                when (ABBREV("TSO",PARM,1) = 1) then          /* @BI */
+                     sort = 'TSOUSER,C,'seq                   /* @BJ */
+                otherwise NOP                                 /* @A5 */
+             END                                              /* @A5 */
+        END                                                   /* @AT */
+        WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @A5 */
+             lparm = parm                                     /* @A5 */
         When (abbrev("ONLY",zcmd,1) = 1) then do              /* @BE */
              find_str = translate(parm)                       /* @BE */
              'tbtop ' tbla                                    /* @BE */
@@ -141,39 +170,11 @@ PROFL:
              end                                              /* @BE */
          END                                                  /* @LB */
          WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO            /* @AS */
-              fld_sort = 'USER,C,A'                           /* @A5 */
+              sort = 'USER,C,A'                               /* @BJ */
               xtdtop   = 1                                    /* @AS */
               "TBEND" tbla                                    /* @BE */
               call create_table                               /* @BE */
          END                                                  /* @AS */
-         WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO             /* @AT */
-              xtdtop   = 1                                    /* @AT */
-              if (seq = 'A') | (seq = 'D') then               /* @AU */
-                 nop                                          /* @AU */
-              else                                            /* @AU */
-                 seq = 'A'                                    /* @AU */
-              SELECT                                          /* @A5 */
-                 when (ABBREV("USERID",PARM,1) = 1) then      /* @BI */
-                      fld_sort = 'USER,C,'seq                 /* @AQ */
-                 when (ABBREV("NAME",PARM,1) = 1) then        /* @BI */
-                      fld_sort = 'NAME,C,'seq                 /* @AQ */
-                 when (ABBREV("GROUP",PARM,1) = 1) then       /* @BI */
-                      fld_sort = 'DEFGRP,C,'seq               /* @AQ */
-                 when (ABBREV("LOGON",PARM,1) = 1) then       /* @BI */
-                      fld_sort = 'DATELGN,C,'seq              /* @AQ */
-                 when (ABBREV("OWNER",PARM,1) = 1) then       /* @BI */
-                      fld_sort = 'OWNER,C,'seq                /* @AQ */
-                 when (ABBREV("REV",PARN,1) = 1) then         /* @BI */
-                      fld_sort = 'REVOKED,C,'seq              /* @AQ */
-                 when (ABBREV("ATTR",ZCMD,1) = 1)  then       /* @BI */
-                      fld_sort = 'ATTR,C,'seq                 /* @AQ */
-                 when (ABBREV("TSO",PARM,1) = 1) then         /* @BI */
-                      fld_sort = 'TSOUSER,C,'seq              /* @AQ */
-                 otherwise NOP                                /* @A5 */
-              END                                             /* @A5 */
-         END                                                  /* @AT */
-         WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN              /* @A5 */
-              lparm = parm                                    /* @A5 */
          otherwise lparm = ''
      End /* Select */
      ZCMD = ""; PARM = ""                                     /* @A5 */
@@ -223,14 +224,7 @@ PROFL:
         End
      end  /* Do while (reta < 4) */
      opta = ' '
-     if (fld_sort <> '') then DO                              /* @A7 */
-        sort = fld_sort
-        PARSE VAR FLD_SORT LOCARG "," .                       /* @A8 */
-     END                                                      /* @A7 */
-     else DO                                                  /* @A7 */
-        sort   = dfl_sort
-        LOCARG = DFL_SORT
-     END                                                      /* @A7 */
+     PARSE VAR SORT LOCARG "," .                              /* @BJ */
      CLRUSER = "GREEN"; CLRNAME = "GREEN"                     /* @AY */
      CLRDEFG = "GREEN"; CLRDATE = "GREEN"                     /* @AY */
      CLROWNE = "GREEN"; CLRREVO = "GREEN"                     /* @AY */
@@ -241,7 +235,7 @@ PROFL:
      if (lparm <> '') then do
         ASTERICK = "*"                                        /* @A5 */
         INTERPRET LOCARG" = lparm||ASTERICK"                  /* @A8 */
-        PARSE VAR FLD_SORT . "," . "," SEQ                    /* @AR */
+        PARSE VAR SORT . "," . "," SEQ                        /* @BJ */
         IF (SEQ = "D") THEN                                   /* @AR */
            CONDLIST = "LE"                                    /* @AR */
         ELSE                                                  /* @AR */

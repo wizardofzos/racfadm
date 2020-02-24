@@ -7,13 +7,14 @@
 %Command ===>_ZCMD                                                             +
 %
 +Primary Commands
+%  Sort column A/D +Sort a column, in ascending or descending order
 %  Only text       +Only display rows with text string
 %  Locate text     +Locate text in the sorted column
 %  Reset           +Redisplay all rows and sort first column
 +
 +Line Commands
-%  S  !Select      +Select a class from the list of active classes
+%  S  !Show        +Select a class from the list of active classes
 %  R  !Refresh     +Issue a RACLIST refresh on the class
 )PROC
-  &ZUP     = #RACSETR
+  &ZUP     = #RACCLSR
 )END

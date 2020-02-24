@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A4  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
 /* @A3  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A2  200218  RACFA    Condense VGETs into one line                 */
 /* @A1  200119  RACFA    Standardized/reduced lines of code           */
@@ -11,9 +12,8 @@
 ADDRESS ISPEXEC                                               /* @A3 */
   Arg message
   Signal off error
-  "VGET (ZSCREEN ERASHOW ERATRACE) ASIS"                      /* @A2 */
+  "VGET (ERASHOW ERATRACE) ASIS"                              /* @A2 */
   If (eratrace = 'YES') then Trace r                          /* @A3 */
-  address TSO "PROFILE MSGID"
 
   answer  = 'NO'
   zwinttl = 'CONFIRM REQUEST'

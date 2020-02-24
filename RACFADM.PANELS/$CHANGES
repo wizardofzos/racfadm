@@ -2,6 +2,44 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  23 Feb 2020 - V4R7
+     - Tutorials
+       -- Had to restore the deleted panel #RACFCLS, turns out, it is
+          used by several panels
+
+  23 Feb 2020 - V4R6
+     - Menu Option 1 (User)
+       * Added primary commands SORT, LOCATE, ONLY and RESET when
+         SEarching a userid, prior was only locate
+       * Changed 'SEarch' panel, so it just displays CLASS column, not
+         PROFILE, since there is no profile to display (RACFCLS8)
+         o Also, when selecting a CLASS, just display PROFILE column,
+           not CLASS since it's the same on each row, instead place
+           the CLASS to the right of USER field at the top of panel
+           (RACFCLSD, new panel)
+     - Menu Option 4 (General Resources)
+       * Only display line command 'R, Refresh' when 'Administrator=YES'
+         in 'Settings' (Menu option 0)
+       * Added primary command SORT
+       * When 'S'howing a class's dataset
+         o Added primary commands SORT, LOCATE, ONLY, RESET
+         o Deleted panels RACFCLSA and #RACCLSA, no longer needed
+     - Menu Option 1/2/3/4 (User/group/Dataset/General Resource)
+       * Simplified the SORTing code in the REXX programs, making it
+         easier to read/maintain
+       * Changed 'Profile Name' to 'Profile' on column headers of
+         panels displaying tables
+       * Removed '.AUTOSEL=NO' from several panels, do not believe it
+         is needed
+       * Removed 'address TSO "PROFILE MSGID"' from all REXX programs
+         do not believe it is needed
+     - Tutorials
+       * Fixed several panels, the &ZUP/&ZCONT variable had incorrect
+         panel name defined
+       * Changed text in panels for line command 'S' to Show, was
+         Select in some of them
+       * Updated tutorials with new commands/etc.
+
   22 Feb 2020 - V4R5
      - Main Menu
        * Added version to menu title
@@ -11,7 +49,7 @@
      - Menu Option T (Tutoral)
        * Added point-n-shoot fields to tutorials
      - Tutorials
-       * Updated a few tutorial panels to reflect changes made
+       * Updated a tutorial panels to reflect changes made
      - Other Items
        * Allow tabbing down to a row and just pressing ENTER to
          to select it ('S'how)

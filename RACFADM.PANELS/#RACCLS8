@@ -7,17 +7,14 @@
 %Command ===>_ZCMD                                                             +
 %
 +Primary Commands
-%  LOCATE CLASS argument+-or-%L C argument
-+    Issue this command from the command line to locate a given class
-+    or move as near as possible to it, ex.%LOCATE CLASS BMC
+%  Sort column A/D +Sort a column, in ascending or descending order
++                  +(Column headers are point-and-shoot sort fields)
+%  Locate text     +Locate text in the sorted column
+%  Only text       +Only display rows with text string
+%  Reset           +Redisplay all rows and sort first column
 +
-%  LOCATE PROFILE argument+-or-%L P argument
-+    Once located the desired class, issue this command from the command
-+    line to locate a given profile or move as near as possible to it,
-+    ex.%LOCATE CLASS BMC
-+
-%Line Commands
-%  S !Select +Analyze user access to this profile
++Line Commands
+%  S  !Show        +Analyze user access to this profile
 )PROC
-  &ZUP     = #RACSRCH
+  &ZUP     = #RACCLS8
 )END

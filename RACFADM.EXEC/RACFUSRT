@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A8  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
 /* @A7  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @A6  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A5  200220  RACFA    Renamed RACFTSO to RACFUSRT (Standardization)*/
@@ -50,7 +51,6 @@ ADDRESS TSO                                                   /* @A7 */
   /*- Authorize Library allocation                -*/
   "PERMIT '"user".**' GEN ACC(ALTER) ID("USERID()")"
   "SETROPTS REFRESH GENERIC(DATASET)"
-  "PROFILE MSGID"
 
   /*- Define user alias for datasets -*/
   signal off error

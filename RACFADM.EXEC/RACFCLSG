@@ -3,6 +3,9 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AL  200223  RACFA    Deleted panel RACFCLS9, no longer needed     */
+/* @AK  200223  RACFA    Added primary cmds SORT, LOCATE, ONLY, RESET */
+/* @AJ  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
 /* @AI  200222  RACFA    Allow placing cursor on row and press ENTER  */
 /* @AH  200221  RACFA    Removed "G = '(G)'", not referenced          */
 /* @AG  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
@@ -39,13 +42,13 @@ ADDRESS ISPEXEC                                               /* @AG */
       SELCMDS = "ÝS¨Show,ÝL¨List,ÝC¨Change,ÝA¨Add,ÝR¨Remove"  /* @AB */
   else
       SELCMDS = "ÝS¨Show,ÝL¨list"                             /* @AB */
-  address TSO "PROFILE MSGID"
   rlv    = SYSVAR('SYSLRACF')
   called = SYSVAR('SYSNEST')
   If (called = 'YES') & (rdisp <> 'YES') then
      "CONTROL NONDISPL ENTER"
   "DISPLAY PANEL(RACFCLS1)"
   Do while (rc = 0)
+     Call create_table
      call Profl
      if (called <> 'YES') | (rdisp = 'YES') then do
         "DISPLAY PANEL(RACFCLS1)"
@@ -67,97 +70,62 @@ RETURN 0
 /*  Show all profiles for a filter                                    */
 /*--------------------------------------------------------------------*/
 PROFL:
-  seconds = TIME('S')
-  tbla    = 'TA'ZSCREEN||SECONDS  /* table unique */
-  "TBCREATE" tbla "KEYS(PROFILE TYPE)",
-                  "NAMES(RCLASS DATA) REPLACE NOWRITE"
-  cmd = "SEARCH FILTER("RFILTER") CLASS("rclass")"            /* @AF */
-  if (erashow = 'YES') then                                   /* @AF */
-     call SHOWCMD                                             /* @AF */
-  x = OUTTRAP('var.')
-  address TSO cmd                                             /* @AF */
-  x = OUTTRAP('OFF')
-  Do i = 1 to var.0
-     temp    = var.i
-     profile = SUBWORD(temp,1,1)
-     t       = INDEX(temp,g)
-     if (t > 0) then
-        type = 'GEN'
-     else do
-        type = 'DISCRETE'
-        msgr = SUBWORD(temp,1,1)
-        Select
-           when (msgr = 'ICH31005I') then do
-                profile = 'NONE'     /* No profiles */
-                type    = 'GEN'
-           end
-           when (msgr = 'ICH31009I') then do
-                profile = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
-           end
-           when (msgr = 'ICH31012I') then do
-                profile = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
-           end
-           when (msgr = 'ICH31014I') then do
-                profile = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
-           end
-           when (msgr = 'ICH31016I') then do
-                profile = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
-           end
-           when (msgr = 'ICH31017I') then do
-                profile = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
-           end
-           when (msgr= 'ICH31018I') then do
-                profile = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
-           end
-           when (msgr = 'IKJ56716I') then do
-                profile = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
-           end
-           when (substr(msgr,1,6) = 'ICH310') then do
-                type = ' '           /* Misc. errs  */
-                call Emsg 'ERR09'
-           end
-           otherwise nop
-        End  /* Select */
-     end  /* Else */
-     /*---------------------------------------------*/
-     /* Display number of records retrieved        -*/
-     /*---------------------------------------------*/
-     IF (ERASINT <> 0) THEN DO     /* Status interval */      /* @AA */
-        IF (I//ERASINT = 0) THEN DO                           /* @AA */
-           n1 = i; n2 = var.0
-           "control display lock"
-           "display msg(RACF014)"
-        END                                                   /* @AA */
-     END                                                      /* @AA */
-     /* Get Further information */
-     call GETD
-     "TBMOD" tbla
-  end  /* Do i=1 to var.0 */
-  if (profile = 'INVALID') then do
-     "TBEND" tbla
-     return
-  end
-  /* profiles table display section */
   opta = ' '
-  "TBSORT " tbla "FIELDS(PROFILE)"
+  sort = 'PROFILE,C,A'                                        /* @AK */
+  CLRPROF = "TURQ";  CLRDATA = "GREEN"   /* Col. colors */    /* @AK */
+  "TBSORT " tbla "FIELDS("sort")"                             /* @AK */
   "TBTOP  " tbla
   "TBDISPL" tbla "PANEL("Pnl_list_prof")"
   reta = rc
   do while (reta < 8)    /* tablea panel */
      "CONTROL DISPLAY SAVE"
      xtdtop = ztdtop
+     lparm  = ""                                              /* @AK */
+     PARSE VAR ZCMD ZCMD PARM SEQ                             /* @AK */
      IF (SROW <> "") & (SROW <> 0) THEN                       /* @AI */
         IF (SROW > 0) THEN DO                                 /* @AI */
            "TBTOP " TBLA                                      /* @AI */
            "TBSKIP" TBLA "NUMBER("SROW")"                     /* @AI */
         END                                                   /* @AI */
+     Select                                                   /* @AK */
+        WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO              /* @AK */
+             xtdtop   = 1                                     /* @AK */
+             if (seq = 'A') | (seq = 'D') then                /* @AK */
+                nop                                           /* @AK */
+             else                                             /* @AK */
+                seq = 'A'                                     /* @AK */
+             SELECT                                           /* @AK */
+                when (ABBREV("PROFILE",PARM,1) = 1) then      /* @AK */
+                     sort = 'PROFILE,C,'seq                   /* @AK */
+                when (ABBREV("DESCRIPTION",PARM,1) = 1) then  /* @AK */
+                     sort = 'DATA,C,'seq                      /* @AK */
+                otherwise NOP                                 /* @AK */
+             END                                              /* @AK */
+        END                                                   /* @AK */
+        WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @AK */
+             lparm = parm                                     /* @AK */
+        When (abbrev("ONLY",zcmd,1) = 1) then do              /* @AK */
+             find_str = translate(parm)                       /* @AK */
+             'tbtop ' tbla                                    /* @AK */
+             'tbskip' tbla                                    /* @AK */
+             do forever                                       /* @AK */
+                str = translate(dataset type)                 /* @AK */
+                if (pos(find_str,str) > 0) then nop           /* @AK */
+                else 'tbdelete' tbla                          /* @AK */
+                'tbskip' tbla                                 /* @AK */
+                if (rc > 0) then do                           /* @AK */
+                   'tbtop' tbla                               /* @AK */
+                   leave                                      /* @AK */
+                end                                           /* @AK */
+             end                                              /* @AK */
+        END                                                   /* @AK */
+        WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO             /* @AK */
+             sort = 'PROFILE,C,A'                             /* @AK */
+             call create_table                                /* @AK */
+             xtdtop   = 1                                     /* @AK */
+        END                                                   /* @AK */
+        otherwise NOP                                         /* @AK */
+     END /* Select */                                         /* @AK */
      Select
         when (opta= 'A') then call Addd
         when (opta= 'C') then call Chgd
@@ -183,9 +151,25 @@ PROFL:
         End
      end  /* Do while (reta < 4) */
      opta = ' '
-     "TBSORT " tbla "FIELDS(PROFILE)"
+     PARSE VAR SORT LOCARG "," .                              /* @AK */
+     CLRPROF = "GREEN"; CLRDATA = "GREEN"                     /* @AK */
+     INTERPRET "CLR"SUBSTR(LOCARG,1,4)" = 'TURQ'"             /* @AK */
+     "TBSORT" tbla "FIELDS("sort")"                           /* @AK */
      "TBTOP  " tbla
-     "TBSKIP " tbla "NUMBER("XTDTOP")"
+     if (lparm <> '') then do                                 /* @AK */
+        ASTERICK = "*"                                        /* @AK */
+        INTERPRET LOCARG" = lparm||ASTERICK"                  /* @AK */
+        "TBTOP" tbla                                          /* @AK */
+        PARSE VAR SORT . "," . "," SEQ                        /* @AK */
+        IF (SEQ = "D") THEN                                   /* @AK */
+           CONDLIST = "LE"                                    /* @AK */
+        ELSE                                                  /* @AK */
+           CONDLIST = "GE"                                    /* @AK */
+        "TBSCAN "tbla,                                        /* @AK */
+                "ARGLIST("LOCARG") CONDLIST("CONDLIST")"      /* @AK */
+     end                                                      /* @AK */
+     else                                                     /* @AK */
+        "TBSKIP" tbla "NUMBER("XTDTOP")"
      "CONTROL DISPLAY RESTORE"
      "TBDISPL" tbla "PANEL("Pnl_list_prof")"
      reta = rc
@@ -597,7 +581,11 @@ GETD:
            getd_i        = getd_i + 2
            getd_temp     = getd_var.getd_i
            memcls        = subword(getd_temp,1,1)
-           Pnl_list_prof = 'RACFCLSA'
+           If (ERAADMN = "YES") then                          /* @AL */
+               SELCMDS = "ÝS¨Show,ÝL¨list,ÝC¨Change,"||,      /* @AL */
+                         "ÝA¨dd,ÝR¨Remove,ÝM¨Member"          /* @AL */
+           else                                               /* @AL */
+               SELCMDS = "ÝS¨Show,ÝL¨list"                    /* @AL */
         end
      if (audit = ' ') then
         if (substr(getd_temp,2,8) = 'AUDITING') then do
@@ -913,3 +901,85 @@ SHOWCMD:                                                      /* @AF */
   'DISPLAY PANEL(RACFMSG2)'                                   /* @AF */
   'REMPOP'                                                    /* @AF */
 RETURN                                                        /* @AF */
+/*--------------------------------------------------------------------*/
+/*  Create Table                                                  @AK */
+/*--------------------------------------------------------------------*/
+CREATE_TABLE:
+  seconds = TIME('S')
+  tbla    = 'TA'ZSCREEN||SECONDS  /* table unique */
+  "TBCREATE" tbla "KEYS(PROFILE TYPE)",
+                  "NAMES(RCLASS DATA) REPLACE NOWRITE"
+  cmd = "SEARCH FILTER("RFILTER") CLASS("rclass")"            /* @AF */
+  if (erashow = 'YES') then                                   /* @AF */
+     call SHOWCMD                                             /* @AF */
+  x = OUTTRAP('var.')
+  address TSO cmd                                             /* @AF */
+  x = OUTTRAP('OFF')
+  Do i = 1 to var.0
+     temp    = var.i
+     profile = SUBWORD(temp,1,1)
+     t       = INDEX(temp,g)
+     if (t > 0) then
+        type = 'GEN'
+     else do
+        type = 'DISCRETE'
+        msgr = SUBWORD(temp,1,1)
+        Select
+           when (msgr = 'ICH31005I') then do
+                profile = 'NONE'     /* No profiles */
+                type    = 'GEN'
+           end
+           when (msgr = 'ICH31009I') then do
+                profile = 'INVALID'  /* Bad filter  */
+                call Emsg 'ERR08'
+           end
+           when (msgr = 'ICH31012I') then do
+                profile = 'INVALID'  /* Bad filter  */
+                call Emsg 'ERR08'
+           end
+           when (msgr = 'ICH31014I') then do
+                profile = 'INVALID'  /* Bad filter  */
+                call Emsg 'ERR08'
+           end
+           when (msgr = 'ICH31016I') then do
+                profile = 'INVALID'  /* Bad filter  */
+                call Emsg 'ERR08'
+           end
+           when (msgr = 'ICH31017I') then do
+                profile = 'INVALID'  /* Bad filter  */
+                call Emsg 'ERR08'
+           end
+           when (msgr= 'ICH31018I') then do
+                profile = 'INVALID'  /* Bad filter  */
+                call Emsg 'ERR08'
+           end
+           when (msgr = 'IKJ56716I') then do
+                profile = 'INVALID'  /* Bad filter  */
+                call Emsg 'ERR08'
+           end
+           when (substr(msgr,1,6) = 'ICH310') then do
+                type = ' '           /* Misc. errs  */
+                call Emsg 'ERR09'
+           end
+           otherwise nop
+        End  /* Select */
+     end  /* Else */
+     /*---------------------------------------------*/
+     /* Display number of records retrieved        -*/
+     /*---------------------------------------------*/
+     IF (ERASINT <> 0) THEN DO     /* Status interval */      /* @AA */
+        IF (I//ERASINT = 0) THEN DO                           /* @AA */
+           n1 = i; n2 = var.0
+           "control display lock"
+           "display msg(RACF014)"
+        END                                                   /* @AA */
+     END                                                      /* @AA */
+     /* Get Further information */
+     call GETD
+     "TBMOD" tbla
+  end  /* Do i=1 to var.0 */
+  if (profile = 'INVALID') then do
+     "TBEND" tbla
+     return
+  end
+RETURN                                                        /* @AK */
