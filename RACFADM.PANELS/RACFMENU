@@ -4,7 +4,7 @@
   + TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(GREEN)
   ~  TYPE(PS)
 )BODY EXPAND(\\)
-+\-\(%RACFADM - RACF Administration - V5R3+)\-\
++\-\(%RACFADM - RACF Administration - V5R4+)\-\
 %Option ===>_ZCMD                                                              +
 %
 %   0 ~Settings +Customize options
@@ -22,10 +22,10 @@
 +
 +
 + ---------------------------------------------------------------------------
-+   User:!ZUSER       +Group:!RACFGRP
 +   RACF:!RACFVER     +Dbase:!RACFDSN
 +   z/OS:!ZOSVER      +Plex: !ZSYSPLEX    +Lpar:!ZSYSID
 +   Date:!ZDATE       +Jdate:!ZJDATE      +Time:!ZTIME
++   User:!ZUSER       +Group:!RACFGRP     +Name:!RACFNAM
 + ---------------------------------------------------------------------------
 )INIT
   .CURSOR = ZCMD
@@ -49,8 +49,9 @@
   &RACFVER = &Z              /*- Obtain RACF/Sys Info -*/
   &RACFDSN = &Z
   &RACFGRP = &Z
+  &RACFNAM = &Z
   &ZOSVER  = &ZOS390RL
-  *REXX (RACFVER RACFDSN ZOSVER RACFGRP)
+  *REXX (RACFVER RACFDSN ZOSVER RACFGRP RACFNAM)
     cvt       = c2x(storage(10,4))
     cvtrac$   = d2x((x2d(cvt))+992)
     cvtrac    = c2x(storage(cvtrac$,4))
@@ -66,7 +67,11 @@
     acee$  = d2x((x2d(asxb))+200)      /* ASXB + 200                  */
     acee   = c2x(storage(acee$,4))     /* ASXBSENV (My ACEE)          */
     group$ = d2x((x2d(acee))+30)       /* ACEE + 30                   */
+    name$  = d2x((x2d(acee))+100)      /* ACEE + 100                  */
+    name$  = c2x(storage(name$,4))     /* ACEEUNAM Ptr                */
+    name$  = d2x((x2d(name$))+1)       /* ACEEUNAM Ptr +1             */
     RACFGRP  = storage(group$,8)       /* ACEEGRPN (RACF group name)  */
+    RACFNAM  = storage(name$,20)       /* ACEEUNAM (RACF user name)   */
   *ENDREXX
 )PROC
   VER (&CLASS,NAME)

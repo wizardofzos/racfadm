@@ -43,7 +43,7 @@
 + Enhanced generic naming{..........$RCVTSEGN+
 + Erase on scratch{.................$RCVTSEOS+
 + Generic owner{....................$RCVTSGNO+
-+ Initialize Statistics{............$RCVTNLS +
++ Initialize statistics{............$RCVTNLS +
 + JES batch all{....................$RCVTJALL+
 + JES early verify{.................$RCVTJCHK+
 + JES undefined userid{.............$RCVTJUND+
