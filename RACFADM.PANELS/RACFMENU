@@ -4,7 +4,7 @@
   + TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(GREEN)
   ~  TYPE(PS)
 )BODY EXPAND(\\)
-+\-\(%RACFADM - RACF Administration - V5R4+)\-\
++\-\(%RACFADM - RACF Administration - V5R5+)\-\
 %Option ===>_ZCMD                                                              +
 %
 %   0 ~Settings +Customize options

@@ -29,13 +29,13 @@
  RACFCLSR  Class          List classes (show, refresh), menu option 4
  RACFCLSS  Class          List classes (show)
  RACFCLS1  Class          Set filter
+ RACFCLS2  Class          List profiles and descriptions
  RACFCLS3  Class          Add class
  RACFCLS4  Class          Change class
  RACFCLS5  Class          List group/ids and access
  RACFCLS6  Class          Change access
  RACFCLS7  Class          Add access
  RACFCLS8  Class          List classes and profiles
- RACFCLS9  Class          List profiles and descriptions
  RACFDSN1  Dataset        Set filter, menu option 3
  RACFDSN2  Dataset        List profiles and types
  RACFDSN3  Dataset        Add profile

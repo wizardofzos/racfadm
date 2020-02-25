@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AA  200125  LBD      Fixed PREFIX, wrong environment              */
 /* @A9  200124  RACFA    Place panels at top of REXX in variables     */
 /* @A8  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
 /* @A7  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
@@ -28,7 +29,9 @@ ADDRESS ISPEXEC                                               /* @A7 */
   "VGET (ERASHOW ERATRACE ERAISPP ERACTLG",                   /* @A4 */
         "ERAUNIT ERAULIB  ERAUVOL ERAMCAT) ASIS"              /* @A4 */
   If (eratrace = 'YES') then Trace r                          /* @A6 */
-  "PROF NOPREF"
+
+ADDRESS TSO
+  "PROF NOPREF"                                               /* @AA */
   signal on error
   x = OUTTRAP('trash.')
   interpret 'signal ' era_cmd
@@ -38,7 +41,7 @@ ADDRESS ISPEXEC                                               /* @A7 */
 /*--------------------------------------------------------------------*/
 ADDD:
 CHGD:
-ADDRESS TSO                                                   /* @A7 */
+ADDRESS TSO
   "ADDSD  ('"user".**') UACC(READ) OWNER("owner")"
 /*-------------------------------------------------------------------*/
 /*- Authorize sys1.brodcast update for alias creation -              */
@@ -119,6 +122,7 @@ ADDRESS ISPEXEC                                               /* @A7 */
   "TBTOP  " tblmsg
   "TBDISPL" tblmsg "PANEL("PANEL29")"                         /* @A9 */
   "TBEND  " tblmsg
+ADDRESS TSO                                                   /* @AA */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Delete userid dataset profile                                     */

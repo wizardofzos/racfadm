@@ -2,11 +2,20 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  25 Feb 2020 - V5R5
+     - User (Option 1)
+       * Fixed deleting a user, added 'ADDRESS TSO' to 'PROFILE PREFIX'
+     - General Resource (Option 4)
+       * Fixed ONLY command
+       * Rename below panels
+           #RACCLS9 -> #RACCLS2
+           RACFCLS9 -> RACFCLS2
+
   25 Feb 2020 - V5R4
      - Main Menu
        * Added user's name to bottom of panel
      - RACFprms (Option 5)
-       * Tweaked gramar on a few of the RACF parameters
+       * Tweaked grammar on a few of the RACF parameters
 
   24 Feb 2020 - V5R3
      - RACFprms (Option 5)

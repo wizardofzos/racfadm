@@ -23,7 +23,7 @@
 /* @A1  200120  RACFA    Added comment box above procedures           */
 /* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
 /*====================================================================*/
-PANEL08 = "RACFCLS8"    /* List classes and profiles       */ /* @XX */
+PANEL08 = "RACFCLS8"    /* List classes and profiles       */ /* @AI */
 PANEL13 = "RACFCLSD"    /* Add class                       */ /* @AG */
 PANELM2 = "RACFMSG2"    /* Execute RACF Command (pop-up)   */ /* @AG */
 
