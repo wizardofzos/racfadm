@@ -33,52 +33,52 @@
 + RACF version{.....................$RCVTGRNM+
 + RACF data base{...................$RCVTGDSN
 {\-\
-+ JES early verify{.................$RCVTJCHK+
-+ JES batch all{....................$RCVTJALL+
-+ JES XBM all{......................$RCVTJXAL+
-+ JES NJE userid{...................$RCVTJSYS+
-+ JES undefined userid{.............$RCVTJUND+
-+ Password interval{................$RCVTPINV+
-+ Password history{.................$RCVTPHIS+
-+ Password attempts{................$RCVTPRVK+
-+ Password warning{.................$RCVTPWRN+
-+ Password rules{...................$RCVTRULS+
-+ Password minimum length{..........$RCVTELEN+
-+ Password maximum length{..........$RCVTSLEN+
-+ Userid inactive{..................$RCVTPINA+
-+ Dataset protection{...............$RCVTSADS+
-+ Erase on scratch{.................$RCVTSEOS+
-+ Catalogued datasets only{.........$RCVTSCAT+
-+ Audit special{....................$RCVTSAUS+
-+ Audit operations{.................$RCVTSAUO+
 + Audit appl{.......................$RCVTSAPL+
-+ List groups access checking{......$RCVTSGRC+
-+ Enhanced generic naming{..........$RCVTSEGN+
-+ Multi factor authentication{......$RCVTSMFA+
-+ Generic owner{....................$RCVTSGNO+
-+ When program{.....................$RCVTSWHE+
-+ Protect all{......................$RCVTSPRA+
-+ Multi level{......................$RCVTSMLA+
-+ Multi level quiet{................$RCVTSMLQ+
-+ Multi level stable{...............$RCVTSMLS+
-+ Multi level secure{...............$RCVTSMLT+
-+ Security level control{...........$RCVTSSLC+
-+ Security label audit{.............$RCVTSSLA+
-+ Retention period{.................$RCVTSRPE+
-+ LU session interval{..............$RCVTSLUI+
-+ Single level prefix{..............$RCVTQUAL+
-+ Dasd volume protection{...........$RCVTDVPR+
++ Audit operations{.................$RCVTSAUO+
++ Audit special{....................$RCVTSAUS+
++ Catalogued datasets only{.........$RCVTSCAT+
++ DASD volume protection{...........$RCVTDVPR+
++ Dataset protection{...............$RCVTSADS+
 + Duplicate datasets{...............$RCVTNDUP+
-+ Model GDG{........................$RCVTMGDG+
++ Enhanced generic naming{..........$RCVTSEGN+
++ Erase on scratch{.................$RCVTSEOS+
++ Generic owner{....................$RCVTSGNO+
++ Initialize Statistics{............$RCVTNLS +
++ JES batch all{....................$RCVTJALL+
++ JES early verify{.................$RCVTJCHK+
++ JES undefined userid{.............$RCVTJUND+
++ JES NJE userid{...................$RCVTJSYS+
++ JES XBM all{......................$RCVTJXAL+
++ List groups access checking{......$RCVTSGRC+
++ LU session interval{..............$RCVTSLUI+
 + Model groups{.....................$RCVTMGRP+
 + Model users{......................$RCVTMUSR+
-+ UADS volume{......................$RCVTUVOL+
-+ UADS datasets{....................$RCVTUADS                     +
++ Model GDG{........................$RCVTMGDG+
++ Multi factor authentication{......$RCVTSMFA+
++ Multi level quiet{................$RCVTSMLQ+
++ Multi level secure{...............$RCVTSMLT+
++ Multi level stable{...............$RCVTSMLS+
++ Multi level{......................$RCVTSMLA+
++ Password attempts{................$RCVTPRVK+
++ Password history{.................$RCVTPHIS+
++ Password interval{................$RCVTPINV+
++ Password maximum length{..........$RCVTSLEN+
++ Password minimum length{..........$RCVTELEN+
++ Password rules{...................$RCVTRULS+
++ Password warning{.................$RCVTPWRN+
++ Protect all{......................$RCVTSPRA+
++ Retention period{.................$RCVTSRPE+
++ Security label audit{.............$RCVTSSLA+
++ Security level control{...........$RCVTSSLC+
++ Single level prefix{..............$RCVTQUAL+
++ Tape dataset protection{..........$RCVTTDPR+
++ Tape volume protection{...........$RCVTTVPR+
 + Terminal authority{...............$RCVTTAUT+
 + Terminal UACC{....................$RCVTTUAC+
-+ Tape volume protection{...........$RCVTTVPR+
-+ Tape dataset protection{..........$RCVTTDPR+
-+ Initialize Statistics{............$RCVTNLS +
++ Userid inactive{..................$RCVTPINA+
++ UADS datasets{....................$RCVTUADS                     +
++ UADS volume{......................$RCVTUVOL+
++ When program{.....................$RCVTSWHE+
 )INIT
   .HELP   = #RACMENU
 )PROC

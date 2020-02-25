@@ -4,7 +4,7 @@
   + TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(GREEN)
   ~  TYPE(PS)
 )BODY EXPAND(\\)
-+\-\(%RACFADM - RACF Administration - V5R1+)\-\
++\-\(%RACFADM - RACF Administration - V5R3+)\-\
 %Option ===>_ZCMD                                                              +
 %
 %   0 ~Settings +Customize options
@@ -21,10 +21,10 @@
 +
 +
 +
-+
 + ---------------------------------------------------------------------------
++   User:!ZUSER       +Group:!RACFGRP
 +   RACF:!RACFVER     +Dbase:!RACFDSN
-+   z/OS:!ZOSVER      +Plex: !ZSYSPLEX    +Lpar:!ZSYSID    +Userid:!ZUSER
++   z/OS:!ZOSVER      +Plex: !ZSYSPLEX    +Lpar:!ZSYSID
 +   Date:!ZDATE       +Jdate:!ZJDATE      +Time:!ZTIME
 + ---------------------------------------------------------------------------
 )INIT
@@ -48,8 +48,9 @@
 
   &RACFVER = &Z              /*- Obtain RACF/Sys Info -*/
   &RACFDSN = &Z
+  &RACFGRP = &Z
   &ZOSVER  = &ZOS390RL
-  *REXX (RACFVER RACFDSN ZOSVER)
+  *REXX (RACFVER RACFDSN ZOSVER RACFGRP)
     cvt       = c2x(storage(10,4))
     cvtrac$   = d2x((x2d(cvt))+992)
     cvtrac    = c2x(storage(cvtrac$,4))
@@ -59,6 +60,13 @@
     rcvtsta$  = d2x((x2d(cvtrac))+56)
     RACFDSN   = storage(rcvtsta$,44)
     parse var zosver . "z/OS" ZOSVER .
+    ascb   = c2x(storage(224,4))       /* PSAAOLD  (My ASCB)          */
+    asxb$  = d2x((x2d(ascb))+108)      /* ASCB + 108                  */
+    asxb   = c2x(storage(asxb$,4))     /* ASCBASXB (My ASXB)          */
+    acee$  = d2x((x2d(asxb))+200)      /* ASXB + 200                  */
+    acee   = c2x(storage(acee$,4))     /* ASXBSENV (My ACEE)          */
+    group$ = d2x((x2d(acee))+30)       /* ACEE + 30                   */
+    RACFGRP  = storage(group$,8)       /* ACEEGRPN (RACF group name)  */
   *ENDREXX
 )PROC
   VER (&CLASS,NAME)

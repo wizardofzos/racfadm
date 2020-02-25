@@ -2,6 +2,14 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  24 Feb 2020 - V5R3
+     - RACFprms (Option 5)
+       * Sorted the RACF pararmeters in alphabetical order
+
+  24 Feb 2020 - V5R2
+     - Main Menu
+       * Added the user's RACF Group to bottom menu
+
   24 Feb 2020 - V5R1
      - Dataset (Option 3)
        * Updated two panels (RACFDSN6/7), mis-spelled 'DATSET',
