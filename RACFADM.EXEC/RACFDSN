@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AX  200126  RACFA    Del address TSO "PROFILE PREF("USERID()")"   */
+/* @AW  200126  RACFA    Removed 'ADDRESS TSO PROF NOPREFIX'          */
 /* @AV  200124  RACFA    Standardize quotes, chg single to double     */
 /* @AU  200124  RACFA    Place panels at top of REXX in variables     */
 /* @AT  200223  RACFA    Fixed SORTed color column                    */
@@ -57,7 +59,6 @@ ADDRESS ISPEXEC                                               /* @AJ */
   else
       SELCMDS = "ÝS¨Show,ÝL¨list"                             /* @AE */
   Rfilter = ERAFLTR                                           /* @AC */
-  address TSO "PROFILE NOPREFIX MSGID"
   rlv = SYSVAR('SYSLRACF')
   chgsmade = 'N'                                              /* @A3 */
   "DISPLAY PANEL("PANEL01")"                                  /* @AU */
@@ -71,7 +72,6 @@ ADDRESS ISPEXEC                                               /* @AJ */
      If (Sure_? = 'YES') then                                 /* @A3 */
         call EXCMD "SETROPTS GENERIC(DATASET)"                /* @A3 */
   End                                                         /* @A3 */
-  address TSO "PROFILE PREF("USERID()")"                      /* @A4 */
 EXIT
 /*--------------------------------------------------------------------*/
 /*  Show all profiles for a filter                                    */

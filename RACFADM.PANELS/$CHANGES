@@ -2,6 +2,17 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  26 Feb 2020 - V5R8
+     - User (Option 1)
+       * Fixed SORTing the ATT column
+       * When a userid is not revoked, has no attributes or TSO
+         segment defined, place NO in the REV, ATT and TSO column
+         o Prior it was blank, making it impossible to LOCATE these
+           entries when SORTed on the column
+     - Other Items
+       * Removed 'ADDRESS TSO PROFILE' commands in all REXX programs,
+         do not believe it is needed
+
   26 Feb 2020 - V5R7
      - User (Option 1)
        * Removed hard coded 'TRACE R', used to trouble-shoot SORTing

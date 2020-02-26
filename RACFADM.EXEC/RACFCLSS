@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AJ  200125  RACFA    Del address TSO "PROFILE PREF("USERID()")"   */
 /* @AI  200124  RACFA    Fixed PANEL08, typo in defining variable     */
 /* @AH  200124  RACFA    Standardize quotes, chg single to double     */
 /* @AG  200124  RACFA    Place panels at top of REXX in variables     */
@@ -32,7 +33,6 @@ ADDRESS ISPEXEC                                               /* @A6 */
   selection = 0  /* something selected */
   "VGET (ZSCREEN ERATRACE ERASHOW) ASIS"                      /* @A7 */
   If (eratrace = 'YES') then Trace r                          /* @A4 */
-  address TSO "PROFILE PREF("USERID()")"
   rlv = SYSVAR('SYSLRACF')
 
   seconds = time('S')

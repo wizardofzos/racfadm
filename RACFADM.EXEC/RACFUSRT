@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AB  200126  RACFA    Removed "PROFILE PREF("USERID()")"           */
+/* @AB  200126  RACFA    Removed 'ADDRESS TSO PROF NOPREFIX'          */
 /* @AA  200125  LBD      Fixed PREFIX, wrong environment              */
 /* @A9  200124  RACFA    Place panels at top of REXX in variables     */
 /* @A8  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
@@ -31,7 +33,6 @@ ADDRESS ISPEXEC                                               /* @A7 */
   If (eratrace = 'YES') then Trace r                          /* @A6 */
 
 ADDRESS TSO
-  "PROF NOPREF"                                               /* @AA */
   signal on error
   x = OUTTRAP('trash.')
   interpret 'signal ' era_cmd
@@ -92,7 +93,6 @@ ADDRESS TSO
   "SETROPTS RACLIST(TSOPROC) REFRESH"
 
   call Delete_Admin_permits
-  "PROFILE PREF("USERID()")"                                  /* @A1 */
 RETURN RC
 /*--------------------------------------------------------------------*/
 /*  Delete userid dataset profile                                     */

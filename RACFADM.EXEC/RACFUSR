@@ -3,6 +3,9 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BQ  200226  RACFA    Place NO in TSO field                        */
+/* @BP  200226  RACFA    Place NO in REVOKE field                     */
+/* @BO  200226  RACFA    Fixed SORTing ATTR2, was ATTR, and added NO  */
 /* @BN  200226  RACFA    Fixed ATTR color when sorting                */
 /* @BM  200124  RACFA    Standardize quotes, chg single to double     */
 /* @BL  200124  RACFA    Place panels at top of REXX in variables     */
@@ -158,8 +161,8 @@ PROFL:
                      sort = 'OWNER,C,'seq                     /* @BJ */
                 when (ABBREV("REV",PARM,1) = 1) then          /* @BI */
                      sort = 'REVOKED,C,'seq                   /* @BI */
-                when (ABBREV("ATTR",PARM,1) = 1) then         /* @BN */
-                     sort = 'ATTR,C,'seq                      /* @BJ */
+                when (ABBREV("ATT",PARM,1) = 1) then          /* @BN */
+                     sort = 'ATTR2,C,'seq                     /* @BO */
                 when (ABBREV("TSO",PARM,1) = 1) then          /* @BI */
                      sort = 'TSOUSER,C,'seq                   /* @BJ */
                 otherwise NOP                                 /* @A5 */
@@ -172,7 +175,7 @@ PROFL:
              'tbtop ' tbla                                    /* @BE */
              'tbskip' tbla                                    /* @BE */
              do forever                                       /* @BE */
-                str = translate(user name defgrp owner attr)  /* @BE */
+                str = translate(user name defgrp owner attr2) /* @BO */
                 if (pos(find_str,str) > 0) then nop           /* @BE */
                 else 'tbdelete' tbla                          /* @BE */
                 'tbskip' tbla                                 /* @BE */
@@ -322,7 +325,7 @@ RESD:
   if (sure_? = 'YES') then do
      call EXCMD "ALTUSER "user" RESUME PASSWORD("user")"
      if (rc = 0) then do
-        revoked =''
+        revoked ='NO'                                         /* @BP */
         "TBMOD" TBLA
      end
      else
@@ -647,7 +650,7 @@ GETD:
   datelgn  = ' '
   datepass = ' '
   intpass  = ' '
-  revoked  = ' '
+  revoked  = 'NO'                                             /* @BP */
   attr     =''
   tsouser  =''
   cmd      = "LU "USER" TSO"                                  /* @BB */
@@ -686,7 +689,8 @@ GETD:
   attr = STRIP(attribute1) STRIP(attribute2)                  /* @AB */
   rev  = POS('REVOKED',attribute1)
   if (rev <> 0) then revoked = 'YES'
-  none = POS('NONE',attribute1)                               /* @A9 */
+  none  = POS('NONE',attribute1)                              /* @A9 */
+  attr2 = 'NO'                                                /* @BO */
   if (none = 0) then do                                       /* @A9 */
      attr2 = 'YES'                                            /* @AB */
   end                                                         /* @A9 */
@@ -709,6 +713,7 @@ GETD:
   end                                                         /* @AN */
 
   parse var details.7 'INSTALLATION-DATA=' data
+  TSOUSER = "NO"                                              /* @BQ */
   do getd_count=8 to getd_max
      if (details.getd_count = 'NO TSO INFORMATION') then leave
      if (details.getd_count = 'TSO INFORMATION') then do
