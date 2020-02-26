@@ -117,7 +117,7 @@ PROFL:
         END                                                   /* @AN */
         WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @AM */
              lparm = parm                                     /* @AM */
-        When (abbrev("ONLY",zcmd,1) = 1) then do              /* @AL */
+        WHEN (ABBREV("ONLY",ZCMD,1) = 1) THEN DO              /* @AL */
              find_str = translate(parm)                       /* @AL */
              'tbtop ' tbla                                    /* @AL */
              'tbskip' tbla                                    /* @AL */

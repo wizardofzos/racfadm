@@ -11,7 +11,7 @@
 /* @AS  200222  RACFA    Removed translating OPTA/B, not needed       */
 /* @AR  200222  RACFA    Allow placing cursor on row and press ENTER  */
 /* @AQ  200221  RACFA    Removed "G = '(G)'", not referenced          */
-/* @AP  200221  LBDYCK   Add ONLY primary command                     */
+/* @AP  200221  LBD      Add ONLY primary command                     */
 /* @AO  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @AN  200220  RACFA    Fixed displaying all RACF commands           */
 /* @AM  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
@@ -119,7 +119,7 @@ PROFL:
         END                                                   /* @AF */
         WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @A3 */
              lparm = parm                                     /* @A3 */
-        When (abbrev("ONLY",zcmd,1) = 1) then do              /* @AP */
+        WHEN (ABBREV("ONLY",ZCMD,1) = 1) THEN DO              /* @AP */
              find_str = translate(parm)                       /* @AP */
              'tbtop ' tbla                                    /* @AP */
              'tbskip' tbla                                    /* @AP */

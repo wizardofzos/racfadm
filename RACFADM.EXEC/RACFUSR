@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BN  200226  RACFA    Fixed ATTR color when sorting                */
 /* @BM  200124  RACFA    Standardize quotes, chg single to double     */
 /* @BL  200124  RACFA    Place panels at top of REXX in variables     */
 /* @BK  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
@@ -144,6 +145,7 @@ PROFL:
                 nop                                           /* @AU */
              else                                             /* @AU */
                 seq = 'A'                                     /* @AU */
+                TRACE R
              SELECT                                           /* @A5 */
                 when (ABBREV("USERID",PARM,1) = 1) then       /* @BI */
                      sort = 'USER,C,'seq                      /* @BJ */
@@ -157,7 +159,7 @@ PROFL:
                      sort = 'OWNER,C,'seq                     /* @BJ */
                 when (ABBREV("REV",PARM,1) = 1) then          /* @BI */
                      sort = 'REVOKED,C,'seq                   /* @BI */
-                when (ABBREV("ATTR",ZCMD,1) = 1) then         /* @BI */
+                when (ABBREV("ATTR",PARM,1) = 1) then         /* @BN */
                      sort = 'ATTR,C,'seq                      /* @BJ */
                 when (ABBREV("TSO",PARM,1) = 1) then          /* @BI */
                      sort = 'TSOUSER,C,'seq                   /* @BJ */
@@ -166,7 +168,7 @@ PROFL:
         END                                                   /* @AT */
         WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @A5 */
              lparm = parm                                     /* @A5 */
-        When (abbrev("ONLY",zcmd,1) = 1) then do              /* @BE */
+        WHEN (ABBREV("ONLY",ZCMD,1) = 1) THEN DO              /* @BE */
              find_str = translate(parm)                       /* @BE */
              'tbtop ' tbla                                    /* @BE */
              'tbskip' tbla                                    /* @BE */

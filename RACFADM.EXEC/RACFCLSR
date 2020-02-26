@@ -133,7 +133,7 @@ DISPLAY_TABLE:
         END                                                   /* @AD */
         WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @A8 */
              lclass = parm                                    /* @A8 */
-        WHEN (abbrev("ONLY",zcmd,1) = 1) then do              /* @A9 */
+        WHEN (ABBREV("ONLY",ZCMD,1) = 1) THEN DO              /* @A9 */
              find_str = translate(parm)                       /* @A9 */
              'tbtop ' tbla                                    /* @A9 */
              'tbskip' tbla                                    /* @A9 */

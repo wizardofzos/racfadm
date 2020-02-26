@@ -225,7 +225,7 @@ DISPLAY_TABLE:
         END                                                   /* @AB */
         WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @AB */
              lclass = parm                                    /* @AE */
-        When (abbrev("ONLY",zcmd,1) = 1) then do              /* @AB */
+        WHEN (ABBREV("ONLY",ZCMD,1) = 1) THEN DO              /* @AB */
              find_str = translate(parm)                       /* @AB */
              'tbtop ' tbla                                    /* @AB */
              'tbskip' tbla                                    /* @AB */
