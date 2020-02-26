@@ -2,6 +2,11 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  26 Feb 2020 - V5R9
+     - Other Items
+       * Removed double quotes around cmd variable, in the
+         'ADDRESS TSO cmd' in all REXX programs
+
   26 Feb 2020 - V5R8
      - User (Option 1)
        * Fixed SORTing the ATT column

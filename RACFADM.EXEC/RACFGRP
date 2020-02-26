@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AY  200126  RACFA    Removed double quotes before/after cmd       */
 /* @AX  200124  RACFA    Standardize quotes, chg single to double     */
 /* @AW  200124  RACFA    Place panels at top of REXX in variables     */
 /* @AV  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
@@ -623,7 +624,7 @@ EXCMD:
   if (erashow = 'YES') then                                   /* @AN */
      call SHOWCMD                                             /* @AN */
   x = OUTTRAP('msg.')
-  address TSO ""cmd""
+  address TSO cmd                                             /* @AY */
   ret_code = rc
   x = OUTTRAP('OFF')
   if (subword(msg.1,1,1)= 'ICH11009I') |,

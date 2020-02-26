@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BR  200126  RACFA    Removed double quotes before/after cmd       */
 /* @BQ  200226  RACFA    Place NO in TSO field                        */
 /* @BP  200226  RACFA    Place NO in REVOKE field                     */
 /* @BO  200226  RACFA    Fixed SORTing ATTR2, was ATTR, and added NO  */
@@ -809,7 +810,7 @@ EXCMD:
   if (erashow = 'YES') then                                   /* @BB */
      call SHOWCMD                                             /* @BB */
   x = OUTTRAP('msg.')
-  address TSO ""cmd""
+  address TSO cmd                                             /* @BR */
   ret_code = rc
   x = OUTTRAP('OFF')
   if (subword(msg.1,1,1)= 'ICH11009I') |,

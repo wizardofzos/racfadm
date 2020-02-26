@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AQ  200126  RACFA    Removed double quotes before/after cmd       */
 /* @AP  200225  RACFA    Chg PANEL09=RACFCLS9 to PANEL02=RACFCLS2     */
 /* @AO  200225  TRIDJK   Fix ONLY search argument for profiles        */
 /* @AN  200124  RACFA    Standardize quotes, chg single to double     */
@@ -31,7 +32,7 @@
 /* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
 /*====================================================================*/
 PANEL01 = "RACFCLS1"    /* Set filter, menu option 4       */ /* @AM */
-PANEL02 = "RACFCLS2"    /* List profiles and descriptions  */ /* @XX */
+PANEL02 = "RACFCLS2"    /* List profiles and descriptions  */ /* @AP */
 PANEL03 = "RACFCLS3"    /* Add class                       */ /* @AM */
 PANEL04 = "RACFCLS4"    /* Change class                    */ /* @AM */
 PANEL05 = "RACFCLS5"    /* List group/ids and access       */ /* @AM */
@@ -49,7 +50,7 @@ ADDRESS ISPEXEC                                               /* @AG */
      Rfilter = ERAFLTR                                        /* @A9 */
   end                                                         /* @A9 */
   Raclist       = 'NO'
-  Pnl_list_prof = PANEL02                                     /* @XX */
+  Pnl_list_prof = PANEL02                                     /* @AP */
   Rclass        = strip(rclass)
   "VGET (ZSCREEN ERASHOW ERATRACE ERACONF",                   /* @AA */
         "ERASINT ERAADMN ERADISP) ASIS"                       /* @AC */
@@ -795,7 +796,7 @@ EXCMD:
   if (erashow = 'YES') then                                   /* @AF */
      call SHOWCMD                                             /* @AF */
   x = OUTTRAP('msg.')
-  address TSO ""cmd""
+  address TSO cmd                                             /* @AQ */
   ret_code = rc
   x = OUTTRAP('OFF')
   if (subword(msg.1,1,1) = 'ICH11009I') |,

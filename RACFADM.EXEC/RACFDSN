@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AY  200126  RACFA    Removed double quotes before/after cmd       */
 /* @AX  200126  RACFA    Del address TSO "PROFILE PREF("USERID()")"   */
 /* @AW  200126  RACFA    Removed 'ADDRESS TSO PROF NOPREFIX'          */
 /* @AV  200124  RACFA    Standardize quotes, chg single to double     */
@@ -648,7 +649,7 @@ EXCMD:
   if (erashow = 'YES') then                                   /* @AI */
      call SHOWCMD                                             /* @AI */
   x = OUTTRAP('msg.')
-  address TSO ""cmd""
+  address TSO cmd                                             /* @AY */
   ret_code = rc
   x = OUTTRAP('OFF')
   if (subword(msg.1,1,1) = 'ICH11009I') |,
