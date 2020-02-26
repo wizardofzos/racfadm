@@ -2,6 +2,10 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  26 Feb 2020 - V5R7
+     - User (Option 1)
+       * Removed hard coded 'TRACE R', used to trouble-shoot SORTing
+
   26 Feb 2020 - V5R6
      - User (Option 1)
        * Fixed the color when SORTing ATTribute column

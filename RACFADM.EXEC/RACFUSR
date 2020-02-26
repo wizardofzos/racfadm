@@ -145,7 +145,6 @@ PROFL:
                 nop                                           /* @AU */
              else                                             /* @AU */
                 seq = 'A'                                     /* @AU */
-                TRACE R
              SELECT                                           /* @A5 */
                 when (ABBREV("USERID",PARM,1) = 1) then       /* @BI */
                      sort = 'USER,C,'seq                      /* @BJ */
