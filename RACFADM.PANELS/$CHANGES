@@ -2,6 +2,15 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  27 Feb 2020 - V6R5
+     - User (Option 1)
+       * Remove/place single quotes around the user catalog name
+         when defining an alias, this was due to removing the
+         'ADDRESS TSO PROFILE' on 26 Feb 20 (V5R8)
+       * Adding/changing a userid, if RACF parameter Enhanced
+         Generic Naming (EGN) is YES, then use double asterisks (**),
+         else use single asterisks (*)
+
   27 Feb 2020 - V6R4
      - User (Option 1)
        * Fixed Adding/Changing a userid, removed REVOKED and NONE
