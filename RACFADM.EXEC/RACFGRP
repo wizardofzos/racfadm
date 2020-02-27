@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B2  200126  RACFA    Fix @AZ chg, chg ret_code to cmd_rc          */
 /* @B1  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
 /* @AZ  200126  RACFA    Added 'Return Code =' when displaying cmd    */
 /* @AY  200126  RACFA    Removed double quotes before/after cmd       */
@@ -281,7 +282,7 @@ DISD:
      cmd   = "LG "group                                       /* @AN */
      x = OUTTRAP('VAR.')
      address TSO cmd                                          /* @AN */
-     ret_code = rc                                            /* @AZ */
+     cmd_rc = rc                                              /* @AZ */
      x = OUTTRAP('OFF')
      if (erashow = 'YES') then                                /* @AN */
         call SHOWCMD                                          /* @AN */
@@ -399,7 +400,7 @@ GETD:
   cmd    = "LG "group                                         /* @AN */
   x = OUTTRAP('details.')
   address TSO cmd                                             /* @AN */
-  ret_code = rc                                               /* @AZ */
+  cmd_rc = rc                                                 /* @AZ */
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @AN */
      call SHOWCMD                                             /* @AN */
@@ -437,7 +438,7 @@ LISD:
   cmd      = "LG "GROUP" "WFLGPRM                             /* @AN */
   X = OUTTRAP("WFREC.")                                       /* @A2 */
   ADDRESS TSO cmd                                             /* @AN */
-  ret_code = rc                                               /* @AZ */
+  cmd_rc   = rc                                               /* @AZ */
   X = OUTTRAP("OFF")                                          /* @A2 */
   if (erashow = 'YES') then                                   /* @AN */
      call SHOWCMD                                             /* @AN */
@@ -478,7 +479,7 @@ LISP:
   cmd = "LU "ID WFLUPRM                                       /* @AN */
   X = OUTTRAP("WFREC.")                                       /* @A5 */
   ADDRESS TSO cmd                                             /* @AN */
-  ret_code = rc                                               /* @AZ */
+  cmd_rc = rc                                                 /* @AZ */
   X = OUTTRAP("OFF")                                          /* @A5 */
   if (erashow = 'YES') then                                   /* @AN */
      call SHOWCMD                                             /* @AN */
@@ -630,7 +631,7 @@ EXCMD:
   arg cmd
   x = OUTTRAP('msg.')
   address TSO cmd                                             /* @AY */
-  ret_code = rc
+  cmd_rc = rc
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @AN */
      call SHOWCMD                                             /* @AN */
@@ -645,7 +646,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @AN */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @AN */
-  MSG4 = "Return code = "ret_code                             /* @AZ */
+  MSG4 = "Return code = "cmd_rc                               /* @AZ */
   "ADDPOP ROW(6) COLUMN(4)"                                   /* @AX */
   "DISPLAY PANEL("PANELM2")"                                  /* @AW */
   "REMPOP"                                                    /* @AX */
@@ -660,7 +661,7 @@ CREATE_TABLE:                                                 /* @AP */
   cmd = "SEARCH FILTER("RFILTER") CLASS("rclass")"            /* @AN */
   x = OUTTRAP('var.')
   address TSO cmd                                             /* @AN */
-  ret_code = rc                                               /* @AZ */
+  cmd_rc = rc                                                 /* @AZ */
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @AN */
      call SHOWCMD                                             /* @AN */

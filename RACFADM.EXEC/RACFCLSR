@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMhDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AK  200126  RACFA    Fix @AI chg, chg ret_code to cmd_rc          */
 /* @AJ  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
 /* @AI  200126  RACFA    Added 'Return Code =' when displaying cmd    */
 /* @AH  200126  RACFA    Removed double quotes before/after cmd       */
@@ -64,7 +65,7 @@ GET_ACT_CLASS:
   cmd  = "SETROPTS LIST"                                      /* @A6 */
   x = OUTTRAP('var.')
   address TSO cmd                                             /* @A6 */
-  ret_code = rc                                               /* @AI */
+  cmd_rc = rc                                                 /* @AI */
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @A6 */
      call SHOWCMD                                             /* @A6 */
@@ -216,7 +217,7 @@ EXCMD:
   arg cmd
   x = OUTTRAP('msg.')
   address TSO cmd                                             /* @AH */
-  ret_code = rc
+  cmd_rc = rc
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @A6 */
      call SHOWCMD                                             /* @A6 */
@@ -232,7 +233,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @A6 */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @A6 */
-  MSG4 = "Return code = "ret_code                             /* @AI */
+  MSG4 = "Return code = "cmd_rc                               /* @AI */
   "ADDPOP ROW(6) COLUMN(4)"                                   /* @AG */
   "DISPLAY PANEL("PANELM2")"                                  /* @AF */
   "REMPOP"                                                    /* @AG */

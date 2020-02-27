@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AD  200126  RACFA    Fix @AB chg, chg ret_code to cmd_rc          */
 /* @AC  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
 /* @AB  200126  RACFA    Added 'Return Code =' when displaying cmd    */
 /* @AA  200126  RACFA    Removed double quotes before/after cmd       */
@@ -81,7 +82,7 @@ GET_PROF_ACL:
   cmd = "RLIST "RCLASS PROFILE" AUTH"                         /* @A5 */
   x = OUTTRAP('VAR.')
   address TSO cmd                                             /* @A5 */
-  ret_code = rc                                               /* @AB */
+  cmd_rc = rc                                                 /* @AB */
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @A5 */
      call SHOWCMD                                             /* @A5 */
@@ -152,7 +153,7 @@ GET_USER_GROUP:
   x = OUTTRAP('VAR.')
   address TSO cmd                                             /* @A5 */
   x = OUTTRAP('OFF')
-  ret_code = rc                                               /* @AB */
+  cmd_rc = rc                                                 /* @AB */
   if (erashow = 'YES') then                                   /* @A5 */
      call SHOWCMD                                             /* @A5 */
   Do i = 1 to var.0               /* Scan output */
@@ -206,7 +207,7 @@ EXCMD:
   arg cmd
   x = OUTTRAP('msg.')
   address TSO cmd                                             /* @AB */
-  ret_code = rc
+  cmd_rc = rc
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @A5 */
      call SHOWCMD                                             /* @A5 */
@@ -222,7 +223,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @A5 */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @A5 */
-  MSG4 = "Return code = "ret_code                             /* @AB */
+  MSG4 = "Return code = "cmd_rc                               /* @AB */
   "ADDPOP ROW(6) COLUMN(4)"                                   /* @A9 */
   "DISPLAY PANEL("PANELM2")"                                  /* @A8 */
   "REMPOP"                                                    /* @A9 */

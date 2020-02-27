@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BU  200126  RACFA    Fix @AK chg, chg ret_code to cmd_rc          */
 /* @AL  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
 /* @AK  200126  RACFA    Removed double quotes before/after cmd       */
 /* @AJ  200125  RACFA    Del address TSO "PROFILE PREF("USERID()")"   */
@@ -54,7 +55,7 @@ GET_PERMITS:
   cmd   = "SEARCH CLASS("class") USER("user")"                /* @A5 */
   x = OUTTRAP('VAR.')
   address TSO cmd                                             /* @A5 */
-  ret_code = rc                                               /* @AK */
+  cmd_rc = rc                                                 /* @AK */
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @A5 */
      call SHOWCMD                                             /* @A5 */
@@ -155,7 +156,7 @@ GET_ACT_CLASS:
   cmd  = "SETROPTS LIST"                                      /* @A5 */
   x = OUTTRAP('var.')
   address TSO cmd                                             /* @A5 */
-  ret_code = rc                                               /* @AK */
+  cmd_rc = rc                                                 /* @AK */
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @A5 */
      call SHOWCMD                                             /* @A5 */
@@ -299,7 +300,7 @@ EXIT
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @A5 */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @A5 */
-  MSG4 = "Return code = "ret_code                             /* @AK */
+  MSG4 = "Return code = "cmd_rc                               /* @AK */
   "ADDPOP ROW(6) COLUMN(4)"                                   /* @AH */
   "DISPLAY PANEL("PANELM2")"                                  /* @AG */
   "REMPOP"                                                    /* @AH */

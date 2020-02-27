@@ -2,6 +2,13 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  26 Feb 2020 - V6R2
+     - Other Items
+       * Renamed the variable used to store the return code after
+         executing RACF commands, was ret_code, now is cmd_rc
+         o Turns out this ret_code variable was already in use
+           to control loops
+
   26 Feb 2020 - V6R1
      - Dataset (Option 3)
        * Added single quotes around dataset name when executing

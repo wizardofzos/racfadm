@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AT  200126  RACFA    Fix @AR chg, chg ret_code to cmd_rc          */
 /* @AS  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
 /* @AR  200126  RACFA    Added 'Return Code =' when displaying cmd    */
 /* @AQ  200126  RACFA    Removed double quotes before/after cmd       */
@@ -81,7 +82,7 @@ ADDRESS ISPEXEC                                               /* @AG */
      if (sure_? = 'YES') then do
         cmd = "SETROPTS RACLIST("rclass") REFRESH"            /* @AF */
         address TSO cmd                                       /* @AF */
-        ret_code = rc                                         /* @AR */
+        cmd_rc = rc                                           /* @AR */
         if (erashow = 'YES') then                             /* @AF */
            call SHOWCMD                                       /* @AF */
      end
@@ -418,7 +419,7 @@ GETM:
   cmd = "RLIST "RCLASS PROFILE" AUTH"                         /* @AF */
   x = OUTTRAP('var.')
   address TSO cmd                                             /* @AF */
-  ret_code = rc                                               /* @AR */
+  cmd_rc = rc                                                 /* @AR */
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @AF */
      call SHOWCMD                                             /* @AF */
@@ -458,7 +459,7 @@ DISD:
      cmd = "RLIST "RCLASS PROFILE" AUTH"                      /* @AF */
      x = OUTTRAP('VAR.')
      address TSO cmd                                          /* @AF */
-     ret_code = rc                                            /* @AR */
+     cmd_rc = rc                                              /* @AR */
      x = OUTTRAP('OFF')
      if (erashow = 'YES') then                                /* @AF */
         call SHOWCMD                                          /* @AF */
@@ -584,7 +585,7 @@ GETD:
   cmd    = "RLIST "RCLASS PROFILE                             /* @AF */
   x = OUTTRAP('getd_var.')
   address TSO cmd                                             /* @AF */
-  ret_code = rc                                               /* @AR */
+  cmd_rc = rc                                                 /* @AR */
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @AF */
      call SHOWCMD                                             /* @AF */
@@ -672,7 +673,7 @@ DISP:
   cmd = "LU "id                                               /* @AF */
   x = OUTTRAP('trash.')
   address TSO cmd                                             /* @AF */
-  ret_code = rc
+  cmd_rc = rc
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @AF */
      call SHOWCMD                                             /* @AF */
@@ -802,7 +803,7 @@ EXCMD:
   arg cmd
   x = OUTTRAP('msg.')
   address TSO cmd                                             /* @AQ */
-  ret_code = rc
+  cmd_rc = rc
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @AF */
      call SHOWCMD                                             /* @AF */
@@ -828,7 +829,7 @@ LISD:                                                         /* @A1 */
   cmd = "RLIST "RCLASS PROFILE" AUTH"                         /* @AF */
   X = OUTTRAP("WFREC.")                                       /* @A1 */
   ADDRESS TSO cmd                                             /* @AF */
-  ret_code = rc                                               /* @AR */
+  cmd_rc = rc                                                 /* @AR */
   X = OUTTRAP("OFF")                                          /* @A1 */
   if (erashow = 'YES') then                                   /* @AF */
      call SHOWCMD                                             /* @AF */
@@ -885,14 +886,14 @@ LISP:                                                         /* @A2 */
   cmd     = "LG "ID WFLGPRM                                   /* @AF */
   X = OUTTRAP("WFREC.")                                       /* @A2 */
   ADDRESS TSO cmd                                             /* @AF */
-  ret_code = rc                                               /* @AR */
+  cmd_rc = rc                                                 /* @AR */
   if (erashow = 'YES') then                                   /* @AF */
      call SHOWCMD                                             /* @AF */
-  if (ret_code = 4) then do                                   /* @A8 */
+  if (cmd_rc = 4) then do                                     /* @A8 */
      wfrec.1 = ' '                                            /* @A8 */
      CMD     = "LU "ID                                        /* @AF */
      ADDRESS TSO cmd                                          /* @AR */
-     ret_code = rc                                            /* @AR */
+     cmd_rc = rc                                              /* @AR */
      if (erashow = 'YES') then                                /* @AF */
         call SHOWCMD                                          /* @AF */
   end                                                         /* @A8 */
@@ -922,7 +923,7 @@ RETURN                                                        /* @A2 */
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @AF */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @AF */
-  MSG4 = "Return code = "ret_code                             /* @AR */
+  MSG4 = "Return code = "cmd_rc                               /* @AR */
   "ADDPOP ROW(6) COLUMN(4)"                                   /* @AN */
   "DISPLAY PANEL("PANELM2")"                                  /* @AM */
   "REMPOP"                                                    /* @AN */
@@ -938,7 +939,7 @@ CREATE_TABLE:
   cmd = "SEARCH FILTER("RFILTER") CLASS("rclass")"            /* @AF */
   x = OUTTRAP('var.')
   address TSO cmd                                             /* @AF */
-  ret_code = rc                                               /* @AR */
+  cmd_rc = rc                                                 /* @AR */
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @AF */
      call SHOWCMD                                             /* @AF */

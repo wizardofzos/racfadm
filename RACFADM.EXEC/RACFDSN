@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B3  200126  RACFA    Fix @AZ chg, chg ret_code to cmd_rc          */
 /* @B2  200126  RACFA    Fixed 'L List' cmd, added single quotes      */
 /* @B1  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
 /* @AZ  200126  RACFA    Added 'Return Code =' when displaying cmd    */
@@ -334,7 +335,7 @@ DISD:
      cmd = "LISTDSD DA('"DATASET"') AUTH"                     /* @AI */
      x = OUTTRAP('VAR.')
      address TSO cmd                                          /* @AI */
-     ret_code = rc                                            /* @AZ */
+     cmd_rc = rc                                              /* @AZ */
      x = OUTTRAP('OFF')
      if (erashow = 'YES') then                                /* @AI */
         call SHOWCMD                                          /* @AI */
@@ -454,7 +455,7 @@ GETD:
   cmd   = "LISTDSD DA('"DATASET"')"                           /* @AI */
   x = OUTTRAP('VAR.')
   address TSO cmd                                             /* @AI */
-  ret_code = rc                                               /* @AZ */
+  cmd_rc = rc                                                 /* @AZ */
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @AI */
      call SHOWCMD                                             /* @AI */
@@ -617,7 +618,7 @@ DISP:
   cmd = "LU "id                                               /* @AI */
   x = OUTTRAP('trash.')
   address TSO cmd                                             /* @AI */
-  ret_code = rc
+  cmd_rc = rc
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @AI */
      call SHOWCMD                                             /* @AI */
@@ -654,7 +655,7 @@ EXCMD:
   arg cmd
   x = OUTTRAP('msg.')
   address TSO cmd                                             /* @AY */
-  ret_code = rc
+  cmd_rc = rc
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @AI */
      call SHOWCMD                                             /* @AI */
@@ -673,7 +674,7 @@ LISD:                                                         /* @A1 */
   CMD     = "LISTDSD DATASET('"DATASET"')" WFLDPRM            /* @B2 */
   X = OUTTRAP("WFREC.")                                       /* @A1 */
   ADDRESS TSO cmd                                             /* @AI */
-  ret_code = rc                                               /* @AZ */
+  cmd_rc = rc                                                 /* @AZ */
   X = OUTTRAP("OFF")                                          /* @A1 */
   if (erashow = 'YES') then                                   /* @AI */
      call SHOWCMD                                             /* @AI */
@@ -706,14 +707,14 @@ LISP:                                                         /* @A5 */
   CMD     = "LG "ID WFLGPRM                                   /* @AI */
   X = OUTTRAP("WFREC.")                                       /* @A5 */
   ADDRESS TSO cmd                                             /* @AI */
-  ret_code = rc                                               /* @AZ */
+  cmd_rc = rc                                                 /* @AZ */
   if erashow = 'YES' then                                     /* @AI */
      call SHOWCMD                                             /* @AI */
-  if (ret_code = 4) then do                                   /* @AB */
+  if (cmd_rc = 4) then do                                     /* @AB */
      wfrec.1 = ' '                                            /* @AB */
      CMD     = "LU "ID                                        /* @AI */
      ADDRESS TSO cmd                                          /* @AI */
-     ret_code = rc                                            /* @AB */
+     cmd_rc = rc                                              /* @AB */
      if (erashow = 'YES') then                                /* @AI */
         call SHOWCMD                                          /* @AI */
   end                                                         /* @AB */
@@ -743,7 +744,7 @@ RETURN                                                        /* @A5 */
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @AI */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @AI */
-  MSG4 = "Return code = "ret_code                             /* @AZ */
+  MSG4 = "Return code = "cmd_rc                               /* @AZ */
   "ADDPOP ROW(6) COLUMN(4)"                                   /* @AV */
   "DISPLAY PANEL("PANELM2")"                                  /* @AU */
   "REMPOP"                                                    /* @AV */
@@ -757,7 +758,7 @@ CREATE_TABLE:
   cmd = "SEARCH FILTER("RFILTER") CLASS(DATASET)"             /* @AI */
   x = OUTTRAP('var.')
   address TSO cmd                                             /* @AI */
-  ret_code = rc                                               /* @AB */
+  cmd_rc = rc                                                 /* @AB */
   x = OUTTRAP('OFF')
   if (erashow = 'YES') then                                   /* @AI */
      call SHOWCMD                                             /* @AI */
