@@ -3,12 +3,12 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
-/* @B2  200126  RACFA    Fix @AZ chg, chg ret_code to cmd_rc          */
-/* @B1  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
-/* @AZ  200126  RACFA    Added 'Return Code =' when displaying cmd    */
-/* @AY  200126  RACFA    Removed double quotes before/after cmd       */
-/* @AX  200124  RACFA    Standardize quotes, chg single to double     */
-/* @AW  200124  RACFA    Place panels at top of REXX in variables     */
+/* @B2  200226  RACFA    Fix @AZ chg, chg ret_code to cmd_rc          */
+/* @B1  200226  RACFA    Added 'CONTROL ERRORS RETURN'                */
+/* @AZ  200226  RACFA    Added 'Return Code =' when displaying cmd    */
+/* @AY  200226  RACFA    Removed double quotes before/after cmd       */
+/* @AX  200224  RACFA    Standardize quotes, chg single to double     */
+/* @AW  200224  RACFA    Place panels at top of REXX in variables     */
 /* @AV  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
 /* @AU  200223  RACFA    Simplified SORT, removed FLD/DFL_SORT vars   */
 /* @AT  200222  RACFA    Allowing abbreviating the column in SORT cmd */

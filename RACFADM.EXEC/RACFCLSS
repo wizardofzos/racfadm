@@ -3,13 +3,13 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
-/* @BU  200126  RACFA    Fix @AK chg, chg ret_code to cmd_rc          */
-/* @AL  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
-/* @AK  200126  RACFA    Removed double quotes before/after cmd       */
-/* @AJ  200125  RACFA    Del address TSO "PROFILE PREF("USERID()")"   */
-/* @AI  200124  RACFA    Fixed PANEL08, typo in defining variable     */
-/* @AH  200124  RACFA    Standardize quotes, chg single to double     */
-/* @AG  200124  RACFA    Place panels at top of REXX in variables     */
+/* @BU  200226  RACFA    Fix @AK chg, chg ret_code to cmd_rc          */
+/* @AL  200226  RACFA    Added 'CONTROL ERRORS RETURN'                */
+/* @AK  200226  RACFA    Removed double quotes before/after cmd       */
+/* @AJ  200225  RACFA    Del address TSO "PROFILE PREF("USERID()")"   */
+/* @AI  200224  RACFA    Fixed PANEL08, typo in defining variable     */
+/* @AH  200224  RACFA    Standardize quotes, chg single to double     */
+/* @AG  200224  RACFA    Place panels at top of REXX in variables     */
 /* @AF  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
 /* @AE  200223  RACFA    Reduced code when LOCATEing, not necessary   */
 /* @AD  200223  RACFA    Reduced code when SORTing, not necessary     */

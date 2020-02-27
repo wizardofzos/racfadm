@@ -3,10 +3,10 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
-/* @AB  200126  RACFA    Removed "PROFILE PREF("USERID()")"           */
-/* @AB  200126  RACFA    Removed 'ADDRESS TSO PROF NOPREFIX'          */
-/* @AA  200125  LBD      Fixed PREFIX, wrong environment              */
-/* @A9  200124  RACFA    Place panels at top of REXX in variables     */
+/* @AB  200226  RACFA    Removed "PROFILE PREF("USERID()")"           */
+/* @AB  200226  RACFA    Removed 'ADDRESS TSO PROF NOPREFIX'          */
+/* @AA  200225  LBD      Fixed PREFIX, wrong environment              */
+/* @A9  200224  RACFA    Place panels at top of REXX in variables     */
 /* @A8  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
 /* @A7  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @A6  200220  RACFA    Added ERATRACE=YES, then TRACE R             */

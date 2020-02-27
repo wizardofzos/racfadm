@@ -3,14 +3,14 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
-/* @AT  200126  RACFA    Fix @AR chg, chg ret_code to cmd_rc          */
-/* @AS  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
-/* @AR  200126  RACFA    Added 'Return Code =' when displaying cmd    */
-/* @AQ  200126  RACFA    Removed double quotes before/after cmd       */
+/* @AT  200226  RACFA    Fix @AR chg, chg ret_code to cmd_rc          */
+/* @AS  200226  RACFA    Added 'CONTROL ERRORS RETURN'                */
+/* @AR  200226  RACFA    Added 'Return Code =' when displaying cmd    */
+/* @AQ  200226  RACFA    Removed double quotes before/after cmd       */
 /* @AP  200225  RACFA    Chg PANEL09=RACFCLS9 to PANEL02=RACFCLS2     */
 /* @AO  200225  TRIDJK   Fix ONLY search argument for profiles        */
-/* @AN  200124  RACFA    Standardize quotes, chg single to double     */
-/* @AM  200124  RACFA    Place panels at top of REXX in variables     */
+/* @AN  200224  RACFA    Standardize quotes, chg single to double     */
+/* @AM  200224  RACFA    Place panels at top of REXX in variables     */
 /* @AL  200223  RACFA    Deleted panel RACFCLS2, no longer needed     */
 /* @AK  200223  RACFA    Added primary cmds SORT, LOCATE, ONLY, RESET */
 /* @AJ  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/

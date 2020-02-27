@@ -3,17 +3,18 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
-/* @BW  200127  RACFA    Added line command 'D', display user datasets*/
-/* @BU  200126  RACFA    Fix @BS chg, chg ret_code to cmd_rc          */
-/* @BT  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
-/* @BS  200126  RACFA    Added 'Return Code =' when displaying cmd    */
-/* @BR  200126  RACFA    Removed double quotes before/after cmd       */
+/* @BX  200227  TRIDJK   Fix for add and change (NONE/PROTECTED)      */
+/* @BW  200227  RACFA    Added line command 'D', display user datasets*/
+/* @BU  200226  RACFA    Fix @BS chg, chg ret_code to cmd_rc          */
+/* @BT  200226  RACFA    Added 'CONTROL ERRORS RETURN'                */
+/* @BS  200226  RACFA    Added 'Return Code =' when displaying cmd    */
+/* @BR  200226  RACFA    Removed double quotes before/after cmd       */
 /* @BQ  200226  RACFA    Place NO in TSO field                        */
 /* @BP  200226  RACFA    Place NO in REVOKE field                     */
 /* @BO  200226  RACFA    Fixed SORTing ATTR2, was ATTR, and added NO  */
 /* @BN  200226  RACFA    Fixed ATTR color when sorting                */
-/* @BM  200124  RACFA    Standardize quotes, chg single to double     */
-/* @BL  200124  RACFA    Place panels at top of REXX in variables     */
+/* @BM  200224  RACFA    Standardize quotes, chg single to double     */
+/* @BL  200224  RACFA    Place panels at top of REXX in variables     */
 /* @BK  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
 /* @BJ  200223  RACFA    Simplified SORT, removed FLD/DFL_SORT vars   */
 /* @BI  200222  RACFA    Allowing abbreviating the column in SORT cmd */
@@ -716,13 +717,20 @@ GETD:
   parse var details.3 'ATTRIBUTES='attribute1                 /* @AB */
   parse var details.4 'ATTRIBUTES='attribute2                 /* @AB */
   attr = STRIP(attribute1) STRIP(attribute2)                  /* @AB */
-  rev  = POS('REVOKED',attribute1)
-  if (rev <> 0) then revoked = 'YES'
-  none  = POS('NONE',attribute1)                              /* @A9 */
+  rev  = POS('REVOKED',attr)
+  if (rev <> 0) then do                                       /* @BX */
+     revoked = 'YES'                                          /* @BX */
+     attr = delstr(attr,rev,7)   /* Del 'REVOKED' */          /* @BX */
+  end                                                         /* @BX */
+  none  = POS('NONE',attr)                                    /* @A9 */
+  if (none <> 0) then                                         /* @BX */
+     attr = delstr(attr,none,4)  /* Del 'NONE'    */          /* @BX */
   attr2 = 'NO'                                                /* @BO */
   if (none = 0) then do                                       /* @A9 */
      attr2 = 'YES'                                            /* @AB */
   end                                                         /* @A9 */
+  prot  = POS('PROTECTED',attr)                               /* @BX */
+  if (prot <> 0) then attr = delstr(attr,prot,9)              /* @BX */
 
   parse var details.5 'LAST-ACCESS=' datelgn5                 /* @AI */
   parse var details.6 'LAST-ACCESS=' datelgn6                 /* @AI */

@@ -3,8 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
-/* @A6  200124  RACFA    Standardize quotes, chg single to double     */
-/* @A5  200124  RACFA    Place panels at top of REXX in variables     */
+/* @A6  200224  RACFA    Standardize quotes, chg single to double     */
+/* @A5  200224  RACFA    Place panels at top of REXX in variables     */
 /* @A4  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
 /* @A3  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A2  200218  RACFA    Condense VGETs into one line                 */

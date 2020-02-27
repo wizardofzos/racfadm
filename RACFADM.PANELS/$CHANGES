@@ -2,6 +2,11 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  27 Feb 2020 - V6R4
+     - User (Option 1)
+       * Fixed Adding/Changing a userid, removed REVOKED and NONE
+         from attribute definitions
+
   27 Feb 2020 - V6R3
      - User and Dataset (Options 1/3)
        * Added line command D, to display datasets

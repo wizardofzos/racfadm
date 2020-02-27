@@ -3,7 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
-/* @A3  200124  RACFA    Place panels at top of REXX in variables     */
+/* @A3  200224  RACFA    Place panels at top of REXX in variables     */
 /* @A2  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @A1  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A0  200123  RACFA    Created REXX                                 */
