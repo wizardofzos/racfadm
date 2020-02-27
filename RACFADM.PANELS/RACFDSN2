@@ -33,9 +33,9 @@ _Z+ Z                                      Z
         IF (&SROW ^= 0)
            &OPTA = S
   IF (&ERAADMN = YES)
-     VER (&OPTA,LIST,S,L,C,A,R)
+     VER (&OPTA,LIST,S,L,D,C,A,R)
   ELSE
-     VER (&OPTA,LIST,S,L)
+     VER (&OPTA,LIST,S,L,D)
 )PNTS
   FIELD(ZPS00001) VAR(ZCMD) VAL('SORT PROFILE')
   FIELD(ZPS00002) VAR(ZCMD) VAL('SORT TYPE')

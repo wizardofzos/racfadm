@@ -17,6 +17,7 @@
 %  S  !Show        +List of groups connected to the user
 %  SE !Search      +Analyze user access to general resource profiles
 %  L  !List        +Issue LISTUSER RACF command
+%  D  !Dsn         +Display datasets
 %  C  !Change      +Change user attributes (admin)
 %  A  !Add         +Define a new user (admin)
 %  R  !Remove      +Remove user from RACF (admin)

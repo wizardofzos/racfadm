@@ -2,6 +2,10 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  27 Feb 2020 - V6R3
+     - User and Dataset (Options 1/3)
+       * Added line command D, to display datasets
+
   26 Feb 2020 - V6R2
      - Other Items
        * Renamed the variable used to store the return code after

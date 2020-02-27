@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BW  200127  RACFA    Added line command 'D', display user datasets*/
 /* @BU  200126  RACFA    Fix @BS chg, chg ret_code to cmd_rc          */
 /* @BT  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
 /* @BS  200126  RACFA    Added 'Return Code =' when displaying cmd    */
@@ -19,7 +20,7 @@
 /* @BH  200222  RACFA    Removed translating OPTA/B, not needed       */
 /* @BG  200222  RACFA    Allow placing cursor on row and press ENTER  */
 /* @BF  200221  RACFA    Removed "G = '(G)'", not referenced          */
-/* @BE  200221  LBDYCK   Add ONLY primary command                     */
+/* @BE  200221  LBD      Add ONLY primary command                     */
 /* @BD  200221  RACFA    Display '*Search' to right of userid         */
 /* @BC  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @BB  200220  RACFA    Fixed displaying all RACF commands           */
@@ -92,13 +93,14 @@ ADDRESS ISPEXEC                                               /* @BC */
         "ERAULIB ERAADMN ERASINT ERADISP) ASIS"               /* @B7 */
   If (eratrace = 'YES') then Trace r                          /* @BA */
   If (ERAADMN = "YES") then do                                /* @B2 */
-      SELCMDS2 = "ÝS¨Show,ÝSE¨Search,ÝL¨List,ÝC¨Chg,"||,      /* @B4 */
-                 "ÝA¨Add,ÝR¨Remove,ÝRS¨Reset,ÝRV¨Revoke"      /* @B4 */
+      SELCMDS2 = "ÝS¨Show,ÝSE¨Srch,ÝL¨Lst,ÝD¨Dsn,"||,         /* @BW */
+                 "ÝC¨Chg,ÝA¨Add,ÝR¨Rem,ÝRS¨Res,"||,           /* @BW */
+                 "ÝRV¨Rev"                                    /* @BW */
       SELCMDS3 = "ÝS¨Show,ÝL¨List,ÝC¨Change,"||,              /* @B6 */
                  "ÝA¨Add,ÝR¨Remove"                           /* @B4 */
   end
   else do
-      SELCMDS2 = "ÝS¨Show,ÝSE¨Search,ÝL¨list"                 /* @B4 */
+      SELCMDS2 = "ÝS¨Show,ÝSE¨Search,ÝL¨list,ÝD¨Dsn"          /* @BW */
       SELCMDS3 = "ÝS¨Show,ÝL¨list"                            /* @B8 */
   end
   rlv       = SYSVAR('SYSLRACF')
@@ -202,6 +204,19 @@ PROFL:
      Select
         when (opta = 'A')  then call Addd
         when (opta = 'C')  then call Chgd
+        when (opta = 'D')  then do                            /* @BW */
+             "CONTROL DISPLAY SAVE"                           /* @BW */
+             "SELECT PGM(ISRDSLST)",                          /* @BW */
+                     "PARM(DSL '"user"')",                    /* @BW */
+                     "SUSPEND SCRNAME(DSL)"                   /* @BW */
+             "CONTROL DISPLAY RESTORE"                        /* @BW */
+             action = '*Dsn'                                  /* @BW */
+             "TBMOD" TBLA                                     /* @BW */
+        end                                                   /* @BW */
+        when (opta = 'L')  then call Lisd
+        when (opta = 'R')  then call Deld
+        when (opta = 'RS') then call Resd
+        when (opta = 'RV') then call Revd
         when (opta = 'S')  then call Disd
         when (opta = 'SE') then do
              if (revoked <> 'YES') then call RACFCLSS user
@@ -209,10 +224,6 @@ PROFL:
              action = '*Search'                               /* @BD */
              "TBMOD" TBLA                                     /* @BD */
         end
-        when (opta = 'R')  then call Deld
-        when (opta = 'RS') then call Resd
-        when (opta = 'L')  then call Lisd
-        when (opta = 'RV') then call Revd
         when (opta = 'XR') then call Xrefd                    /* @AL */
         otherwise nop
      End
@@ -229,6 +240,19 @@ PROFL:
         Select
            when (opta = 'A')  then call Addd
            when (opta = 'C')  then call Chgd
+           when (opta = 'D')  then do                         /* @BW */
+                "CONTROL DISPLAY SAVE"                        /* @BW */
+                "SELECT PGM(ISRDSLST)",                       /* @BW */
+                        "PARM(DSL '"user"')",                 /* @BW */
+                        "SUSPEND SCRNAME(DSL)"                /* @BW */
+                "CONTROL DISPLAY RESTORE"                     /* @BW */
+                action = '*Dsn'                               /* @BW */
+                "TBMOD" TBLA                                  /* @BW */
+           end                                                /* @BW */
+           when (opta = 'L')  then call Lisd
+           when (opta = 'R')  then call Deld
+           when (opta = 'RS') then call Resd
+           when (opta = 'RV') then call Revd
            when (opta = 'S')  then call Disd
            when (opta = 'SE') then do
                 if (revoked <> 'YES') then call RACFCLSS user
@@ -236,10 +260,6 @@ PROFL:
                 action = '*Search'                            /* @BD */
                 "TBMOD" TBLA                                  /* @BD */
            end
-           when (opta = 'R')  then call Deld
-           when (opta = 'RS') then call Resd
-           when (opta = 'L')  then call Lisd
-           when (opta = 'RV') then call Revd
            when (opta = 'XR') then call Xrefd                 /* @AL */
            otherwise nop
         End

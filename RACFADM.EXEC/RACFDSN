@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B4  200127  RACFA    Added line command 'D', display user datasets*/
 /* @B3  200126  RACFA    Fix @AZ chg, chg ret_code to cmd_rc          */
 /* @B2  200126  RACFA    Fixed 'L List' cmd, added single quotes      */
 /* @B1  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
@@ -60,10 +61,10 @@ ADDRESS ISPEXEC                                               /* @AJ */
          "ERAADMN ERASINT ERADISP) ASIS"                      /* @AF */
   If (eratrace = 'YES') then Trace r                          /* @AH */
   If (ERAADMN = "YES") then                                   /* @B2 */
-      SELCMDS = "ÝS¨Show,ÝL¨List,ÝC¨Change,ÝA¨Add,"||,        /* @AE */
-                "ÝR¨Remove"                                   /* @AE */
+      SELCMDS = "ÝS¨Show,ÝL¨List,ÝD¨Dsn,ÝC¨Change,"||,        /* @B4 */
+                "ÝA¨Add,ÝR¨Remove"                            /* @B4 */
   else
-      SELCMDS = "ÝS¨Show,ÝL¨list"                             /* @AE */
+      SELCMDS = "ÝS¨Show,ÝL¨list,ÝD¨Dsn"                      /* @AE */
   Rfilter = ERAFLTR                                           /* @AC */
   rlv = SYSVAR('SYSLRACF')
   chgsmade = 'N'                                              /* @A3 */
@@ -148,9 +149,16 @@ PROFL:
      Select
         when (opta = 'A') then call Addd
         when (opta = 'C') then call Chgd
-        when (opta = 'S') then call Disd
-        when (opta = 'R') then call Deld
+        when (opta = 'D')  then do                            /* @B4 */
+             "CONTROL DISPLAY SAVE"                           /* @B4 */
+             "SELECT PGM(ISRDSLST)",                          /* @B4 */
+                     "PARM(DSL '"dataset"')",                 /* @B4 */
+                     "SUSPEND SCRNAME(DSL)"                   /* @B4 */
+             "CONTROL DISPLAY RESTORE"                        /* @B4 */
+        end                                                   /* @B4 */
         when (opta = 'L') then call Lisd                      /* @A1 */
+        when (opta = 'R') then call Deld
+        when (opta = 'S') then call Disd
         otherwise nop
      End
      Do while (reta = 4)   /* process multi selection */
@@ -161,8 +169,16 @@ PROFL:
         Select
            when (opta = 'A') then call Addd
            when (opta = 'C') then call Chgd
-           when (opta = 'S') then call Disd
+           when (opta = 'D')  then do                         /* @B4 */
+                "CONTROL DISPLAY SAVE"                        /* @B4 */
+                "SELECT PGM(ISRDSLST)",                       /* @B4 */
+                        "PARM(DSL '"dataset"')",              /* @B4 */
+                        "SUSPEND SCRNAME(DSL)"                /* @B4 */
+                "CONTROL DISPLAY RESTORE"                     /* @B4 */
+           end                                                /* @B4 */
+           when (opta = 'L') then call Lisd
            when (opta = 'R') then call Deld
+           when (opta = 'S') then call Disd
            otherwise nop
         End
      end  /* Do while (reta < 4) */
