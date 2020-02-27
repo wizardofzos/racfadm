@@ -2,6 +2,11 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  26 Feb 2020 - V6R1
+     - Dataset (Option 3)
+       * Added single quotes around dataset name when executing
+         'L-List' next to a dataset profile
+
   26 Feb 2020 - V6R0
      - Settings (Option 0)
        * When 'RACF commands = YES', display the RACF command

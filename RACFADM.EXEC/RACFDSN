@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B2  200126  RACFA    Fixed 'L List' cmd, added single quotes      */
 /* @B1  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
 /* @AZ  200126  RACFA    Added 'Return Code =' when displaying cmd    */
 /* @AY  200126  RACFA    Removed double quotes before/after cmd       */
@@ -669,7 +670,7 @@ RETURN
 LISD:                                                         /* @A1 */
   WFDD    = "ERA"RANDOM(0,99999)                              /* @A1 */
   WFLDPRM = "ALL"                                             /* @A1 */
-  CMD     = "LISTDSD DATASET("DATASET")" WFLDPRM              /* @AI */
+  CMD     = "LISTDSD DATASET('"DATASET"')" WFLDPRM            /* @B2 */
   X = OUTTRAP("WFREC.")                                       /* @A1 */
   ADDRESS TSO cmd                                             /* @AI */
   ret_code = rc                                               /* @AZ */
