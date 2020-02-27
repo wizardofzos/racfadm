@@ -2,6 +2,17 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  26 Feb 2020 - V6R0
+     - Settings (Option 0)
+       * When 'RACF commands = YES', display the RACF command
+         after executing (prior was before) and display the
+         return code
+     - Other Items
+       * To assist in trouble-shooting RACF commands, added ISPF
+         command 'CONTROL ERRORS RETURN' to sevearl REXX programs
+         o Will allow displaying the RACF command with return code,
+           instead of abending or displaying the ISPF error panel
+
   26 Feb 2020 - V5R9
      - Other Items
        * Removed double quotes around cmd variable, in the

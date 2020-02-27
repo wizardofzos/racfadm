@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMhDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AJ  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
+/* @AI  200126  RACFA    Added 'Return Code =' when displaying cmd    */
 /* @AH  200126  RACFA    Removed double quotes before/after cmd       */
 /* @AG  200124  RACFA    Standardize quotes, chg single to double     */
 /* @AF  200124  RACFA    Place panels at top of REXX in variables     */
@@ -27,6 +29,7 @@ PANELM2 = "RACFMSG2"    /* Execute RACF Command (pop-up)   */ /* @AF */
 
 ADDRESS ISPEXEC                                               /* @A7 */
   Arg class
+  "CONTROL ERRORS RETURN"                                     /* @AJ */
   "VGET (ZSCREEN ERAADMN ERASHOW ERATRACE) ASIS"              /* @AC */
   If (eratrace = 'YES') then Trace r                          /* @A5 */
   If (ERAADMN = "YES") then                                   /* @AC */
@@ -59,11 +62,12 @@ RETURN
 GET_ACT_CLASS:
   Scan = 'OFF'
   cmd  = "SETROPTS LIST"                                      /* @A6 */
-  if (erashow = 'YES') then                                   /* @A6 */
-     call SHOWCMD                                             /* @A6 */
   x = OUTTRAP('var.')
   address TSO cmd                                             /* @A6 */
+  ret_code = rc                                               /* @AI */
   x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @A6 */
+     call SHOWCMD                                             /* @A6 */
   Do i = 1 to var.0         /* Scan output */
      temp = var.i
      if (rlv > '1081') then  /* RACF 1.9 add blank */
@@ -210,12 +214,12 @@ RETURN
 EXCMD:
   signal off error
   arg cmd
-  if (erashow = 'YES') then                                   /* @A6 */
-     call SHOWCMD                                             /* @A6 */
   x = OUTTRAP('msg.')
   address TSO cmd                                             /* @AH */
   ret_code = rc
   x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @A6 */
+     call SHOWCMD                                             /* @A6 */
   if (subword(msg.1,1,1)= 'ICH11009I') |,
      (subword(msg.1,1,1)= 'ICH10006I') |,
      (subword(msg.1,1,1)= 'ICH06011I') then
@@ -228,6 +232,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @A6 */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @A6 */
+  MSG4 = "Return code = "ret_code                             /* @AI */
   "ADDPOP ROW(6) COLUMN(4)"                                   /* @AG */
   "DISPLAY PANEL("PANELM2")"                                  /* @AF */
   "REMPOP"                                                    /* @AG */

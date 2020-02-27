@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AL  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
+/* @AK  200126  RACFA    Removed double quotes before/after cmd       */
 /* @AJ  200125  RACFA    Del address TSO "PROFILE PREF("USERID()")"   */
 /* @AI  200124  RACFA    Fixed PANEL08, typo in defining variable     */
 /* @AH  200124  RACFA    Standardize quotes, chg single to double     */
@@ -31,6 +33,7 @@ PANELM2 = "RACFMSG2"    /* Execute RACF Command (pop-up)   */ /* @AG */
 ADDRESS ISPEXEC                                               /* @A6 */
   Arg user
   selection = 0  /* something selected */
+  "CONTROL ERRORS RETURN"                                     /* @AL */
   "VGET (ZSCREEN ERATRACE ERASHOW) ASIS"                      /* @A7 */
   If (eratrace = 'YES') then Trace r                          /* @A4 */
   rlv = SYSVAR('SYSLRACF')
@@ -49,11 +52,12 @@ GET_PERMITS:
   class = arg(1)
   user  = arg(2)
   cmd   = "SEARCH CLASS("class") USER("user")"                /* @A5 */
-  if (erashow = 'YES') then                                   /* @A5 */
-     call SHOWCMD                                             /* @A5 */
   x = OUTTRAP('VAR.')
   address TSO cmd                                             /* @A5 */
+  ret_code = rc                                               /* @AK */
   x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @A5 */
+     call SHOWCMD                                             /* @A5 */
   Do i = 1 to var.0   /* Scan output */
      profile = subword(var.i,1,1)
      if (profile <> 'ICH31005I') then do
@@ -149,11 +153,12 @@ GET_ACT_CLASS:
                   "NAMES(ACTION) REPLACE NOWRITE"             /* @AB */
   Scan = 'OFF'                                                /* @AB */
   cmd  = "SETROPTS LIST"                                      /* @A5 */
-  if (erashow = 'YES') then                                   /* @A5 */
-     call SHOWCMD                                             /* @A5 */
   x = OUTTRAP('var.')
   address TSO cmd                                             /* @A5 */
+  ret_code = rc                                               /* @AK */
   x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @A5 */
+     call SHOWCMD                                             /* @A5 */
   Do i = 1 to var.0           /* Scan output */
      temp = var.i
      if (rlv > '1081') then   /* RACF 1.9 add blank */
@@ -294,6 +299,7 @@ EXIT
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @A5 */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @A5 */
+  MSG4 = "Return code = "ret_code                             /* @AK */
   "ADDPOP ROW(6) COLUMN(4)"                                   /* @AH */
   "DISPLAY PANEL("PANELM2")"                                  /* @AG */
   "REMPOP"                                                    /* @AH */

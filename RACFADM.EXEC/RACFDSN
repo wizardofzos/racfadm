@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B1  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
+/* @AZ  200126  RACFA    Added 'Return Code =' when displaying cmd    */
 /* @AY  200126  RACFA    Removed double quotes before/after cmd       */
 /* @AX  200126  RACFA    Del address TSO "PROFILE PREF("USERID()")"   */
 /* @AW  200126  RACFA    Removed 'ADDRESS TSO PROF NOPREFIX'          */
@@ -51,6 +53,7 @@ PANELM2 = "RACFMSG2"    /* Execute RACF Command (pop-up)   */ /* @AU */
 
 ADDRESS ISPEXEC                                               /* @AJ */
   Rclass = 'DATASET'
+  "CONTROL ERRORS RETURN"                                     /* @B1 */
   "VGET (ZSCREEN ERASHOW ERATRACE ERAFLTR",                   /* @AD */
          "ERAADMN ERASINT ERADISP) ASIS"                      /* @AF */
   If (eratrace = 'YES') then Trace r                          /* @AH */
@@ -328,11 +331,12 @@ DISD:
      if (type = 'DISCRETE') then
         type = ' '
      cmd = "LISTDSD DA('"DATASET"') AUTH"                     /* @AI */
-     if (erashow = 'YES') then                                /* @AI */
-        call SHOWCMD                                          /* @AI */
      x = OUTTRAP('VAR.')
      address TSO cmd                                          /* @AI */
+     ret_code = rc                                            /* @AZ */
      x = OUTTRAP('OFF')
+     if (erashow = 'YES') then                                /* @AI */
+        call SHOWCMD                                          /* @AI */
      if (type = ' ') then
         type = 'DISCRETE'
      Do i = 1 to var.0          /* Scan output */
@@ -447,11 +451,12 @@ GETD:
   audit = ' '
   data  = ' '
   cmd   = "LISTDSD DA('"DATASET"')"                           /* @AI */
-  if (erashow = 'YES') then                                   /* @AI */
-     call SHOWCMD                                             /* @AI */
   x = OUTTRAP('VAR.')
   address TSO cmd                                             /* @AI */
+  ret_code = rc                                               /* @AZ */
   x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @AI */
+     call SHOWCMD                                             /* @AI */
   Do i = 1 to var.0 while (flags <> 'OUT') /* Scan output */
      temp = var.i
      if (rlv > '1081') then  /* RACF 1.9 add blank */
@@ -609,12 +614,12 @@ RETURN
 DISP:
   x   = msg('OFF')
   cmd = "LU "id                                               /* @AI */
-  if (erashow = 'YES') then                                   /* @AI */
-     call SHOWCMD                                             /* @AI */
   x = OUTTRAP('trash.')
   address TSO cmd                                             /* @AI */
   ret_code = rc
   x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @AI */
+     call SHOWCMD                                             /* @AI */
   x = msg('ON')
   if (ret_code = 0) then call RACFUSR id
   else call RACFGRP id
@@ -646,12 +651,12 @@ RETURN answer
 EXCMD:
   signal off error
   arg cmd
-  if (erashow = 'YES') then                                   /* @AI */
-     call SHOWCMD                                             /* @AI */
   x = OUTTRAP('msg.')
   address TSO cmd                                             /* @AY */
   ret_code = rc
   x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @AI */
+     call SHOWCMD                                             /* @AI */
   if (subword(msg.1,1,1) = 'ICH11009I') |,
      (subword(msg.1,1,1) = 'ICH10006I') |,
      (subword(msg.1,1,1) = 'ICH06011I') then raclist = 'YES'
@@ -665,11 +670,12 @@ LISD:                                                         /* @A1 */
   WFDD    = "ERA"RANDOM(0,99999)                              /* @A1 */
   WFLDPRM = "ALL"                                             /* @A1 */
   CMD     = "LISTDSD DATASET("DATASET")" WFLDPRM              /* @AI */
-  if (erashow = 'YES') then                                   /* @AI */
-     call SHOWCMD                                             /* @AI */
   X = OUTTRAP("WFREC.")                                       /* @A1 */
   ADDRESS TSO cmd                                             /* @AI */
+  ret_code = rc                                               /* @AZ */
   X = OUTTRAP("OFF")                                          /* @A1 */
+  if (erashow = 'YES') then                                   /* @AI */
+     call SHOWCMD                                             /* @AI */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A1 */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A1 */
               "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @A1 */
@@ -697,18 +703,18 @@ LISP:                                                         /* @A5 */
   WFDD    = "ERA"RANDOM(0,99999)                              /* @A5 */
   WFLGPRM = "CSDATA DFP OMVS OVM TME"                         /* @A5 */
   CMD     = "LG "ID WFLGPRM                                   /* @AI */
-  if erashow = 'YES' then                                     /* @AI */
-     call SHOWCMD                                             /* @AI */
   X = OUTTRAP("WFREC.")                                       /* @A5 */
   ADDRESS TSO cmd                                             /* @AI */
-  lrc = rc                                                    /* @AB */
-  if (lrc = 4) then do                                        /* @AB */
+  ret_code = rc                                               /* @AZ */
+  if erashow = 'YES' then                                     /* @AI */
+     call SHOWCMD                                             /* @AI */
+  if (ret_code = 4) then do                                   /* @AB */
      wfrec.1 = ' '                                            /* @AB */
      CMD     = "LU "ID                                        /* @AI */
+     ADDRESS TSO cmd                                          /* @AI */
+     ret_code = rc                                            /* @AB */
      if (erashow = 'YES') then                                /* @AI */
         call SHOWCMD                                          /* @AI */
-     ADDRESS TSO cmd                                          /* @AI */
-     lrc = rc                                                 /* @AB */
   end                                                         /* @AB */
   X = OUTTRAP("OFF")                                          /* @A5 */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A5 */
@@ -726,7 +732,7 @@ LISP:                                                         /* @A5 */
   END                                                         /* @AF */
   ADDRESS TSO "FREE FI("WFDD")"                               /* @A5 */
   DROP WFREC. WFDD WFLGPRM                                    /* @A5 */
-  if (lrc = 0) then                                           /* @AB */
+  if (ret_code = 0) then                                      /* @AB */
      "TBMOD" TBLB                                             /* @A5 */
   else                                                        /* @A5 */
      CALL emsg "ERR10"   /* Generic failure */                /* @A5 */
@@ -736,6 +742,7 @@ RETURN                                                        /* @A5 */
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @AI */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @AI */
+  MSG4 = "Return code = "ret_code                             /* @AZ */
   "ADDPOP ROW(6) COLUMN(4)"                                   /* @AV */
   "DISPLAY PANEL("PANELM2")"                                  /* @AU */
   "REMPOP"                                                    /* @AV */
@@ -747,11 +754,12 @@ CREATE_TABLE:
   tbla = 'RCFDA'ZSCREEN
   "TBCREATE" tbla "KEYS(DATASET TYPE) REPLACE NOWRITE"
   cmd = "SEARCH FILTER("RFILTER") CLASS(DATASET)"             /* @AI */
-  if (erashow = 'YES') then                                   /* @AI */
-     call SHOWCMD                                             /* @AI */
   x = OUTTRAP('var.')
   address TSO cmd                                             /* @AI */
+  ret_code = rc                                               /* @AB */
   x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @AI */
+     call SHOWCMD                                             /* @AI */
   Do i = 1 to var.0
      temp = var.i
      /*---------------------------------------------*/

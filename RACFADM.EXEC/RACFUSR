@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BT  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
+/* @BS  200126  RACFA    Added 'Return Code =' when displaying cmd    */
 /* @BR  200126  RACFA    Removed double quotes before/after cmd       */
 /* @BQ  200226  RACFA    Place NO in TSO field                        */
 /* @BP  200226  RACFA    Place NO in REVOKE field                     */
@@ -84,6 +86,7 @@ ADDRESS ISPEXEC                                               /* @BC */
   Call Digital_Certs                                          /* @AP */
   Rclass = 'USER'
   lparm  =''                              /* Locate parm */   /* @A5 */
+  "CONTROL ERRORS RETURN"                                     /* @BT */
   "VGET (ZSCREEN ERASHOW ERATRACE ERAMCAT",                   /* @AZ */
         "ERAULIB ERAADMN ERASINT ERADISP) ASIS"               /* @B7 */
   If (eratrace = 'YES') then Trace r                          /* @BA */
@@ -365,11 +368,12 @@ LISD:
      wfluprm = delstr(wfluprm,mfa_pos,4)                      /* @AJ */
   end                                                         /* @AJ */
   cmd = "LU "USER WFLUPRM                                     /* @BB */
-  if (erashow = 'YES') then                                   /* @BB */
-     call SHOWCMD                                             /* @BB */
   X = OUTTRAP("WFREC.")                                       /* @A2 */
   ADDRESS TSO cmd                                             /* @BB */
+  ret_code = rc                                               /* @BS */
   X = OUTTRAP("OFF")                                          /* @A2 */
+  if (erashow = 'YES') then                                   /* @BB */
+     call SHOWCMD                                             /* @BB */
   if (user = 'irrcerta') then do                              /* @AP */
      wfrec.  = ''                                             /* @AP */
      wfrec.0 = 3                                              /* @AP */
@@ -443,11 +447,12 @@ LISP:
   WFDD    = "ERA"RANDOM(0,99999)                              /* @AC */
   WFLGPRM = "CSDATA DFP OMVS OVM TME"                         /* @AC */
   cmd     = "LG "ID" "WFLGPRM                                 /* @BB */
-  if (erashow = 'YES') then                                   /* @BB */
-     call SHOWCMD                                             /* @BB */
   X = OUTTRAP("WFREC.")                                       /* @AC */
   ADDRESS TSO cmd                                             /* @BB */
+  ret_code = rc                                               /* @BS */
   X = OUTTRAP("OFF")                                          /* @AC */
+  if (erashow = 'YES') then                                   /* @BB */
+     call SHOWCMD                                             /* @BB */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @AC */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @AC */
               "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @AC */
@@ -576,11 +581,12 @@ DISD:
      flags = 'OFF'
      uacc  = ' '
      cmd   = "LU "USER                                        /* @BB */
-     if (erashow = 'YES') then                                /* @BB */
-        call SHOWCMD                                          /* @BB */
      x = OUTTRAP('VAR.')
      address TSO cmd                                          /* @BB */
+     ret_code = rc                                            /* @BS */
      x = OUTTRAP('OFF')
+     if (erashow = 'YES') then                                /* @BB */
+        call SHOWCMD                                          /* @BB */
      Do i = 1 to var.0  /* Scan output */
         temp = var.i
         if (substr(temp,3,5) = 'GROUP') then do
@@ -655,11 +661,12 @@ GETD:
   attr     =''
   tsouser  =''
   cmd      = "LU "USER" TSO"                                  /* @BB */
-  if (erashow = 'YES') then                                   /* @BB */
-     call SHOWCMD                                             /* @BB */
   x        = OUTTRAP('details.')
   address TSO cmd                                             /* @BB */
+  ret_code = RC                                               /* @BS */
   x        = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @BB */
+     call SHOWCMD                                             /* @BB */
   getd_max = details.0
 
   if (user = 'irrcerta') then do                              /* @AP */
@@ -807,12 +814,12 @@ RETURN
 EXCMD:
   signal off error
   arg cmd
-  if (erashow = 'YES') then                                   /* @BB */
-     call SHOWCMD                                             /* @BB */
   x = OUTTRAP('msg.')
   address TSO cmd                                             /* @BR */
-  ret_code = rc
+  ret_code = rc                                               /* @BS */
   x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @BB */
+     call SHOWCMD                                             /* @BB */
   if (subword(msg.1,1,1)= 'ICH11009I') |,
      (subword(msg.1,1,1)= 'ICH10006I') |,
      (subword(msg.1,1,1)= 'ICH06011I') then raclist = 'YES'
@@ -853,6 +860,7 @@ RETURN                                                        /* @AP */
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @BB */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @BB */
+  MSG4 = "Return code = "ret_code                             /* @BS */
   "ADDPOP ROW(6) COLUMN(4)"                                   /* @BB */
   "DISPLAY PANEL("PANELM2")"                                  /* @BL */
   "REMPOP"                                                    /* @BB */
@@ -869,11 +877,12 @@ CREATE_TABLE:                                                 /* @BE */
                         "REVOKED ATTR TSOUSER DATA ATTR2)",
                         "REPLACE NOWRITE"
   cmd = "SEARCH FILTER("RFILTER") CLASS("rclass")"            /* @BB */
-  if (erashow = 'YES') then                                   /* @BB */
-     call SHOWCMD                                             /* @BB */
   x = OUTTRAP('var.')
   address TSO cmd                                             /* @BB */
+  ret_code = rc                                               /* @BS */
   x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @BB */
+     call SHOWCMD                                             /* @BB */
   Do i = 1 to var.0
      temp = var.i
      USER = SUBWORD(temp,1,1)

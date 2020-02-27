@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AC  200126  RACFA    Added 'CONTROL ERRORS RETURN'                */
+/* @AB  200126  RACFA    Added 'Return Code =' when displaying cmd    */
 /* @AA  200126  RACFA    Removed double quotes before/after cmd       */
 /* @A9  200124  RACFA    Standardize quotes, chg single to double     */
 /* @A8  200124  RACFA    Place panels at top of REXX in variables     */
@@ -21,6 +23,7 @@ PANELM2 = "RACFMSG2"    /* Execute RACF Command  (pop-up)  */ /* @A8 */
 
 ADDRESS ISPEXEC                                               /* @A6 */
   Arg rclass profile user
+  "CONTROL ERRORS RETURN"                                     /* @AC */
   "VGET (ZSCREEN ERASHOW ERATRACE) ASIS"                      /* @A3 */
   If (eratrace = 'YES') then Trace r                          /* @A4 */
 
@@ -76,11 +79,12 @@ GET_PROF_ACL:
   if (type = 'DISCRETE') then
      type = ' '
   cmd = "RLIST "RCLASS PROFILE" AUTH"                         /* @A5 */
-  if (erashow = 'YES') then                                   /* @A5 */
-     call SHOWCMD                                             /* @A5 */
   x = OUTTRAP('VAR.')
   address TSO cmd                                             /* @A5 */
+  ret_code = rc                                               /* @AB */
   x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @A5 */
+     call SHOWCMD                                             /* @A5 */
   if (type = ' ') then
      type = 'DISCRETE'
   Do i = 1 to var.0          /* Scan output */
@@ -145,11 +149,12 @@ GET_USER_GROUP:
   flags  = 'OFF'
   grp_ix = 0
   cmd    = "LU "USER                                          /* @A5 */
-  if (erashow = 'YES') then                                   /* @A5 */
-     call SHOWCMD                                             /* @A5 */
   x = OUTTRAP('VAR.')
   address TSO cmd                                             /* @A5 */
   x = OUTTRAP('OFF')
+  ret_code = rc                                               /* @AB */
+  if (erashow = 'YES') then                                   /* @A5 */
+     call SHOWCMD                                             /* @A5 */
   Do i = 1 to var.0               /* Scan output */
      temp = var.i
      if (substr(temp,3,5) = 'GROUP') then do
@@ -199,12 +204,12 @@ RETURN
 EXCMD:
   signal off error
   arg cmd
-  if (erashow = 'YES') then                                   /* @A5 */
-     call SHOWCMD                                             /* @A5 */
   x = OUTTRAP('msg.')
-  address TSO cmd                                             /* @AA */
+  address TSO cmd                                             /* @AB */
   ret_code = rc
   x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @A5 */
+     call SHOWCMD                                             /* @A5 */
   if (subword(msg.1,1,1)= 'cCH11009I') |,
      (subword(msg.1,1,1)= 'ICH10006I') |,
      (subword(msg.1,1,1)= 'ICH06011I') then
@@ -217,6 +222,7 @@ RETURN
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @A5 */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @A5 */
+  MSG4 = "Return code = "ret_code                             /* @AB */
   "ADDPOP ROW(6) COLUMN(4)"                                   /* @A9 */
   "DISPLAY PANEL("PANELM2")"                                  /* @A8 */
   "REMPOP"                                                    /* @A9 */
