@@ -2,9 +2,14 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  27 Feb 2020 - V6R8
+     - User (Option 1)
+       - Added code to allow tracing be turned on by the user from
+         'Settings (Option 0)' when Adding/Changing/Deleting a userid
+
   27 Feb 2020 - V6R7
      - User (Option 1)
-       * Adjusted the fix of the contuation statements in V6R6
+       * Adjusted the fix of the continuation statements in V6R6
 
   27 Feb 2020 - V6R6
      - User (Option 1)

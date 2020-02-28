@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AF  200228  RACFA    Allow turning tracing on from 'Settings (0)' */
 /* @AE  200227  RACFA    If EGN=YES, then 2 asterisks, else one       */
 /* @AD  200227  RACFA    Set info messages off, del outtrap('trash.') */
 /* @AC  200227  TRIDJK   Add single quotes around catalog name        */
@@ -22,12 +23,16 @@
 /*====================================================================*/
 PANEL29 = "RACFUSRT"    /* Add, chg and del a TSO userid  */  /* @A9 */
 X       = MSG("OFF")    /* No informational messages      */  /* @AD */
-rc      = GETEGN(ERAEGN,53,'01','NO','YES')  /* egn       */  /* @AE */
-ASTERIC = "*"
-IF (ERAEGN = "YES") THEN
-   ASTERIC = "**"
 
-ADDRESS ISPEXEC                                               /* @A7 */
+ADDRESS ISPEXEC                                               /* @AF */
+  "VGET (ERATRACE) ASIS"                                      /* @AF */
+  If (eratrace = 'YES') then Trace r                          /* @AF */
+
+  rc      = GETEGN(ERAEGN,53,'01','NO','YES')  /* egn=Y/N */  /* @AE */
+  ASTERIC = "*"                                               /* @AE */
+  IF (ERAEGN = "YES") THEN                                    /* @AE */
+     ASTERIC = "**"                                           /* @AE */
+
   signal off error
   era_cmd = arg(1)
   user    = arg(2)
