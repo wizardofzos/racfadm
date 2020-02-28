@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @C3  200228  RACFA    Place single quotes around comma, prevent err*/
 /* @C2  200228  RACFA    Added PASSWORD() to ADDUSER                  */
 /* @C1  200228  RACFA    Removed ERAMCAT from VGET, not used          */
 /* @BZ  200227  RACFA    Had to add "" for contuation to work properly*/
@@ -320,8 +321,8 @@ ADDD:
              "NAME('"name"') PASSWORD("user")" XTR ATTR       /* @C2 */
   ret_code = rc
   if (tsouser = 'YES') & (ret_code = 0) then DO
-     ret_code = RACFUSRT('ADDD',user,tsoproc,tsoacct,""||,    /* @BZ */
-                      defgrp,owner,tsolib)
+     ret_code = RACFUSRT('ADDD,'user','tsoproc','||,          /* @C3 */
+                tsoacct','defgrp','owner','tsolib)            /* @C3 */
      if (ret_code = 0) then DO
          call EXCMD "ALTUSER ("USER")",
              "OWN("owner") DFLTGRP("defgrp")",
@@ -539,8 +540,8 @@ CHGD:
   end
   if (tsouser = 'YES') then do
       if (new_tsouser = 'YES') then
-         ret_code = RACFUSRT('CHGD',user,tsoproc,""||,        /* @BZ */
-                              tsoacct,defgrp,owner,tsolib)
+         ret_code = RACFUSRT('CHGD,'user','tsoproc','||,      /* @C3 */
+                    tsoacct','defgrp','owner','tsolib)        /* @C3 */
       if (ret_code = 0) then
          call EXCMD "ALTUSER ("USER")" alt_own,
                      alt_defgrp alt_name xtr attr,
@@ -573,8 +574,8 @@ DELD:
         msg    = user'.'eraulib 'will be deleted'
         Sure_? = RACFMSGC(msg)
         if (sure_? = 'YES') then
-           ret_code = RACFUSRT('DELD',user,tsoproc,""||,     /* @BZ */
-                      tsoacct,defgrp,owner,tsolib)
+           ret_code = RACFUSRT('DELD,'user','tsoproc','||,    /* @C3 */
+                      tsoacct','defgrp','owner','tsolib)      /* @C3 */
         if (ret_code <= 8) then do
            call EXCMD "DELUSER ("USER")"
            if (rc = 0) then

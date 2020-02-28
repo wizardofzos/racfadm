@@ -2,13 +2,19 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
-  27 Feb 2020 - V7R0
+  28 Feb 2020 - V7R1
+     - User (Option 1)
+       * Placed single quotes around commas on parameter passed to
+         RACFUSRT when adding, changing and deleting a userid, in
+         hopes of finally preventing an abend/error
+
+  28 Feb 2020 - V7R0
      - User (Option 1)
        * Added PASSWORD() parameter to RACF ADDUSER command, preventing
          from having to RS (Resume) the userid to allow logging on
          and changing the password
 
-  27 Feb 2020 - V6R9
+  28 Feb 2020 - V6R9
      - User (Option 1)
        * Added code to allow displaying RACF/TSO commands and the
          return code when 'RACF commands=YES' in Settings (Option 0),
