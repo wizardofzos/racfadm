@@ -2,6 +2,12 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  27 Feb 2020 - V7R0
+     - User (Option 1)
+       * Added PASSWORD() parameter to RACF ADDUSER command, preventing
+         from having to RS (Resume) the userid to allow logging on
+         and changing the password
+
   27 Feb 2020 - V6R9
      - User (Option 1)
        * Added code to allow displaying RACF/TSO commands and the

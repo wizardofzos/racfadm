@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @C2  200228  RACFA    Added PASSWORD() to ADDUSER                  */
 /* @C1  200228  RACFA    Removed ERAMCAT from VGET, not used          */
 /* @BZ  200227  RACFA    Had to add "" for contuation to work properly*/
 /* @BY  200227  RACFA    Fix continuation of statement                */
@@ -316,7 +317,7 @@ ADDD:
   datelgn = 'UNKNOWN'
   call EXCMD "ADDUSER ("user")",
              "OWN("owner") DFLTGRP("defgrp")",
-             "NAME('"name"')" XTR ATTR
+             "NAME('"name"') PASSWORD("user")" XTR ATTR       /* @C2 */
   ret_code = rc
   if (tsouser = 'YES') & (ret_code = 0) then DO
      ret_code = RACFUSRT('ADDD',user,tsoproc,tsoacct,""||,    /* @BZ */
