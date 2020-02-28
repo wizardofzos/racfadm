@@ -2,6 +2,11 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  28 Feb 2020 - V7R2
+     - User (Option 1)
+       * Trying once again to fix the RACFUSRT issue, when adding,
+         changing and deleting a userid, changed ARG() with PARSE VAR
+
   28 Feb 2020 - V7R1
      - User (Option 1)
        * Placed single quotes around commas on parameter passed to

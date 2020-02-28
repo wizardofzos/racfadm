@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AH  200228  RACFA    Removed ARG() statements, use PARSE ARG      */
 /* @AG  200228  RACFA    Allow turning disp. REXX cmds 'Settings (0)' */
 /* @AF  200228  RACFA    Allow turning tracing on from 'Settings (0)' */
 /* @AE  200227  RACFA    If EGN=YES, then 2 asterisks, else one       */
@@ -37,13 +38,7 @@ ADDRESS ISPEXEC                                               /* @AF */
      ASTERIC = "**"                                           /* @AE */
 
   signal off error
-  era_cmd = arg(1)
-  user    = arg(2)
-  tsoproc = arg(3)
-  tsoacct = arg(4)
-  defgrp  = arg(5)
-  owner   = arg(6)
-  joblib  = arg(7)
+  parse arg era_cmd user tsoproc tsoacct defgrp owner joblib  /* @AH */
 
   signal on error
   interpret 'signal ' era_cmd
