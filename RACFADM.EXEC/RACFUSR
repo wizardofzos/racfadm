@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BZ  200227  RACFA    Had to add "" for contuation to work properly*/
+/* @BY  200227  RACFA    Fix continuation of statement                */
 /* @BX  200227  TRIDJK   Fix for add and change (NONE/PROTECTED)      */
 /* @BW  200227  RACFA    Added line command 'D', display user datasets*/
 /* @BU  200226  RACFA    Fix @BS chg, chg ret_code to cmd_rc          */
@@ -316,7 +318,7 @@ ADDD:
              "NAME('"name"')" XTR ATTR
   ret_code = rc
   if (tsouser = 'YES') & (ret_code = 0) then DO
-     ret_code = RACFUSRT('ADDD',user,tsoproc,tsoacct,,        /* @B5 */
+     ret_code = RACFUSRT('ADDD',user,tsoproc,tsoacct,""||,    /* @BZ */
                       defgrp,owner,tsolib)
      if (ret_code = 0) then DO
          call EXCMD "ALTUSER ("USER")",
@@ -535,8 +537,8 @@ CHGD:
   end
   if (tsouser = 'YES') then do
       if (new_tsouser = 'YES') then
-         ret_code = RACFUSRT('CHGD',user,tsoproc,tsoacct,,    /* @B5 */
-                              defgrp,owner,tsolib)
+         ret_code = RACFUSRT('CHGD',user,tsoproc,""||,        /* @BZ */
+                              tsoacct,defgrp,owner,tsolib)
       if (ret_code = 0) then
          call EXCMD "ALTUSER ("USER")" alt_own,
                      alt_defgrp alt_name xtr attr,
@@ -569,7 +571,7 @@ DELD:
         msg    = user'.'eraulib 'will be deleted'
         Sure_? = RACFMSGC(msg)
         if (sure_? = 'YES') then
-           ret_code = RACFUSRT('DELD',user,tsoproc,,          /* @B5 */
+           ret_code = RACFUSRT('DELD',user,tsoproc,""||,     /* @BZ */
                       tsoacct,defgrp,owner,tsolib)
         if (ret_code <= 8) then do
            call EXCMD "DELUSER ("USER")"
