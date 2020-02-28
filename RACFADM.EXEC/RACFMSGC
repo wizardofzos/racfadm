@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A7  200228  RACFA    Removed ERASHOW from VGET, not used          */
 /* @A6  200224  RACFA    Standardize quotes, chg single to double     */
 /* @A5  200224  RACFA    Place panels at top of REXX in variables     */
 /* @A4  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
@@ -16,7 +17,7 @@ PANELM1 = "RACFMSG1"    /* Confirm Request (pop-up)        */ /* @A5 */
 ADDRESS ISPEXEC                                               /* @A3 */
   Arg message
   Signal off error
-  "VGET (ERASHOW ERATRACE) ASIS"                              /* @A2 */
+  "VGET (ERATRACE) ASIS"                                      /* @A7 */
   If (eratrace = 'YES') then Trace r                          /* @A3 */
 
   answer  = 'NO'

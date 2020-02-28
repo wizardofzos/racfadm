@@ -2,10 +2,21 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  27 Feb 2020 - V6R9
+     - User (Option 1)
+       * Added code to allow displaying RACF/TSO commands and the
+         return code when 'RACF commands=YES' in Settings (Option 0),
+         when adding/changing/deleting a userid (RACFUSRT)
+       * Increases space and directory when allocating ISPF profile
+         dataset
+     - Other Items
+       * Removed unnecessary VGETs for variables not used in REXX pgms
+       * Corrected grammar in this change log
+
   27 Feb 2020 - V6R8
      - User (Option 1)
-       - Added code to allow tracing be turned on by the user from
-         'Settings (Option 0)' when Adding/Changing/Deleting a userid
+       * Added code to allow tracing be turned on by the user from
+         'Settings (Option 0)', when adding/changing/deleting a userid
 
   27 Feb 2020 - V6R7
      - User (Option 1)
@@ -21,7 +32,7 @@
        * Remove/place single quotes around the user catalog name
          when defining an alias, this was due to removing the
          'PROFILE NOPREF' statements on 26 Feb 20 (V5R8)
-       * Adding/changing a userid, if RACF parameter 'Enhanced
+       * Adding/changing a userid, if RACF parameter  Enhanced
          Generic Naming (EGN)' is YES, then use double asterisks (**),
          else use single asterisks (*)
 
@@ -98,7 +109,7 @@
 
   24 Feb 2020 - V5R3
      - RACFprms (Option 5)
-       * Sorted the RACF pararmeters in alphabetical order
+       * Sorted the RACF parameters in alphabetical order
 
   24 Feb 2020 - V5R2
      - Main Menu

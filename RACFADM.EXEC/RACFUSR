@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @C1  200228  RACFA    Removed ERAMCAT from VGET, not used          */
 /* @BZ  200227  RACFA    Had to add "" for contuation to work properly*/
 /* @BY  200227  RACFA    Fix continuation of statement                */
 /* @BX  200227  TRIDJK   Fix for add and change (NONE/PROTECTED)      */
@@ -91,8 +92,8 @@ ADDRESS ISPEXEC                                               /* @BC */
   Call Digital_Certs                                          /* @AP */
   Rclass = 'USER'
   lparm  =''                              /* Locate parm */   /* @A5 */
-  "CONTROL ERRORS RETURN"                                     /* @BT */
-  "VGET (ZSCREEN ERASHOW ERATRACE ERAMCAT",                   /* @AZ */
+  "CONTROL ERRORS RETURN"                                     /* @B1 */
+  "VGET (ZSCREEN ERASHOW ERATRACE",                           /* @C1 */
         "ERAULIB ERAADMN ERASINT ERADISP) ASIS"               /* @B7 */
   If (eratrace = 'YES') then Trace r                          /* @BA */
   If (ERAADMN = "YES") then do                                /* @B2 */

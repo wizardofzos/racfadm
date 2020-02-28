@@ -62,7 +62,7 @@ ADDRESS ISPEXEC                                               /* @AO */
   end                                                         /* @AB */
   "CONTROL ERRORS RETURN"                                     /* @B1 */
   "VGET (ZSCREEN ERASHOW ERATRACE ERASINT",                   /* @AI */
-                        "ERAADMN ERADISP) ASIS"               /* @AK */
+        "ERAADMN ERADISP) ASIS"                               /* @AK */
   If (eratrace = 'YES') then Trace r                          /* @AM */
   If (ERAADMN = "YES") then                                   /* @B2 */
       SELCMDS = "ÝS¨Show,ÝL¨List,ÝC¨Change,ÝA¨Add,ÝR¨Remove"  /* @AJ */
