@@ -9,3 +9,5 @@ RACF013    '                        '                    .WINDOW=NORESP
 RACF014    '                        '                    .WINDOW=NORESP
 'Retrieving record &n1 of &n2                                             '    +
 '                                                                              '
+RACF015  '&racfsmsg                 ' .ALARM=NO .HELP=*
+'&racflmsg'

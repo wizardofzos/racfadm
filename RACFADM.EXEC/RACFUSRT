@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AI  200301  RACFA    Added back "x = OUTTRAP('trash.')"           */
 /* @AH  200228  RACFA    Removed ARG() statements, use PARSE ARG      */
 /* @AG  200228  RACFA    Allow turning disp. REXX cmds 'Settings (0)' */
 /* @AF  200228  RACFA    Allow turning tracing on from 'Settings (0)' */
@@ -40,6 +41,7 @@ ADDRESS ISPEXEC                                               /* @AF */
   signal off error
   parse arg era_cmd user tsoproc tsoacct defgrp owner joblib  /* @AH */
 
+  x = OUTTRAP('trash.')                                       /* @AI */
   signal on error
   interpret 'signal ' era_cmd
 /*--------------------------------------------------------------------*/

@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B5  200228  RACFA    Check for 'NO ENTRIES MEET SEARCH CRITERIA'  */
 /* @B4  200227  RACFA    Added line command 'D', display user datasets*/
 /* @B3  200226  RACFA    Fix @AZ chg, chg ret_code to cmd_rc          */
 /* @B2  200226  RACFA    Fixed 'L List' cmd, added single quotes      */
@@ -85,8 +86,14 @@ EXIT
 /*--------------------------------------------------------------------*/
 PROFL:
   call create_table
-  if (dataset = 'INVALID') then do
+  if (dataset = 'INVALID') | (dataset = 'NO') THEN DO         /* @B5 */
      "TBEND" tbla
+     if (cmd_rc > 0) then DO                                  /* @B5 */
+        racfsmsg = 'No entries'                               /* @B5 */
+        racflmsg = 'No entries meet search criteria'          /* @B5 */
+        "SETMSG MSG(RACF015)"                                 /* @B5 */
+        RETURN                                                /* @B5 */
+     END                                                      /* @B5 */
      return
   end
   /* profiles table display section */

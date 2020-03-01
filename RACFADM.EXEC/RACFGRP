@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B4  200228  RACFA    Do not display User=No, Access=Command       */
+/* @B3  200228  RACFA    Check for 'NO ENTRIES MEET SEARCH CRITERIA'  */
 /* @B2  200226  RACFA    Fix @AZ chg, chg ret_code to cmd_rc          */
 /* @B1  200226  RACFA    Added 'CONTROL ERRORS RETURN'                */
 /* @AZ  200226  RACFA    Added 'Return Code =' when displaying cmd    */
@@ -85,8 +87,14 @@ EXIT
 /*--------------------------------------------------------------------*/
 PROFL:
   call create_table                                           /* @AP */
-  if (group = 'INVALID') then do
+  if (group = 'INVALID') | (group = 'NO') then do             /* @B3 */
      "TBEND" tbla
+     if (cmd_rc > 0) then DO                                  /* @C5 */
+        racfsmsg = 'No entries'                               /* @C5 */
+        racflmsg = 'No entries meet search criteria'          /* @C5 */
+        "SETMSG MSG(RACF015)"                                 /* @C5 */
+        RETURN                                                /* @C5 */
+     END                                                      /* @C5 */
      return
   end
   /* profiles table display section */
@@ -316,6 +324,7 @@ DISD:
                  flags = 'OUT'  /* end access list */
         end
         if (flags = 'ON') then do
+           if (substr(temp,2,10) = 'No Command') then iterate /* @B4 */
            if (substr(temp,2,10) = 'NO ENTRIES') then do
               id  = 'NONE'       /* empty access list */
               acc = 'DEFINED'

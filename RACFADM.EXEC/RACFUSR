@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @C5  200228  RACFA    Check for 'NO ENTRIES MEET SEARCH CRITERIA'  */
 /* @C4  200228  RACFA    Removed quote/commas, using PARSE ARG instead*/
 /* @C3  200228  RACFA    Place single quotes around comma, prevent err*/
 /* @C2  200228  RACFA    Added PASSWORD() to ADDUSER                  */
@@ -130,8 +131,14 @@ EXIT
 /*--------------------------------------------------------------------*/
 PROFL:
   call create_table                                           /* @BE */
-  if (USER = 'INVALID') then do
+  if (USER = 'INVALID') | (USER = 'NO') THEN DO               /* @C5 */
      "TBEND" tbla
+     if (cmd_rc > 0) then DO                                  /* @C5 */
+        racfsmsg = 'No entries'                               /* @C5 */
+        racflmsg = 'No entries meet search criteria'          /* @C5 */
+        "SETMSG MSG(RACF015)"                                 /* @C5 */
+        RETURN                                                /* @C5 */
+     END                                                      /* @C5 */
      return
   end
   /* profiles table display section */
