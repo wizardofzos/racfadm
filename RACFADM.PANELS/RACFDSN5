@@ -17,7 +17,7 @@
 +WARNING:$WARN    { (Warn or fail access, YES/NO)
 +AUDIT:  $AUDIT
 +                                           +
-+SELECT: ¬SELCMDS                                                              ¬
++SELECT: ¬SELCMDS5                                                             ¬
 +
 %S   Group/ID   Access
 %-------------------------------------------------------------------------------

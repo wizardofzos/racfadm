@@ -82,6 +82,11 @@ ADDRESS ISPEXEC                                               /* @A4 */
           racfsmsg = 'No entries'
           racflmsg = 'No entries meet search criteria'
      end
+     WHEN (code = 'ERR17') then do
+          racfsmsg = 'Invalid - Wild card'
+          racflmsg = 'The astrisk (*) is a wild card,',
+                     'signifies default access'
+     end
      otherwise nop
   End
   "SETMSG MSG(RACF011)"

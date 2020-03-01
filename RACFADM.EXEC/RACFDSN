@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B9  200301  RACFA    When grp/ids (RACFUSR5) don't display D-DSN  */
+/* @B8  200301  RACFA    Display msg when id is an asterisk (*)       */
 /* @B7  200301  RACFA    Fixed displaying userids, was ret_code       */
 /* @B6  200301  RACFA    Del EMSG procedure, instead call racfmsgs    */
 /* @B5  200228  RACFA    Check for 'NO ENTRIES MEET SEARCH CRITERIA'  */
@@ -63,11 +65,16 @@ ADDRESS ISPEXEC                                               /* @AJ */
   "VGET (ZSCREEN ERASHOW ERATRACE ERAFLTR",                   /* @AD */
          "ERAADMN ERASINT ERADISP) ASIS"                      /* @AF */
   If (eratrace = 'YES') then Trace r                          /* @AH */
-  If (ERAADMN = "YES") then                                   /* @B2 */
-      SELCMDS = "ÝS¨Show,ÝL¨List,ÝD¨Dsn,ÝC¨Change,"||,        /* @B4 */
-                "ÝA¨Add,ÝR¨Remove"                            /* @B4 */
-  else
-      SELCMDS = "ÝS¨Show,ÝL¨list,ÝD¨Dsn"                      /* @AE */
+  If (ERAADMN = "YES") then do                                /* @B2 */
+      SELCMDS2 = "ÝS¨Show,ÝL¨List,ÝD¨Dsn,ÝC¨Change,"||,       /* @B9 */
+                 "ÝA¨Add,ÝR¨Remove"                           /* @B4 */
+      SELCMDS5 = "ÝS¨Show,ÝL¨List,ÝC¨Change,"||,              /* @B9 */
+                 "ÝA¨Add,ÝR¨Remove"                           /* @B4 */
+  end
+  else do
+      SELCMDS2 = "ÝS¨Show,ÝL¨list,ÝD¨Dsn"                     /* @B9 */
+      SELCMDS5 = "ÝS¨Show,ÝL¨list"                            /* @B9 */
+  end
   Rfilter = ERAFLTR                                           /* @AC */
   rlv = SYSVAR('SYSLRACF')
   chgsmade = 'N'                                              /* @A3 */
@@ -606,6 +613,10 @@ RETURN
 /*  Display userid                                                    */
 /*--------------------------------------------------------------------*/
 DISP:
+  if (id = "*") then do  /* Wild card - All other entries */  /* @B8 */
+     call RACFMSGS ERR17                                      /* @B8 */
+     return                                                   /* @B8 */
+  end                                                         /* @B8 */
   x   = msg('OFF')
   cmd = "LU "id                                               /* @AI */
   x = OUTTRAP('trash.')

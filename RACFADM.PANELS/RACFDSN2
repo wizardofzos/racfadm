@@ -13,7 +13,7 @@
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
 %
 +FILTER: $RFILTER
-+SELECT: ¬SELCMDS                                                              ¬
++SELECT: ¬SELCMDS2                                                             ¬
 %
 %S  ~Profile                                ~Type
 %-------------------------------------------------------------------------------

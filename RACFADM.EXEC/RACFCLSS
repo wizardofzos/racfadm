@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BW  200301  RACFA    Chk for 'NO ENTRIES MEET SEARCH CRITERIA'    */
 /* @BU  200226  RACFA    Fix @AK chg, chg ret_code to cmd_rc          */
 /* @AL  200226  RACFA    Added 'CONTROL ERRORS RETURN'                */
 /* @AK  200226  RACFA    Removed double quotes before/after cmd       */
@@ -61,6 +62,8 @@ GET_PERMITS:
      call SHOWCMD                                             /* @A5 */
   Do i = 1 to var.0   /* Scan output */
      profile = subword(var.i,1,1)
+     If (profile = "NO") then                                 /* @BW */
+        LEAVE         /* NO ENTRIES MEET SEARCH CRITERIA */
      if (profile <> 'ICH31005I') then do
         n1 = i; n2 = var.0
         "control display lock"
