@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B5  200301  RACFA    Del EMSG procedure, instead call RACFMSGS    */
 /* @B4  200228  RACFA    Do not display User=No, Access=Command       */
 /* @B3  200228  RACFA    Check for 'NO ENTRIES MEET SEARCH CRITERIA'  */
 /* @B2  200226  RACFA    Fix @AZ chg, chg ret_code to cmd_rc          */
@@ -90,9 +91,7 @@ PROFL:
   if (group = 'INVALID') | (group = 'NO') then do             /* @B3 */
      "TBEND" tbla
      if (cmd_rc > 0) then DO                                  /* @C5 */
-        racfsmsg = 'No entries'                               /* @C5 */
-        racflmsg = 'No entries meet search criteria'          /* @C5 */
-        "SETMSG MSG(RACF015)"                                 /* @C5 */
+        call racfmsgs 'ERR16'                                 /* @B3 */
         RETURN                                                /* @C5 */
      END                                                      /* @C5 */
      return
@@ -225,7 +224,7 @@ ADDD:
   call EXCMD "AG ("group") OWNER("owner")",
              "SUPGROUP("supgrp")" xtr
   if (rc > 0) then do
-     CALL Emsg 'ERR01'  /* Add DSD failed */
+     CALL racfmsgs 'ERR01' /* Add DSD failed */               /* @B5 */
      return
   end
   "TBMOD" TBLA
@@ -252,7 +251,7 @@ CHGD:
   call EXCMD "ALG ("group") OWNER("OWNER")",
              "SUPGROUP("SUPGRP")" xtr
   if (rc > 0) then
-     call Emsg 'ERR07'  /* Altgroup failed */
+     call racfmsgs 'ERR07' /* Altgroup failed */              /* @B5 */
   else
      "TBMOD" tbla
 RETURN
@@ -269,7 +268,7 @@ DELD:
      if (rc = 0) then
         "TBDELETE" TBLA
      else
-       CALL emsg "ERR02"  /* RDELETE failed */
+       CALL racfmsgs "ERR02" /* RDELETE failed */             /* @B5 */
   end
 RETURN
 /*--------------------------------------------------------------------*/
@@ -435,7 +434,7 @@ CHGP:
   if (rc = 0) then
      "TBMOD" tblb
   else
-     Call Emsg 'ERR03'  /* Permit failed */
+     Call racfmsgs 'ERR03' /* Permit failed */                /* @B5 */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  List group                                                        */
@@ -469,7 +468,7 @@ LISD:
   if (rc = 0) then
      "TBMOD" TBLA
   else
-     CALL emsg "ERR10"   /* Generic failure */
+     CALL racfmsgs "ERR10" /* Generic failure */              /* @B5 */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  List userid                                                       */
@@ -510,7 +509,7 @@ LISP:
   if (rc = 0) then
      "TBMOD" TBLB
   else
-     CALL RACFMSGS "ERR10" /* Generic failure */
+     CALL RACFMSGS "ERR10" /* Generic failure */              /* @B5 */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Get Multi Factor Authentication (MFA) option from RCVT            */
@@ -561,9 +560,9 @@ ADDP:
   end
   else do
      if (from <> ' ') then
-        call Emsg 'ERR04' /* Permit Warning/Failed */
+        call racfmsgs 'ERR04' /* Permit Warning/Failed */     /* @B5 */
      else
-        call Emsg 'ERR05' /* Permit Failed */
+        call racfmsgs 'ERR05' /* Permit Failed */             /* @B5 */
   end
 RETURN
 /*--------------------------------------------------------------------*/
@@ -579,37 +578,8 @@ DELP:
      if (rc = 0) then
         "TBDELETE" tblb
      else
-        call Emsg 'ERR06' /* Permit Failed */
+        call racfmsgs 'ERR06' /* Permit Failed */             /* @B5 */
   end
-RETURN
-/*--------------------------------------------------------------------*/
-/*  Error message                                                     */
-/*--------------------------------------------------------------------*/
-EMSG:
-  Arg code
-  rcflmsg = 'Reissue display to verify results of command'
-  Select
-     when (code = 'ERR01') then
-          rcfsmsg = 'ADD PROFILE FAILED'
-     when (code = 'ERR02') then
-          rcfsmsg = 'DELETE PROFILE FAILED'
-     when (code = 'ERR03') then
-          rcfsmsg = 'PERMIT PROFILE FAILED'
-     when (code = 'ERR04') then
-          rcfsmsg = 'CHECK PERMIT RESULTS'
-     when (code = 'ERR05') then
-          rcfsmsg = 'PERMIT ADD FAILED'
-     when (code = 'ERR06') then
-          rcfsmsg = 'PERMIT DELETE FAILED'
-     when (code = 'ERR07') then
-          rcfsmsg = 'ALTER PROFILE FAILED'
-     when (code = 'ERR08') then
-          rcfsmsg = 'FILTER IS INVALID'
-     when (code = 'ERR09') then
-          rcfsmsg = 'ERROR IN SEARCH'
-     otherwise nop
-  End  /* Select */
-  "SETMSG MSG(RACF011)"
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Confirm delete                                                    */
@@ -683,34 +653,34 @@ CREATE_TABLE:                                                 /* @AP */
              group = 'NONE'       /* No groups  */
         when (msgr = 'ICH31009I') then do
              group = 'INVALID'    /* Bad filter */
-             call Emsg 'ERR08'
+             call racfmsgs 'ERR08'                            /* @B5 */
         end
         when (msgr = 'ICH31012I') then do
              group = 'INVALID'    /* Bad filter */
-             call Emsg 'ERR08'
+             call racfmsgs 'ERR08'                            /* @B5 */
         end
         when (msgr = 'ICH31014I') then do
              group = 'INVALID'    /* Bad filter */
-             call Emsg 'ERR08'
+             call racfmsgs 'ERR08'                            /* @B5 */
         end
         when (msgr = 'ICH31016I') then do
              group = 'INVALID'    /* Bad filter */
-             call Emsg 'ERR08'
+             call racfmsgs 'ERR08'                            /* @B5 */
         end
         when (msgr = 'ICH31017I') then do
              group = 'INVALID'    /* Bad filter */
-             call Emsg 'ERR08'
+             call racfmsgs 'ERR08'                            /* @B5 */
         end
         when (msgr = 'ICH31018I') then do
              group = 'INVALID'    /* Bad filter */
-             call Emsg 'ERR08'
+             call racfmsgs 'ERR08'                            /* @B5 */
         end
         when (msgr = 'IKJ56716I') then do
              group = 'INVALID'    /* Bad filter */
-             call Emsg 'ERR08'
+             call racfmsgs 'ERR08'                            /* @B5 */
         end
         when (substr(msgr,1,6) = 'ICH310') then
-             call Emsg 'ERR09'
+             call racfmsgs 'ERR09'                            /* @B5 */
         otherwise nop
      End  /* Select */
      /*---------------------------------------------*/
@@ -720,7 +690,7 @@ CREATE_TABLE:                                                 /* @AP */
         IF (I//ERASINT = 0) THEN DO                           /* @AI */
            n1 = i; n2 = var.0
            "control display lock"
-           "display msg(RACF014)"
+           "display msg(RACF013)"
         END                                                   /* @AI */
      END                                                      /* @AI */
      /* Get further information */

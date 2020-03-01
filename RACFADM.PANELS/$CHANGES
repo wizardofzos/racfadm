@@ -2,11 +2,18 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  01 Mar 2020 - V7R4
+     - Dataset/Classes (Option 3/4)
+       * Fixed 'S - Showing' a userid
+     - Other Items
+       * Standard messages, removed duplication of code in all
+         modules
+
   01 Mar 2020 - V7R3
      - User (Option 1)
        * Added back "x = OUTTRAP('trash.')" used to capture/display
          RACF messages (RACFUSRT)
-     - User/Group (Otions 1/2)
+     - User/Group (Options 1/2)
        * Do not display User=No, Access=Command
      - User/Group/Dataset (Options 1/2/3)
        * When filter/search criteria, is unable to find entries,
@@ -149,7 +156,7 @@
 
   24 Feb 2020 - V5R0
      - User (Option 1)
-       * Fixed SORT REV, when displaing userid, typo
+       * Fixed SORT REV, when displaying userid, typo
      - General Resources (Option 4)
        * Fixed displaying PROFILE/CLASS when displaying group/ids
          and access, was input fields, needed to be output fields

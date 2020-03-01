@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A3  200301  RACFA    Standardize messaging                        */
 /* @A2  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @A1  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A0  200123  TRIDJK   Created REXX program                         */
@@ -39,9 +40,9 @@ Address TSO
 Address ISPExec
   'lminit dataid(id) ddname(sysprint) enq(exclu)'
   if (rc ^= 0) then do
-     zerrsm = 'Error'
-     zerrlm = 'Error.  LMINIT failed for SYSPRINT'
-     'setmsg msg(isrz002)'
+     racfsmsg = 'Allocation error'                            /* @A3 */
+     racflmsg = 'LMINIT failed for SYSPRINT'                  /* @A3 */
+     'setmsg msg(racf001)'                                    /* @A3 */
      exit
   end
   'Browse dataid('id')'

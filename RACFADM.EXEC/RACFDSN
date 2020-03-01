@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B7  200301  RACFA    Fixed displaying userids, was ret_code       */
+/* @B6  200301  RACFA    Del EMSG procedure, instead call racfmsgs    */
 /* @B5  200228  RACFA    Check for 'NO ENTRIES MEET SEARCH CRITERIA'  */
 /* @B4  200227  RACFA    Added line command 'D', display user datasets*/
 /* @B3  200226  RACFA    Fix @AZ chg, chg ret_code to cmd_rc          */
@@ -89,9 +91,7 @@ PROFL:
   if (dataset = 'INVALID') | (dataset = 'NO') THEN DO         /* @B5 */
      "TBEND" tbla
      if (cmd_rc > 0) then DO                                  /* @B5 */
-        racfsmsg = 'No entries'                               /* @B5 */
-        racflmsg = 'No entries meet search criteria'          /* @B5 */
-        "SETMSG MSG(RACF015)"                                 /* @B5 */
+        call racfmsgs 'ERR16'                                 /* @B5 */
         RETURN                                                /* @B5 */
      END                                                      /* @B5 */
      return
@@ -247,7 +247,7 @@ ADDD:
   call EXCMD "ADDSD '"DATASET"' OWN("OWNER")",                          wrn
              "UACC("UACC")" type aud xtr                                wrn
   if (rc > 0) then do
-     CALL Emsg 'ERR01'  /* Add DSD failed */
+     CALL racfmsgs 'ERR01' /* Add DSD failed */               /* @B6 */
      return
   end
   x = msg('OFF')
@@ -258,7 +258,7 @@ ADDD:
      fopt = "FROM('"FROM"') FCLASS(DATASET) FGENERIC"
      call EXCMD "PERMIT '"DATASET"'" TYPE FOPT
      if (rc > 0) then
-        CALL Emsg 'ERR04'  /* Permit Warn */
+        CALL racfmsgs 'ERR04' /* Permit Warn */               /* @B6 */
   end
   if (type = ' ') then
      type = 'DISCRETE'
@@ -308,7 +308,7 @@ CHGD:
   msg = "ALTDSD '"DATASET"'" own uc type aud xtr wrn
   call EXCMD "ALTDSD '"DATASET"'" own uc type aud xtr wrn
   if (rc > 0) then
-     call Emsg 'ERR07'  /* Altdsd failed */
+     call racfmsgs 'ERR07' /* Altdsd failed */                /* @B6 */
   else do
      if (type = ' ') then
         type = 'DISCRETE'
@@ -334,7 +334,7 @@ DELD:
         "TBDELETE" TBLA
      end
      else
-        CALL emsg "ERR02" /* Del DSD failed */
+        CALL racfmsgs "ERR02" /* Del DSD failed */            /* @B6 */
   end
 RETURN
 /*--------------------------------------------------------------------*/
@@ -546,7 +546,7 @@ CHGP:
      "TBMOD" tblb
   end
   else
-     Call Emsg 'ERR03'  /* permit failed */
+     Call racfmsgs 'ERR03' /* permit failed */                /* @B6 */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Add permit option                                                 */
@@ -579,9 +579,9 @@ ADDP:
   end
   else do
      if (from <> ' ') then
-        call Emsg 'ERR04' /* Permit Warning/Failed */
+        call racfmsgs 'ERR04' /* Permit Warning/Failed */     /* @B6 */
      else
-        call Emsg 'ERR05' /* Permit Failed */
+        call racfmsgs 'ERR05' /* Permit Failed */             /* @B6 */
   end
 RETURN
 /*--------------------------------------------------------------------*/
@@ -599,39 +599,8 @@ DELP:
      if (rc > 0) then
         "TBDELETE" tblb
      else
-        call Emsg 'ERR06'   /* Permit Failed */
+        call racfmsgs 'ERR06' /* Permit Failed */             /* @B6 */
   end
-RETURN
-/*--------------------------------------------------------------------*/
-/*  Error message                                                     */
-/*--------------------------------------------------------------------*/
-EMSG:
-  Arg code
-  rcflmsg = 'Reissue display to verify results of command'
-  Select
-     when (code = 'ERR01') then
-          rcfsmsg = 'ADD PROFILE FAILED'
-     when (code = 'ERR02') then
-          rcfsmsg = 'DELETE PROFILE FAILED'
-     when (code = 'ERR03') then
-          rcfsmsg = 'PERMIT PROFILE FAILED'
-     when (code = 'ERR04') then
-          rcfsmsg = 'CHECK PERMIT RESULTS'
-     when (code = 'ERR05') then
-          rcfsmsg = 'PERMIT ADD FAILED'
-     when (code = 'ERR06') then
-          rcfsmsg = 'PERMIT DELETE FAILED'
-     when (code = 'ERR07') then
-          rcfsmsg = 'ALTER PROFILE FAILED'
-     when (code = 'ERR08') then
-          rcfsmsg = 'FILTER IS INVALID'
-     when (code = 'ERR09') then
-          rcfsmsg = 'ERROR IN SEARCH'
-     when (code = 'ERR10') then                               /* @AB */
-          rcfsmsg = 'LG/LU FAILED'                            /* @AB */
-     otherwise nop
-  End
-  "SETMSG MSG(RACF011)"
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Display userid                                                    */
@@ -646,7 +615,7 @@ DISP:
   if (erashow = 'YES') then                                   /* @AI */
      call SHOWCMD                                             /* @AI */
   x = msg('ON')
-  if (ret_code = 0) then call RACFUSR id
+  if (cmd_rc = 0) then call RACFUSR id                        /* @B7 */
   else call RACFGRP id
 RETURN
 /*--------------------------------------------------------------------*/
@@ -719,7 +688,7 @@ LISD:                                                         /* @A1 */
   if (rc = 0) then                                            /* @A1 */
      "TBMOD" TBLA                                             /* @A1 */
   else                                                        /* @A1 */
-     CALL RACFMSGS "ERR10" /* Generic failure */              /* @A1 */
+     CALL racfmsgs "ERR10" /* Generic failure */              /* @B6 */
 RETURN                                                        /* @A1 */
 /*--------------------------------------------------------------------*/
 /*  List group                                                        */
@@ -760,7 +729,7 @@ LISP:                                                         /* @A5 */
   if (ret_code = 0) then                                      /* @AB */
      "TBMOD" TBLB                                             /* @A5 */
   else                                                        /* @A5 */
-     CALL emsg "ERR10"   /* Generic failure */                /* @A5 */
+     CALL racfmsgs "ERR15" /* Generic failure */              /* @B6 */
 RETURN                                                        /* @A5 */
 /*--------------------------------------------------------------------*/
 /*  Display RACF command                                          @AI */
@@ -794,7 +763,7 @@ CREATE_TABLE:
         IF (I//ERASINT = 0) THEN DO                           /* @AD */
            n1 = i; n2 = var.0
            "control display lock"
-           "display msg(RACF014)"
+           "display msg(RACF013)"
         END                                                   /* @AD */
      END                                                      /* @AD */
 
@@ -812,35 +781,35 @@ CREATE_TABLE:
            end
            when (msgr = 'ICH31009I') then do
                 dataset = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
+                call racfmsgs 'ERR08'                         /* @B6 */
            end
            when (msgr = 'ICH31012I') then do
                 dataset = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
+                call racfmsgs 'ERR08'                         /* @B6 */
            end
            when (msgr = 'ICH31014I') then do
                 dataset = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
+                call racfmsgs 'ERR08'                         /* @B6 */
            end
            when (msgr = 'ICH31016I') then do
                 dataset = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
+                call racfmsgs 'ERR08'                         /* @B6 */
            end
            when (msgr = 'ICH31017I') then do
                 dataset = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
+                call racfmsgs 'ERR08'                         /* @B6 */
            end
            when (msgr = 'ICH31018I') then do
                 dataset = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
+                call racfmsgs 'ERR08'                         /* @B6 */
            end
            when (msgr= 'IKJ56716I') then do
                 dataset = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
+                call racfmsgs 'ERR08'                         /* @B6 */
            end
            when (substr(msgr,1,6) = 'ICH310') then do
                 type = ' '           /* Misc. errs  */
-                call Emsg 'ERR09'
+                call racfmsgs 'ERR09'                         /* @B6 */
            end
            otherwise nop
         End  /* Select */

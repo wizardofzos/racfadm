@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A6  200301  RACFA    Standardize/use this module for all msgs     */
 /* @A5  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
 /* @A4  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @A3  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
@@ -15,32 +16,73 @@ ADDRESS ISPEXEC                                               /* @A4 */
   "VGET (ERATRACE) ASIS"                                      /* @A2 */
   If (eratrace = 'YES') then Trace r                          /* @A3 */
 
+  racfsmsg = ''; racflsmsg = ''
   Select
-     when (code = 'ERR01') then
-          rcflmsg = 'ADD PROFILE FAILED'
-     when (code = 'ERR02') then
-          rcflmsg = 'DELETE PROFILE FAILED'
-     when (code = 'ERR03') then
-          rcflmsg = 'PERMIT PROFILE FAILED'
-     when (code = 'ERR04') then
-          rcflmsg = 'CHECK PERMIT RESULTS'
-     when (code = 'ERR05') then
-          rcflmsg = 'PERMIT ADD FAILED'
-     when (code = 'ERR06') then
-          rcflmsg = 'PERMIT DELETE FAILED'
-     when (code = 'ERR07') then
-          rcflmsg = 'ALTER PROFILE FAILED'
-     when (code = 'ERR08') then
-          rcflmsg = 'FILTER IS INVALID'
-     when (code = 'ERR09') then
-          rcflmsg = 'ERROR IN SEARCH'
-     when (code = 'ERR10') then
-          rcflmsg = 'COMMAND FAILED'
-     when (code = 'ERR11') then
-          rcflmsg = 'DEFINE ALIAS ERROR'
-     when (code = 'ERR12') then
-          rcflmsg = 'USER REVOKED'
+     when (code = 'ERR01') then do
+          racfsmsg = 'Add profile failed'
+          racflmsg = 'Unable to add the profile'
+     end
+     when (code = 'ERR02') then do
+          racfsmsg = 'Delete profile failed'
+          racflmsg = 'Unable to delete the profile'
+     end
+     when (code = 'ERR03') then do
+          racfsmsg = 'Permit profile failed'
+          racflmsg = 'Unable to permit the profile'
+     end
+     when (code = 'ERR04') then do
+          racfsmsg = 'Check permit results'
+          racflmsg = 'Please verify the permit settings'
+     end
+     when (code = 'ERR05') then do
+          racfsmsg = 'Permit add failed'
+          racflmsg = 'Unable to add the permit'
+     end
+     when (code = 'ERR06') then do
+          racfsmsg = 'Permit delete failed'
+          racflmsg = 'Unable to delete the permit'
+     end
+     when (code = 'ERR07') then do
+          racfsmsg = 'Alter profile failed'
+          racflmsg = 'Unable to alter the permit'
+     end
+     when (code = 'ERR08') then do
+          racfsmsg = 'Filter is invalid'
+          racflmsg = 'The filter criteria is invalid'
+     end
+     when (code = 'ERR09') then do
+          racfsmsg = 'Error in search'
+          racflmsg = 'Encountered an error in seaching'
+     end
+     when (code = 'ERR10') then do
+          racfsmsg = 'Command failed'
+          racflmsg = 'Unable to execute the command'
+     end
+     when (code = 'ERR11') then do
+          racfsmsg = 'Define alias error'
+          racflmsg = 'Unable to deine the alias'
+     end
+     when (code = 'ERR12') then do
+          racfsmsg = 'User revoked'
+          racflmsg = 'Userid is revoked'
+     end
+     when (code = 'ERR13') then do
+          RACFSMSG = 'Add member failed'
+          racflmsg = 'Unable to add member'
+     end
+     when (code = 'ERR14') then do
+          RACFSMSG = 'Remove member failed'
+          racflmsg = 'Unable to remove member'
+     end
+     when (code = 'ERR15') then do
+          RACFSMSG = 'LG/LU failed'
+          racflmsg = 'LG/LU failed, please investigate'
+     end
+     WHEN (code = 'ERR16') then do
+          racfsmsg = 'No entries'
+          racflmsg = 'No entries meet search criteria'
+     end
      otherwise nop
   End
-  "SETMSG MSG(RACF013)"
-RETURN 0
+  "SETMSG MSG(RACF011)"
+RETURN

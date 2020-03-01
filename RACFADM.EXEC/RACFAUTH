@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AR  200301  RACFA    Deleted EMSG procedure, not referenced       */
 /* @AD  200226  RACFA    Fix @AB chg, chg ret_code to cmd_rc          */
 /* @AC  200226  RACFA    Added 'CONTROL ERRORS RETURN'                */
 /* @AB  200226  RACFA    Added 'Return Code =' when displaying cmd    */
@@ -165,39 +166,6 @@ GET_USER_GROUP:
         grp.grp_ix = id acc      /* store acl        */
      End
   End
-RETURN
-/*--------------------------------------------------------------------*/
-/*  Error message                                                     */
-/*--------------------------------------------------------------------*/
-EMSG:
-  Arg code
-  rcflmsg = 'Reissue display to verify results of command'
-  Select
-     when (code = 'ERR01') then
-          rcfsmsg = 'ADD PROFILE FAILED'
-     when (code = 'ERR02') then
-          rcfsmsg = 'DELETE PROFILE FAILED'
-     when (code = 'ERR03') then
-          rcfsmsg = 'PERMIT PROFILE FAILED'
-     when (code = 'ERR04') then
-          rcfsmsg = 'CHECK PERMIT RESULTS'
-     when (code = 'ERR05') then
-          rcfsmsg = 'PERMIT ADD FAILED'
-     when (code = 'ERR06') then
-          rcfsmsg = 'PERMIT DELETE FAILED'
-     when (code = 'ERR07') then
-          rcfsmsg = 'ALTER PROFILE FAILED'
-     when (code = 'ERR08') then
-          rcfsmsg = 'FILTER IS INVALID'
-     when (code = 'ERR09') then
-          rcfsmsg = 'ERROR IN SEARCH'
-     when (code = 'ERR10') then
-          rcfsmsg = 'COMMAND ERROR'
-     when (code = 'ERR11') then
-          rcfsmsg = 'DEFINE ALIAS ERROR'
-     otherwise nop
-  End  /* Select */
-  "SETMSG MSG(RACF011)"
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Exec command                                                      */

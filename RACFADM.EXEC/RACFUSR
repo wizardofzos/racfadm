@@ -3,7 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
-/* @C5  200228  RACFA    Check for 'NO ENTRIES MEET SEARCH CRITERIA'  */
+/* @C5  200301  RACFA    Check for 'NO ENTRIES MEET SEARCH CRITERIA'  */
 /* @C4  200228  RACFA    Removed quote/commas, using PARSE ARG instead*/
 /* @C3  200228  RACFA    Place single quotes around comma, prevent err*/
 /* @C2  200228  RACFA    Added PASSWORD() to ADDUSER                  */
@@ -133,12 +133,7 @@ PROFL:
   call create_table                                           /* @BE */
   if (USER = 'INVALID') | (USER = 'NO') THEN DO               /* @C5 */
      "TBEND" tbla
-     if (cmd_rc > 0) then DO                                  /* @C5 */
-        racfsmsg = 'No entries'                               /* @C5 */
-        racflmsg = 'No entries meet search criteria'          /* @C5 */
-        "SETMSG MSG(RACF015)"                                 /* @C5 */
-        RETURN                                                /* @C5 */
-     END                                                      /* @C5 */
+     call racfmsgs 'ERR16'                                    /* @C5 */
      return
   end
   /* profiles table display section */
@@ -234,7 +229,7 @@ PROFL:
         when (opta = 'S')  then call Disd
         when (opta = 'SE') then do
              if (revoked <> 'YES') then call RACFCLSS user
-             else call RACFMSGS 'ERR12' /* user revoked */
+             else call racfmsgs 'ERR12' /* user revoked */
              action = '*Search'                               /* @BD */
              "TBMOD" TBLA                                     /* @BD */
         end
@@ -270,7 +265,7 @@ PROFL:
            when (opta = 'S')  then call Disd
            when (opta = 'SE') then do
                 if (revoked <> 'YES') then call RACFCLSS user
-                else call RACFMSGS 'ERR12' /* user revoked */
+                else call racfmsgs 'ERR12' /* user revoked */
                 action = '*Search'                            /* @BD */
                 "TBMOD" TBLA                                  /* @BD */
            end
@@ -341,7 +336,7 @@ ADDD:
      END
   END
   IF (ret_code > 0) then DO
-     CALL RACFMSGS 'ERR01' /* Add DSD failed */
+     CALL racfmsgs 'ERR01' /* Add DSD failed */
      return
   END
   ELSE DO
@@ -368,7 +363,7 @@ RESD:
         "TBMOD" TBLA
      end
      else
-        CALL RACFMSGS "ERR07" /* Alter failed */
+        CALL racfmsgs "ERR07" /* Alter failed */
   end
 RETURN
 /*--------------------------------------------------------------------*/
@@ -385,7 +380,7 @@ REVD:
         "TBMOD" TBLA
      end
      else
-        CALL RACFMSGS "ERR07" /* Alter failed */
+        CALL racfmsgs "ERR07" /* Alter failed */
   end
 RETURN
 /*--------------------------------------------------------------------*/
@@ -448,7 +443,7 @@ LISD:
   if (rc = 0) then
      "TBMOD" TBLA
   else
-     CALL RACFMSGS "ERR10" /* Generic failure */
+     CALL racfmsgs "ERR10" /* Generic failure */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Get Multi Factor Authentication (MFA) option from RCVT            */
@@ -506,7 +501,7 @@ LISP:
   if (rc = 0) then                                            /* @AC */
      "TBMOD" TBLB                                             /* @AC */
   else                                                        /* @AC */
-     CALL RACFMSGS "ERR10" /* Generic failure */              /* @AC */
+     CALL racfmsgs "ERR10" /* Generic failure */              /* @AC */
 RETURN                                                        /* @AC */
 /*--------------------------------------------------------------------*/
 /*  Change profile                                                    */
@@ -561,9 +556,9 @@ CHGD:
                 alt_defgrp alt_name xtr
   Select
      when (rc > 0) then
-          call RACFMSGS 'ERR07' /* Altdsd failed */
+          call racfmsgs 'ERR07' /* Altdsd failed */
      when (ret_code <> 0) then
-          call RACFMSGS 'ERR11' /* Defalias failed */
+          call racfmsgs 'ERR11' /* Defalias failed */
      otherwise
           "TBMOD" tbla
   End
@@ -588,15 +583,15 @@ DELD:
            call EXCMD "DELUSER ("USER")"
            if (rc = 0) then
               "TBDELETE" TBLA
-           else CALL RACFMSGS "ERR02" /* RDELETE failed */
+           else CALL racfmsgs "ERR02" /* RDELETE failed */
         end
-        else CALL RACFMSGS "ERR02"   /* RDELETE failed */
+        else CALL racfmsgs "ERR02"   /* RDELETE failed */
      end
      else do
         call EXCMD "DELUSER ("USER")"
         if (rc = 0) then
            "TBDELETE" TBLA
-        else CALL RACFMSGS "ERR02"   /* RDELETE failed */
+        else CALL racfmsgs "ERR02"   /* RDELETE failed */
      end
   end  /* Confirm-delete */
 RETURN
@@ -798,7 +793,7 @@ CHGP:
   if (rc = 0) then
      "TBMOD" tblb
   else
-     Call RACFMSGS 'ERR03' /* permit failed */
+     Call racfmsgs 'ERR03' /* permit failed */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Add permit option                                                 */
@@ -829,9 +824,9 @@ ADDP:
   end
   else do
      if (from <> ' ') then
-        call RACFMSGS 'ERR04' /* Permit Warning/Failed */
+        call racfmsgs 'ERR04' /* Permit Warning/Failed */
      else
-        call RACFMSGS 'ERR05' /* Permit Failed */
+        call racfmsgs 'ERR05' /* Permit Failed */
   end
 RETURN
 /*--------------------------------------------------------------------*/
@@ -847,7 +842,7 @@ DELP:
      if (rc = 0) then
         "TBDELETE" tblb
      else
-        call RACFMSGS 'ERR06'     /* Permit Failed */
+        call racfmsgs 'ERR06'     /* Permit Failed */
   end
 RETURN
 /*--------------------------------------------------------------------*/
@@ -938,34 +933,34 @@ CREATE_TABLE:                                                 /* @BE */
            end
            when (msgr = 'ICH31009I') then do
                 USER = 'INVALID'     /* Bad filter */
-                call RACFMSGS 'ERR08'
+                call racfmsgs 'ERR08'
            end
            when (msgr = 'ICH31012I') then do
                 USER = 'INVALID'     /* Bad filter */
-                call RACFMSGS 'ERR08'
+                call racfmsgs 'ERR08'
            end
            when (msgr = 'ICH31014I') then do
                 USER = 'INVALID'     /* Bad filter */
-                call RACFMSGS 'ERR08'
+                call racfmsgs 'ERR08'
            end
            when (msgr = 'ICH31016I') then do
                 USER = 'INVALID'     /* Bad filter */
-                call RACFMSGS 'ERR08'
+                call racfmsgs 'ERR08'
            end
            when (msgr = 'ICH31017I') then do
                 USER = 'INVALID'     /* Bad filter */
-                call RACFMSGS 'ERR08'
+                call racfmsgs 'ERR08'
            end
            when (msgr = 'ICH31018I') then do
                 USER = 'INVALID'     /* Bad filter */
-                call RACFMSGS 'ERR08'
+                call racfmsgs 'ERR08'
            end
            when (msgr = 'IKJ56716I') then do
                 USER = 'INVALID'     /* Bad filter */
-                call RACFMSGS 'ERR08'
+                call racfmsgs 'ERR08'
            end
            when (substr(msgr,1,6) = 'ICH310') then do
-                call RACFMSGS 'ERR09'
+                call racfmsgs 'ERR09'
            end
            otherwise nop
         End  /* Select */
@@ -977,7 +972,7 @@ CREATE_TABLE:                                                 /* @BE */
         IF (I//ERASINT = 0) THEN DO                           /* @AZ */
            n1 = i; n2 = var.0
            "control display lock"
-           "display msg(RACF014)"
+           "display msg(RACF013)"
         END                                                   /* @AZ */
      END                                                      /* @AZ */
      /*---------------------------------------------*/

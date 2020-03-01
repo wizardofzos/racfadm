@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AW  200301  RACFA    Fixed displaying userids, was ret_code       */
+/* @AU  200301  RACFA    Del EMSG procedure, instead call racfmsgs    */
 /* @AT  200226  RACFA    Fix @AR chg, chg ret_code to cmd_rc          */
 /* @AS  200226  RACFA    Added 'CONTROL ERRORS RETURN'                */
 /* @AR  200226  RACFA    Added 'Return Code =' when displaying cmd    */
@@ -227,7 +229,7 @@ ADDD:
   call EXCMD "RDEF "RCLASS" ("PROFILE") OWN("OWNER")",
              "UACC("UACC")" aud xtr wrn
   if (rc > 0) then do
-     CALL Emsg 'ERR01'  /* Add DSD failed */
+     CALL racfmsgs 'ERR01' /* Add DSD failed */               /* @AU */
      return
   end
   x = msg('OFF')
@@ -241,7 +243,7 @@ ADDD:
      call EXCMD "PERMIT "PROFILE" CLASS("RCLASS")",
                  TYPE FOPT
      if (rc > 0) then
-        CALL Emsg 'ERR04'  /* Permit Warn */
+        CALL racfmsgs 'ERR04' /* Permit Warn */               /* @AU */
   end
   if (type = ' ') then
      type = 'DISCRETE'
@@ -288,7 +290,7 @@ CHGD:
   call EXCMD "RALTER "RCLASS" ("PROFILE")",
              own uc aud xtr wrn
   if (ret_code > 0) then
-     call Emsg 'ERR07'  /* Altdsd failed */
+     call racfmsgs 'ERR07' /* Altdsd failed */                /* @AU */
   else do
       if (type = ' ') then
          type = 'DISCRETE'
@@ -313,7 +315,7 @@ DELD:
         "TBDELETE" TBLA
      end
      else
-        CALL emsg "ERR02" /* RDELETE failed */
+        CALL racfmsgs "ERR02" /* RDELETE failed */            /* @AU */
   end
 RETURN
 /*--------------------------------------------------------------------*/
@@ -393,7 +395,7 @@ ADDM:
         "TBDELETE" tblb
      end
   end
-  else call Emsg 'ERR10'   /* Add member Failed */
+  else call racfmsgs 'ERR10' /* Add member Failed */          /* @AU */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Remove Member                                                     */
@@ -409,7 +411,7 @@ DELM:
      if (rc = 0) then
         "TBDELETE" tblb
      else
-        CALL emsg "ERR11"   /* RDELETE failed */
+        CALL racfmsgs "ERR14"   /* RDELETE failed */          /* @AU */
   end
 RETURN
 /*--------------------------------------------------------------------*/
@@ -663,7 +665,7 @@ CHGP:
      "TBMOD" tblb
   end
   else
-     Call Emsg 'ERR03'  /* Permit failed */
+     Call racfmsgs 'ERR03' /* Permit failed */                /* @AU */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Display userid                                                    */
@@ -678,7 +680,7 @@ DISP:
   if (erashow = 'YES') then                                   /* @AF */
      call SHOWCMD                                             /* @AF */
   x = msg('ON')
-  if (ret_code = 0) then call RACFUSR id
+  if (cmd_rc = 0) then call RACFUSR id                        /* @AW */
   else call RACFGRP id
 RETURN
 /*--------------------------------------------------------------------*/
@@ -713,9 +715,9 @@ ADDP:
   end
   else do
      if (from <> ' ') then
-        call Emsg 'ERR04'  /* Permit Warning/Failed */
+        call racfmsgs 'ERR04' /* Permit Warning/Failed */     /* @AU */
      else
-        call Emsg 'ERR05'  /* Permit Failed */
+        call racfmsgs 'ERR05' /* Permit Failed */             /* @AU */
   end
 RETURN
 /*--------------------------------------------------------------------*/
@@ -734,43 +736,8 @@ DELP:
      if (rc = 0) then
         "TBDELETE" tblb
      else
-        call Emsg 'ERR06'         /* Permit Failed */
+        call racfmsgs 'ERR06'     /* Permit Failed */         /* @AU */
   end
-RETURN
-/*--------------------------------------------------------------------*/
-/*  Error message                                                     */
-/*--------------------------------------------------------------------*/
-EMSG:
-  Arg code
-  rcflmsg = 'Reissue display to verify results of command'
-  Select
-     when (code = 'ERR01') then
-          rcfsmsg = 'ADD PROFILE FAILED'
-     when (code = 'ERR02') then
-          rcfsmsg = 'DELETE PROFILE FAILED'
-     when (code = 'ERR03') then
-          rcfsmsg = 'PERMIT PROFILE FAILED'
-     when (code = 'ERR04') then
-          rcfsmsg = 'CHECK PERMIT RESULTS'
-     when (code = 'ERR05') then
-          rcfsmsg = 'PERMIT ADD FAILED'
-     when (code = 'ERR06') then
-          rcfsmsg = 'PERMIT DELETE FAILED'
-     when (code = 'ERR07') then
-          rcfsmsg = 'ALTER PROFILE FAILED'
-     when (code = 'ERR08') then
-          rcfsmsg = 'FILTER IS INVALID'
-     when (code = 'ERR09') then
-          rcfsmsg = 'ERROR IN SEARCH'
-     when (code = 'ERR10') then
-          rcfsmsg = 'ADD MEMBER FAILED'
-     when (code = 'ERR11') then
-          rcfsmsg = 'REMOVE MEMBER FAILED'
-     when (code = 'ERR12') then                               /* @A8 */
-          rcfsmsg = 'LG/LU FAILED'                            /* @A8 */
-     otherwise nop
-  End  /* Select */
-  "SETMSG MSG(RACF011)"
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Confirm delete                                                    */
@@ -851,7 +818,7 @@ LISD:                                                         /* @A1 */
   if (rc = 0) then                                            /* @A1 */
      "TBMOD" TBLA                                             /* @A1 */
   else                                                        /* @A1 */
-     CALL RACFMSGS "ERR10" /* Generic failure */              /* @A1 */
+     CALL racfmsgs "ERR10" /* Generic failure */              /* @AU */
 RETURN                                                        /* @A1 */
 /*--------------------------------------------------------------------*/
 /*  Get Multi Factor Authentication (MFA) option from RCVT            */
@@ -916,7 +883,7 @@ LISP:                                                         /* @A2 */
   if (ret_code = 0) then                                      /* @A8 */
      "TBMOD" TBLB                                             /* @A2 */
   else                                                        /* @A2 */
-     CALL emsg "ERR10"   /* Generic failure */                /* @A2 */
+     CALL racfmsgs "ERR13"   /* Generic failure */            /* @AU */
 RETURN                                                        /* @A2 */
 /*--------------------------------------------------------------------*/
 /*  Display RACF command                                          @AF */
@@ -959,35 +926,35 @@ CREATE_TABLE:
            end
            when (msgr = 'ICH31009I') then do
                 profile = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
+                call racfmsgs 'ERR08'                         /* @AU */
            end
            when (msgr = 'ICH31012I') then do
                 profile = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
+                call racfmsgs 'ERR08'                         /* @AU */
            end
            when (msgr = 'ICH31014I') then do
                 profile = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
+                call racfmsgs 'ERR08'                         /* @AU */
            end
            when (msgr = 'ICH31016I') then do
                 profile = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
+                call racfmsgs 'ERR08'                         /* @AU */
            end
            when (msgr = 'ICH31017I') then do
                 profile = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
+                call racfmsgs 'ERR08'                         /* @AU */
            end
            when (msgr= 'ICH31018I') then do
                 profile = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
+                call racfmsgs 'ERR08'                         /* @AU */
            end
            when (msgr = 'IKJ56716I') then do
                 profile = 'INVALID'  /* Bad filter  */
-                call Emsg 'ERR08'
+                call racfmsgs 'ERR08'                         /* @AU */
            end
            when (substr(msgr,1,6) = 'ICH310') then do
                 type = ' '           /* Misc. errs  */
-                call Emsg 'ERR09'
+                call racfmsgs 'ERR09'                         /* @AU */
            end
            otherwise nop
         End  /* Select */
@@ -999,7 +966,7 @@ CREATE_TABLE:
         IF (I//ERASINT = 0) THEN DO                           /* @AA */
            n1 = i; n2 = var.0
            "control display lock"
-           "display msg(RACF014)"
+           "display msg(RACF013)"
         END                                                   /* @AA */
      END                                                      /* @AA */
      /* Get Further information */

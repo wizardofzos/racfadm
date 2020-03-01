@@ -202,7 +202,7 @@ REFRESH:
   Sure_? = RACFMSGC(msg)
   if (sure_? = 'YES') then do
      call EXCMD "SETR RACLIST("class") REFRESH"
-     if (rc <> 0) then call RACFMSGS "ERR10" /* CMD FAILED */
+     if (rc <> 0) then call racfmsgs "ERR10" /* CMD FAILED */
      else do
         action = '*REFRESHED'
         "TBMOD" tbla
