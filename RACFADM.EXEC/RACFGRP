@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B7  200302  RACFA    Chk RC 'LG GRP PRMS', if RC>0 then 'LG GRP' */
 /* @B6  200302  RACFA    Del TBTOP cmd, prior to TBSCAN for LOCATE    */
 /* @B5  200301  RACFA    Del EMSG procedure, instead call RACFMSGS    */
 /* @B4  200228  RACFA    Do not display User=No, Access=Command       */
@@ -450,6 +451,15 @@ LISD:
   X = OUTTRAP("OFF")                                          /* @A2 */
   if (erashow = 'YES') then                                   /* @AN */
      call SHOWCMD                                             /* @AN */
+  if (cmd_rc > 0) then DO    /* Remove parms */               /* @B7 */
+     cmd = "LG "GROUP                                         /* @B7 */
+     X = OUTTRAP("WFREC.")                                    /* @B7 */
+     ADDRESS TSO cmd                                          /* @B7 */
+     cmd_rc   = rc                                            /* @B7 */
+     X = OUTTRAP("OFF")                                       /* @B7 */
+     if (erashow = 'YES') then                                /* @B7 */
+        call SHOWCMD                                          /* @B7 */
+  END                                                         /* @B7 */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A2 */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A2 */
               "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @A2 */

@@ -2,6 +2,15 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  02 Mar 2020 - V7R7
+     - User (Option 1)
+       * SEarch line command when displaying a classes profiles
+         o Fixed SORT command, not honoring/working
+     - User and Group (Option 1/2)
+       * When executing line command 'L-List', if LU/LG command
+         received a return code greater than zero, then drop the
+         parms and re-execute
+
   02 Mar 2020 - V7R6
      - User (Option 1)
        * SEarch line command when displaying a classes profiles

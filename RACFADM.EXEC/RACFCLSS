@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BZ  200302  RACFA    Fixed SORT cmd for class profiles            */
 /* @BY  200302  RACFA    Chk/honor 'Status Interval' for cls profiles */
 /* @BX  200302  RACFA    Add SORT/LOCATE/ONLY/RESET for class profiles*/
 /* @BW  200301  RACFA    Chk for 'NO ENTRIES MEET SEARCH CRITERIA'    */
@@ -151,7 +152,7 @@ DISPLAY_TABLE_PERMIT:
         End
      end
      opta = ' '
-     "TBSORT "tblb" FIELDS(PROFILE,C,A)"
+     "TBSORT "tblb" FIELDS("SORT")"                           /* @BZ */
      "TBTOP  "tblb                                            /* @BX */
      if (lparm <> '') then do
         ASTERICK = "*"                                        /* @BX */

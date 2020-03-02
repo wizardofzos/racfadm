@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @C7  200302  RACFA    Removed DO...END around code, not needed     */
+/* @C6  200302  RACFA    Chk RC 'LU ID PRMS', if RC>0 then 'LU ID'    */
 /* @C5  200301  RACFA    Check for 'NO ENTRIES MEET SEARCH CRITERIA'  */
 /* @C4  200228  RACFA    Removed quote/commas, using PARSE ARG instead*/
 /* @C3  200228  RACFA    Place single quotes around comma, prevent err*/
@@ -339,11 +341,11 @@ ADDD:
      CALL racfmsgs 'ERR01' /* Add DSD failed */
      return
   END
-  ELSE DO
-     "TBMOD" TBLA
-     call resd /* Reset Password */
-     call disd /* Connect basic group */
-  END
+
+  "TBMOD" TBLA                                                /* @C7 */
+  call resd /* Reset Password */                              /* @C7 */
+  call disd /* Connect basic group */                         /* @C7 */
+
   IF (new = 'YES') THEN DO
      USER = 'NONE'
      "TBDELETE"  TBLA
@@ -401,9 +403,18 @@ LISD:
   X = OUTTRAP("WFREC.")                                       /* @A2 */
   ADDRESS TSO cmd                                             /* @BB */
   cmd_rc = rc                                                 /* @BS */
+  if (erashow = 'YES') then                                   /* @BS */
+     call SHOWCMD                                             /* @BS */
   X = OUTTRAP("OFF")                                          /* @A2 */
-  if (erashow = 'YES') then                                   /* @BB */
-     call SHOWCMD                                             /* @BB */
+  IF (cmd_rc > 0) then DO    /* Removed parms */              /* @C6 */
+     X = OUTTRAP("WFREC.")                                    /* @C6 */
+     cmd = "LU "USER                                          /* @C6 */
+     ADDRESS TSO cmd                                          /* @C6 */
+     cmd_rc = rc                                              /* @C6 */
+     X = OUTTRAP("OFF")                                       /* @C6 */
+     if (erashow = 'YES') then                                /* @C6 */
+        call SHOWCMD                                          /* @C6 */
+  END                                                         /* @C6 */
   if (user = 'irrcerta') then do                              /* @AP */
      wfrec.  = ''                                             /* @AP */
      wfrec.0 = 3                                              /* @AP */
