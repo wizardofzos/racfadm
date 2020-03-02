@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B6  200302  RACFA    Del TBTOP cmd, prior to TBSCAN for LOCATE    */
 /* @B5  200301  RACFA    Del EMSG procedure, instead call RACFMSGS    */
 /* @B4  200228  RACFA    Do not display User=No, Access=Command       */
 /* @B3  200228  RACFA    Check for 'NO ENTRIES MEET SEARCH CRITERIA'  */
@@ -189,7 +190,6 @@ PROFL:
      if (lparm <> '') then do
         ASTERICK = "*"                                        /* @A3 */
         INTERPRET LOCARG" = lparm||ASTERICK"                  /* @A3 */
-        "TBTOP" tbla                                          /* @A3 */
         PARSE VAR SORT . "," . "," SEQ                        /* @AU */
         IF (SEQ = "D") THEN                                   /* @AD */
            CONDLIST = "LE"                                    /* @AD */

@@ -2,12 +2,21 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  02 Mar 2020 - V7R6
+     - User (Option 1)
+       * SEarch line command when displaying a classes profiles
+         o Added SORT, LOCATE, ONLY and RESET primary commands
+         o Honor the 'Status Interval' in Settings (option 0) when
+           displaying progress message
+     - Group/Dataset (Option 2/3)
+       * Removed unnecessary TBTOP statement when executing LOCATE cmd
+
   01 Mar 2020 - V7R5
      - User (Option 1)
        * When SEarching a class, and 'NO ENTRIES MEET SEARCH CRITERIA'
-         display nothing, prior displayed 'NO'
+         display nothing, prior displayed 'NO' as a profile
      - Dataset (Option 3)
-       * When selecting a group/id of an '*' display message,
+       * When 'S-Show'ing a group/id of an '*' display message,
          prior would display all groups/userids, causing users
          terminal to lock up for several minutes
        * Only display line cmd 'D-Dsn' when displaying datasets
@@ -15,7 +24,7 @@
 
   01 Mar 2020 - V7R4
      - Dataset/General Resources (Option 3/4)
-       * Fixed 'S - Showing' a userid
+       * Fixed 'S - Show'ing a userid
      - Other Items
        * Standard messages, removed duplication of code
 
@@ -24,7 +33,7 @@
        * Added back "x = OUTTRAP('trash.')" used to capture/display
          RACF messages (RACFUSRT)
      - User/Group (Options 1/2)
-       * Do not display User=No, Access=Command
+       * Do not display userid of 'No' and access of 'Command'
      - User/Group/Dataset (Options 1/2/3)
        * When filter/search criteria, is unable to find entries,
          display error message, prior displayed a profile of 'NO'

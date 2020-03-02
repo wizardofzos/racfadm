@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BY  200302  RACFA    Chk/honor 'Status Interval' for cls profiles */
+/* @BX  200302  RACFA    Add SORT/LOCATE/ONLY/RESET for class profiles*/
 /* @BW  200301  RACFA    Chk for 'NO ENTRIES MEET SEARCH CRITERIA'    */
 /* @BU  200226  RACFA    Fix @AK chg, chg ret_code to cmd_rc          */
 /* @AL  200226  RACFA    Added 'CONTROL ERRORS RETURN'                */
@@ -36,13 +38,11 @@ ADDRESS ISPEXEC                                               /* @A6 */
   Arg user
   selection = 0  /* something selected */
   "CONTROL ERRORS RETURN"                                     /* @AL */
-  "VGET (ZSCREEN ERATRACE ERASHOW) ASIS"                      /* @A7 */
+  "VGET (ZSCREEN ERATRACE ERASHOW ERASINT) ASIS"              /* @BY */
   If (eratrace = 'YES') then Trace r                          /* @A4 */
   rlv = SYSVAR('SYSLRACF')
 
   seconds = time('S')
-  tblb    = 'TB'ZSCREEN||SECONDS  /* table name unique */
-  "TBCREATE" tblb" KEYS(CLASS PROFILE) REPLACE NOWRITE"
   call Select_class
   if selection then rc = display_table_permit()
   "TBEND" tblb
@@ -51,6 +51,8 @@ EXIT
 /*  Get permits                                                       */
 /*--------------------------------------------------------------------*/
 GET_PERMITS:
+  tblb    = 'TB'ZSCREEN||SECONDS  /* table name unique */     /* @BX */
+  "TBCREATE" tblb" KEYS(CLASS PROFILE) REPLACE NOWRITE"       /* @BX */
   class = arg(1)
   user  = arg(2)
   cmd   = "SEARCH CLASS("class") USER("user")"                /* @A5 */
@@ -65,9 +67,13 @@ GET_PERMITS:
      If (profile = "NO") then                                 /* @BW */
         LEAVE         /* NO ENTRIES MEET SEARCH CRITERIA */
      if (profile <> 'ICH31005I') then do
-        n1 = i; n2 = var.0
-        "control display lock"
-        "display msg(RACF012)"
+        IF (ERASINT <> 0) THEN DO     /* Status interval */   /* @BY */
+           IF (I//ERASINT = 0) THEN DO                        /* @BY */
+              n1 = i; n2 = var.0
+              "control display lock"
+              "display msg(RACF012)"
+           end                                                /* @BY */
+        end                                                   /* @BY */
         "TBMOD" tblb
      end
   end /* end_do i=1     */
@@ -77,34 +83,56 @@ RETURN 0
 /*--------------------------------------------------------------------*/
 DISPLAY_TABLE_PERMIT:
   opta = ' '
-  "TBSORT  "tblb" FIELDS(CLASS,C,A,PROFILE,C,A)"
+  sort = 'PROFILE,C,A'                                        /* @BX */
+  "TBSORT  "tblb" FIELDS("SORT")"                             /* @BX */
   "TBTOP   "tblb
   "TBDISPL "tblb "PANEL("PANEL08")"                           /* @AG */
   reta = rc
   do while (rc < 8)  /* tablea */
      "CONTROL DISPLAY SAVE"
      xtdtop = ztdtop
+     lparm  = ""                                              /* @BX */
+     PARSE VAR ZCMD ZCMD PARM SEQ                             /* @BX */
      IF (SROW <> "") & (SROW <> 0) THEN                       /* @A9 */
         IF (SROW > 0) THEN DO                                 /* @A9 */
            "TBTOP " TBLB                                      /* @A9 */
            "TBSKIP" TBLB "NUMBER("SROW")"                     /* @A9 */
         END                                                   /* @A9 */
      Select
-        when (subword(ZCMD,1,1)  = 'LOCATE' |,
-              subword(ZCMD,1,1)  = 'L') &,
-              (subword(ZCMD,2,1) ='CLASS' |,
-               subword(ZCMD,2,1) ='C') then do
-               locvar  = 'CLASS'
-               profile = ' '
-               locval  = subword(ZCMD,3,1)
-        end
-        when (subword(ZCMD,1,1)  = 'LOCATE' |,
-              subword(ZCMD,1,1)  = 'L') &,
-              (subword(ZCMD,2,1) ='PROFILE' |,
-               subword(ZCMD,2,1) ='P') then do
-               locvar = 'PROFILE'
-               locval = subword(ZCMD,3,1)
-        end
+        WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO              /* @BX */
+             xtdtop   = 1                                     /* @BX */
+             if (seq = 'A') | (seq = 'D') then                /* @BX */
+                nop                                           /* @BX */
+             else                                             /* @BX */
+                seq = 'A'                                     /* @BX */
+             SELECT                                           /* @BX */
+                when (ABBREV("PROFILE",PARM,1) = 1) then      /* @BX */
+                     sort = 'PROFILE,C,'seq                   /* @BX */
+                otherwise NOP                                 /* @BX */
+             END                                              /* @BX */
+        END                                                   /* @BX */
+        WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @BX */
+             lparm = parm                                     /* @BX */
+        WHEN (ABBREV("ONLY",ZCMD,1) = 1) THEN DO              /* @BX */
+             find_str = translate(parm)                       /* @BX */
+             'tbtop ' tblb                                    /* @BX */
+             'tbskip' tblb                                    /* @BX */
+             do forever                                       /* @BX */
+                str = translate(profile)                      /* @BX */
+                if (pos(find_str,str) > 0) then nop           /* @BX */
+                else 'tbdelete' tblb                          /* @BX */
+                'tbskip' tblb                                 /* @BX */
+                if (rc > 0) then do                           /* @BX */
+                   'tbtop' tblb                               /* @BX */
+                   leave                                      /* @BX */
+                end                                           /* @BX */
+             end                                              /* @BX */
+        END                                                   /* @BX */
+        WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO             /* @BX */
+             sort = 'PROFILE,C,A'                             /* @BX */
+             rc = get_permits(class,user) /*get permits*/     /* @BX */
+             xtdtop   = 1                                     /* @BX */
+        END                                                   /* @BX */
         otherwise locvar=''
      End
      Select
@@ -124,16 +152,16 @@ DISPLAY_TABLE_PERMIT:
      end
      opta = ' '
      "TBSORT "tblb" FIELDS(PROFILE,C,A)"
-     if (locvar <> '') then do
-        interpret locvar'='locval
-        "TBTOP " tblb
-        "TBSARG" tblb "NEXT NAMECOND(CLASS,GE,PROFILE,GE)"
-        "TBSCAN" tblb
+     "TBTOP  "tblb                                            /* @BX */
+     if (lparm <> '') then do
+        ASTERICK = "*"                                        /* @BX */
+        LOCARG   = "PROFILE"                                  /* @BX */
+        INTERPRET LOCARG" = lparm||ASTERICK"                  /* @BX */
+        "TBSCAN "tblb,                                        /* @BX */
+                "ARGLIST("LOCARG") CONDLIST(GE)"              /* @BX */
      end
-     else do
-        "TBTOP " tblb
+     else
         "TBSKIP" tblb "NUMBER("XTDTOP")"
-     end
      "CONTROL DISPLAY RESTORE"
      "TBDISPL" tblb "PANEL("PANEL08")"                        /* @AG */
      reta = rc

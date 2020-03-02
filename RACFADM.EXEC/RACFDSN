@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BA  200302  RACFA    Del TBTOP cmd, prior to TBSCAN for LOCATE    */
 /* @B9  200301  RACFA    When grp/ids (RACFUSR5) don't display D-DSN  */
 /* @B8  200301  RACFA    Display msg when id is an asterisk (*)       */
 /* @B7  200301  RACFA    Fixed displaying userids, was ret_code       */
@@ -205,7 +206,6 @@ PROFL:
      if (lparm <> '') then do                                 /* @AM */
         ASTERICK = "*"                                        /* @AM */
         INTERPRET LOCARG" = lparm||ASTERICK"                  /* @AM */
-        "TBTOP" tbla                                          /* @AM */
         PARSE VAR SORT . "," . "," SEQ                        /* @AR */
         IF (SEQ = "D") THEN                                   /* @AM */
            CONDLIST = "LE"                                    /* @AM */

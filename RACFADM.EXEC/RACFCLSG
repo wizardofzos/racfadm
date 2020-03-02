@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AY  200302  RACFA    Del TBTOP cmd, prior to TBSCAN for LOCATE    */
 /* @AW  200301  RACFA    Fixed displaying userids, was ret_code       */
 /* @AU  200301  RACFA    Del EMSG procedure, instead call racfmsgs    */
 /* @AT  200226  RACFA    Fix @AR chg, chg ret_code to cmd_rc          */
@@ -183,7 +184,6 @@ PROFL:
      if (lparm <> '') then do                                 /* @AK */
         ASTERICK = "*"                                        /* @AK */
         INTERPRET LOCARG" = lparm||ASTERICK"                  /* @AK */
-        "TBTOP" tbla                                          /* @AK */
         PARSE VAR SORT . "," . "," SEQ                        /* @AK */
         IF (SEQ = "D") THEN                                   /* @AK */
            CONDLIST = "LE"                                    /* @AK */
