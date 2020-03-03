@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A3  200303  RACFA    Chg 'RL class ALL' to 'RL class * ALL'       */
 /* @A2  200303  RACFA    Added line cmd 'L-List' to class's profile   */
 /* @A1  200303  RACFA    Added line cmd 'L-List' to class             */
 /* @BZ  200302  RACFA    Fixed SORT cmd for class profiles            */
@@ -330,7 +331,7 @@ RETURN 0
 /*--------------------------------------------------------------------*/
 LISP:                                                         /* @A1 */
   WFDD    = "ERA"RANDOM(0,99999)                              /* @A1 */
-  cmd     = "RL "CLASS" ALL"                                  /* @A1 */
+  cmd     = "RL "CLASS" * ALL"                                /* @A3 */
   X = OUTTRAP("WFREC.")                                       /* @A1 */
   ADDRESS TSO cmd                                             /* @A1 */
   cmd_rc = rc                                                 /* @A1 */
@@ -338,7 +339,7 @@ LISP:                                                         /* @A1 */
   if (erashow = 'YES') then                                   /* @A1 */
      call SHOWCMD                                             /* @A1 */
   if (cmd_rc > 0) then do   /* Remove parms */                /* @A1 */
-     cmd     = "RL "CLASS                                     /* @A1 */
+     cmd     = "RL "CLASS" *"                                 /* @A3 */
      X = OUTTRAP("WFREC.")                                    /* @A1 */
      ADDRESS TSO cmd                                          /* @A1 */
      cmd_rc = rc                                              /* @A1 */

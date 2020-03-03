@@ -2,6 +2,11 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  03 Mar 2020 - V7R9
+     - User and General Resources (Option 1/4)
+       * When executing 'L-List' next to a class, execute the RACF
+         command 'RL class * ALL', was 'RL class ALL'
+
   03 Mar 2020 - V7R8
      - User (Option 1)
        * When executing 'SE'earch line command, allow typing 'L-List'
