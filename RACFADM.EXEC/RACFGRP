@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BB  200303  RACFA    Del 'ret_code = rc', not referenced          */
+/* @BA  200303  RACFA    Chg 'RL class ALL' to 'RL class * ALL'       */
 /* @B9  200302  RACFA    Chk RC 'LU id prms', if RC>0 then 'LU id'    */
 /* @B8  200303  RACFA    Fixed chking RC after executing command      */
 /* @B7  200302  RACFA    Chk RC 'LG grp prms', if RC>0 then 'LG grp' */
@@ -83,7 +85,6 @@ ADDRESS ISPEXEC                                               /* @AO */
      call Profl
      If (called <> 'YES') then do
         "DISPLAY PANEL("PANEL01")"                            /* @AW */
-        ret_code = rc
      end
   end
 EXIT
@@ -161,9 +162,9 @@ PROFL:
      Select
         when (opta = 'A') then call Addd
         when (opta = 'C') then call Chgd
-        when (opta = 'S') then call Disd
-        when (opta = 'R') then call Deld
         when (opta = 'L') then call Lisd
+        when (opta = 'R') then call Deld
+        when (opta = 'S') then call Disd
         otherwise nop
      End /* Select */
      Do while (reta = 4)   /* process multi selection */
@@ -226,7 +227,7 @@ ADDD:
      xtr = xtr "DATA('"data"')"
   call EXCMD "AG ("group") OWNER("owner")",
              "SUPGROUP("supgrp")" xtr
-  if (rc > 0) then do
+  if (cmd_rc > 0) then do                                     /* @BA */
      CALL racfmsgs 'ERR01' /* Add DSD failed */               /* @B5 */
      return
   end
@@ -253,7 +254,7 @@ CHGD:
   end
   call EXCMD "ALG ("group") OWNER("OWNER")",
              "SUPGROUP("SUPGRP")" xtr
-  if (rc > 0) then
+  if (cmd_rc > 0) then                                        /* @BA */
      call racfmsgs 'ERR07' /* Altgroup failed */              /* @B5 */
   else
      "TBMOD" tbla
@@ -268,7 +269,7 @@ DELD:
   Sure_? = Confirm_delete(msg)
   if (sure_? = 'YES') then do
      call EXCMD "DG ("group")"
-     if (rc = 0) then
+     if (cmd_rc = 0) then                                     /* @BA */
         "TBDELETE" TBLA
      else
        CALL racfmsgs "ERR02" /* RDELETE failed */             /* @B5 */
@@ -365,8 +366,8 @@ DISD:
         Select
            when (optb = 'A')  then call Addp
            when (optb = 'C')  then call Chgp
-           when (optb = 'R')  then call Delp
            when (optb = 'L')  then call Lisp                  /* @A5 */
+           when (optb = 'R')  then call Delp
            when (optb = 'S')  then call RACFUSR id
            when (optb = 'SE') then call RACFCLSS id
            otherwise nop
@@ -379,8 +380,8 @@ DISD:
            Select
               when (optb = 'A')  then call Addp
               when (optb = 'C')  then call Chgp
-              when (optb = 'R')  then call Delp
               when (optb = 'L')  then call Lisp               /* @A5 */
+              when (optb = 'R')  then call Delp
               when (optb = 'S')  then call RACFUSR id
               when (optb = 'SE') then call RACFCLSS id
               otherwise nop
@@ -434,7 +435,7 @@ CHGP:
   if (rc > 0) then
      return
   call EXCMD "CONNECT ("id") GROUP("group") AUTH("acc")"
-  if (rc = 0) then
+  if (cmd_rc = 0) then                                        /* @BA */
      "TBMOD" tblb
   else
      Call racfmsgs 'ERR03' /* Permit failed */                /* @B5 */
@@ -566,7 +567,7 @@ ADDP:
      idopt = 'ID('ID') ACCESS('ACC')'
   fopt = ' '
   call EXCMD "CONNECT ("id") GROUP("group") AUTH("acc")"
-  if (rc = 0) then do
+  if (cmd_rc = 0) then do                                     /* @BA */
      "TBMOD" tblb
      if (new = 'YES') then do
         id = 'NONE'
@@ -590,7 +591,7 @@ DELP:
   Sure_? = Confirm_delete(msg)
   if (sure_? = 'YES') then do
      call EXCMD "REMOVE "id" GROUP("group")"
-     if (rc = 0) then
+     if (cmd_rc = 0) then                                     /* @BA */
         "TBDELETE" tblb
      else
         call racfmsgs 'ERR06' /* Permit Failed */             /* @B5 */

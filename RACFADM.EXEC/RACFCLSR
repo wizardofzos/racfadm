@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMhDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AO  200303  RACFA    Chg 'RC/Ret_code' to 'cmd_rc' after EXCMD    */
 /* @AN  200303  RACFA    Chg 'RL class ALL' to 'RL class * ALL'       */
 /* @AM  200303  RACFA    Chk RC 'RL cls prms', if RC>0 then 'RL cls'  */
 /* @AL  200303  RACFA    Added line cmd 'L-List'                      */
@@ -166,8 +167,8 @@ DISPLAY_TABLE:
      End
      Select
         when (opta = 'L') then call lisp                      /* @AL */
-        when (opta = 'S') then
-             call RACFCLSG class '**' 'YES' /* call generic */
+        when (opta = 'S') then   /* call generic */
+             call RACFCLSG class '**' 'YES'
         when (opta = 'R') then call REFRESH
         otherwise nop
      End
@@ -177,8 +178,9 @@ DISPLAY_TABLE:
         reta = rc
         "CONTROL DISPLAY SAVE"
         Select
-           when (opta = 'S') then
-                call RACFCLSG class '**' 'YES' /* gen prof. routine */
+           when (opta = 'L') then call lisp                   /* @AL */
+           when (opta = 'S') then /* gen prof. routine */
+                call RACFCLSG class '**' 'YES'
            when (opta = 'R') then call REFRESH
            otherwise nop
         End
@@ -206,7 +208,8 @@ REFRESH:
   Sure_? = RACFMSGC(msg)
   if (sure_? = 'YES') then do
      call EXCMD "SETR RACLIST("class") REFRESH"
-     if (rc <> 0) then call racfmsgs "ERR10" /* CMD FAILED */
+     if (cmd_rc <> 0) then                                    /* @AO */
+        call racfmsgs "ERR10" /* CMD FAILED */
      else do
         action = '*REFRESHED'
         "TBMOD" tbla

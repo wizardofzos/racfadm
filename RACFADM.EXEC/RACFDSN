@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BF  200303  RACFA    Chg 'ret_code' to 'cmd_rc' after EXCMD       */
+/* @BE  200303  RACFA    Chg 'RL class ALL' to 'RL class * ALL'       */
 /* @BD  200303  RACFA    Fixed chking RC and removed TBMOD, not needed*/
 /* @BC  200303  RACFA    Chk RC 'LD dsn prms', if RC>0 then 'LD dsn'  */
 /* @BB  200303  RACFA    Removed TBMOD in LISP procedure, not needed  */
@@ -256,7 +258,7 @@ ADDD:
      xtr = xtr "DATA('"data"')"
   call EXCMD "ADDSD '"DATASET"' OWN("OWNER")",                          wrn
              "UACC("UACC")" type aud xtr                                wrn
-  if (rc > 0) then do
+  if (cmd_rc > 0) then do                                     /* @BE */
      CALL racfmsgs 'ERR01' /* Add DSD failed */               /* @B6 */
      return
   end
@@ -267,7 +269,7 @@ ADDD:
   if (from <> ' ') then do
      fopt = "FROM('"FROM"') FCLASS(DATASET) FGENERIC"
      call EXCMD "PERMIT '"DATASET"'" TYPE FOPT
-     if (rc > 0) then
+     if (cmd_rc > 0) then                                     /* @BE */
         CALL racfmsgs 'ERR04' /* Permit Warn */               /* @B6 */
   end
   if (type = ' ') then
@@ -317,7 +319,7 @@ CHGD:
   end
   msg = "ALTDSD '"DATASET"'" own uc type aud xtr wrn
   call EXCMD "ALTDSD '"DATASET"'" own uc type aud xtr wrn
-  if (rc > 0) then
+  if (cmd_rc > 0) then                                        /* @BE */
      call racfmsgs 'ERR07' /* Altdsd failed */                /* @B6 */
   else do
      if (type = ' ') then
@@ -338,7 +340,7 @@ DELD:
   Sure_? = Confirm_request(msg)
   if (sure_? = 'YES') then do
      call EXCMD "DELDSD '"DATASET"'" type
-     if (rc > 0) then do
+     if (cmd_rc > 0) then do                                  /* @BE */
         if (type = ' ') then
            type = 'DISCRETE'
         "TBDELETE" TBLA
@@ -442,8 +444,8 @@ DISD:
         Select
            when (optb = 'A') then call Addp
            when (optb = 'C') then call Chgp
-           when (optb = 'R') then call Delp
            when (optb = 'L') then call Lisp                   /* @A5 */
+           when (optb = 'R') then call Delp
            when (optb = 'S') then call Disp
            otherwise nop
         End
@@ -550,7 +552,7 @@ CHGP:
   if (type = 'DISCRETE') then
      type = ' '
   call EXCMD "PERMIT '"DATASET"' ID("ID") ACC("ACC")" TYPE
-  if (rc > 0) then do
+  if (cmd_rc > 0) then do                                     /* @BE */
      if (type = ' ') then
         type = 'DISCRETE'
      "TBMOD" tblb
@@ -580,7 +582,7 @@ ADDP:
      rb   = 'YES'             /* Cause table rebuild */
   end
   call EXCMD "PERMIT '"DATASET"'" idopt type fopt
-  if (rc > 0) then do
+  if (cmd_rc > 0) then do                                     /* @BE */
      "TBMOD" tblb
      if (new = 'YES') then do
         id = 'NONE'
@@ -606,7 +608,7 @@ DELP:
   Sure_? = Confirm_request(msg)
   if (sure_? = 'YES') then do
      call EXCMD "PERMIT '"DATASET"' ID("ID") DELETE" TYPE
-     if (rc > 0) then
+     if (cmd_rc > 0) then                                     /* @BE */
         "TBDELETE" tblb
      else
         call racfmsgs 'ERR06' /* Permit Failed */             /* @B6 */
@@ -748,7 +750,7 @@ LISP:                                                         /* @A5 */
   END                                                         /* @AF */
   ADDRESS TSO "FREE FI("WFDD")"                               /* @A5 */
   DROP WFREC. WFDD WFLGPRM                                    /* @A5 */
-  if (ret_code <> 0) then                                     /* @AB */
+  if (cmd_rc > 0) then                                        /* @BF */
      CALL racfmsgs "ERR15" /* Generic failure */              /* @B6 */
 RETURN                                                        /* @A5 */
 /*--------------------------------------------------------------------*/

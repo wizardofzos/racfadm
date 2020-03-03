@@ -14,6 +14,7 @@
 %  Reset           +Redisplay all rows and sort first column
 +
 +Line Commands
+%  L  !List        +Issue RLIST command
 %  S  !Show        +Analyze user access to this profile
 )PROC
   &ZUP     = #RACCLS8

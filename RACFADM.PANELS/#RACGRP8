@@ -15,7 +15,7 @@
 +
 +Line Commands
 %  S  !Show        +List of groups connected to the users
-%  L  !List        +Issue LISTGROUP RACF command
+%  L  !List        +Issue LISTGROUP command
 %  C  !Change      +Change group attributes (admin)
 %  A  !Add         +Define a new group (admin)
 %  R  !Remove      +Remove group from RACF (admin)

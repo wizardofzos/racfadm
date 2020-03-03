@@ -3,6 +3,9 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @CC  200303  RACFA    Del 'ret_code' lines for PANEL01... While    */
+/* @CB  200303  RACFA    Chg 'ret_code = 0' to 'cmd_rc = rc'          */
+/* @CA  200303  RACFA    Chg 'RL class ALL' to 'RL class * ALL'       */
 /* @C9  200303  RACFA    Chk RC 'LG grp prms', if RC>0 then 'LU grp'  */
 /* @C8  200303  RACFA    Fixed chking RC after executing command      */
 /* @C7  200302  RACFA    Removed DO...END around code, not needed     */
@@ -120,14 +123,10 @@ ADDRESS ISPEXEC                                               /* @BC */
   if (called = 'YES') then
      "CONTROL NONDISPL ENTER"
   "DISPLAY PANEL("PANEL01")" /* get profile */                /* @BL */
-  ret_code = rc
-  Do while (ret_code = 0)
-     ret_code = 8
+  Do while (rc = 0)
      call Profl
-     if (called <> 'YES') then do
+     if (called <> 'YES') then
         "DISPLAY PANEL("PANEL01")"                            /* @BL */
-        ret_code = rc
-     End
   End
 EXIT
 /*--------------------------------------------------------------------*/
@@ -326,8 +325,7 @@ ADDD:
   call EXCMD "ADDUSER ("user")",
              "OWN("owner") DFLTGRP("defgrp")",
              "NAME('"name"') PASSWORD("user")" XTR ATTR       /* @C2 */
-  ret_code = rc
-  if (tsouser = 'YES') & (ret_code = 0) then DO
+  if (tsouser = 'YES') & (cmd_rc = 0) then DO                 /* @CB */
      ret_code = RACFUSRT('ADDD' user tsoproc,                 /* @C4 */
                 tsoacct defgrp owner tsolib)                  /* @C4 */
      if (ret_code = 0) then DO
@@ -336,10 +334,9 @@ ADDD:
              "NAME('"name"')" XTR ATTR"",
              "TSO (ACCTNUM("tsoacct") PROC("tsoproc")",
              " SIZE("tsosize") UNIT("tsounit") "
-         ret_code = rc
      END
   END
-  IF (ret_code > 0) then DO
+  IF (cmd_rc > 0) then DO                                     /* @CA */
      CALL racfmsgs 'ERR01' /* Add DSD failed */
      return
   END
@@ -362,7 +359,7 @@ RESD:
   Sure_? = RACFMSGC(msg)
   if (sure_? = 'YES') then do
      call EXCMD "ALTUSER "user" RESUME PASSWORD("user")"
-     if (rc = 0) then do
+     if (cmd_rc = 0) then do                                  /* @CA */
         revoked ='NO'                                         /* @BP */
         "TBMOD" TBLA
      end
@@ -379,7 +376,7 @@ REVD:
   Sure_? = RACFMSGC(msg)
   if (sure_? = 'YES') then do
      call EXCMD "ALTUSER "user" REVOKE"
-     if (rc = 0) then do
+     if (cmd_rc = 0) then do                                  /* @CA */
         revoked ='YES'
         "TBMOD" TBLA
      end
@@ -531,6 +528,7 @@ RETURN                                                        /* @AC */
 CHGD:
   action      = "*Change"                                     /* @A4 */
   ret_code    = 0
+  cmd_rc      = 0                                             /* @CA */
   New_tsouser = 'NO'
   if (USER= 'NONE') then
      return
@@ -577,7 +575,7 @@ CHGD:
      call EXCMD "ALTUSER ("USER")" alt_own,
                 alt_defgrp alt_name xtr
   Select
-     when (rc > 0) then
+     when (cmd_rc > 0) then                                   /* @CA */
           call racfmsgs 'ERR07' /* Altdsd failed */
      when (ret_code <> 0) then
           call racfmsgs 'ERR11' /* Defalias failed */
@@ -603,7 +601,7 @@ DELD:
                       tsoacct defgrp owner tsolib)            /* @C4 */
         if (ret_code <= 8) then do
            call EXCMD "DELUSER ("USER")"
-           if (rc = 0) then
+           if (cmd_rc = 0) then                               /* @CA */
               "TBDELETE" TBLA
            else CALL racfmsgs "ERR02" /* RDELETE failed */
         end
@@ -611,7 +609,7 @@ DELD:
      end
      else do
         call EXCMD "DELUSER ("USER")"
-        if (rc = 0) then
+        if (cmd_rc = 0) then                                  /* @CA */
            "TBDELETE" TBLA
         else CALL racfmsgs "ERR02"   /* RDELETE failed */
      end
@@ -665,7 +663,6 @@ DISD:
            when (optb = 'A') then call Addp
            when (optb = 'C') then call Chgp
            when (optb = 'R') then call Delp
-           when (optb = 'L') then call Lisp                   /* @AC */
            when (optb = 'S') then call RACFGRP id
            otherwise nop
         End
@@ -678,6 +675,7 @@ DISD:
               when (optb = 'A') then call Addp
               when (optb = 'C') then call Chgp
               when (optb = 'R') then call Delp
+              when (optb = 'L') then call Lisp                /* @AC */
               when (optb = 'S') then call RACFGRP id
               otherwise nop
            End
@@ -812,7 +810,7 @@ CHGP:
      return
   call EXCMD "PE "USER" CLASS("RCLASS") ID("ID")",
              "ACC("ACC")" TYPE
-  if (rc = 0) then
+  if (cmd_rc = 0) then                                        /* @CA */
      "TBMOD" tblb
   else
      Call racfmsgs 'ERR03' /* permit failed */
@@ -837,7 +835,7 @@ ADDP:
      rb   = 'YES'             /* Cause table rebuild */
   end
   call EXCMD "CONNECT ("user") GROUP("id") AUTH("acc")"
-  if (rc = 0) then do
+  if (cmd_rc = 0) then do                                     /* @CA */
      "TBMOD" tblb
      if (new = 'YES') then do
         id = 'NONE'
@@ -861,7 +859,7 @@ DELP:
   Sure_? = RACFMSGC(msg)
   if (sure_? = 'YES') then do
      call EXCMD "REMOVE ("user") GROUP("id")"
-     if (rc = 0) then
+     if (cmd_rc = 0) then                                     /* @CA */
         "TBDELETE" tblb
      else
         call racfmsgs 'ERR06'     /* Permit Failed */

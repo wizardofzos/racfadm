@@ -13,6 +13,7 @@
 %  Reset           +Redisplay all rows and sort first column
 +
 +Line Commands
+%  L  !List        +Issue RLIST command
 %  S  !Show        +Select a class from the list of active classes
 %  R  !Refresh     +Issue a RACLIST refresh on the class
 )PROC

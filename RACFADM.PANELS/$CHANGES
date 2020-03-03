@@ -2,6 +2,13 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  03 Mar 2020 - V8R0
+     - Other Items
+       * General clean up of code in several modules
+       * Added 'L-List' command to tutorials when displaying classes
+       * Standardized/fixed checking return code after executing
+         RACF commands
+
   03 Mar 2020 - V7R9
      - User and General Resources (Option 1/4)
        * When executing 'L-List' next to a class, execute the RACF

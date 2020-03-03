@@ -304,6 +304,7 @@ DISPLAY_TABLE:
         reta = rc
         "CONTROL DISPLAY SAVE"
         Select
+           when (opta = 'L') then call lisp                   /* @A1 */
            when (opta = 'S') then
                 rc = get_permits(class,user) /*get permits*/
            otherwise nop

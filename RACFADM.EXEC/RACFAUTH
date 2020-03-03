@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AS  200303  RACFA    Del 'EXCMD' procedure, not referenced        */
 /* @AR  200301  RACFA    Deleted EMSG procedure, not referenced       */
 /* @AD  200226  RACFA    Fix @AB chg, chg ret_code to cmd_rc          */
 /* @AC  200226  RACFA    Added 'CONTROL ERRORS RETURN'                */
@@ -166,25 +167,6 @@ GET_USER_GROUP:
         grp.grp_ix = id acc      /* store acl        */
      End
   End
-RETURN
-/*--------------------------------------------------------------------*/
-/*  Exec command                                                      */
-/*--------------------------------------------------------------------*/
-EXCMD:
-  signal off error
-  arg cmd
-  x = OUTTRAP('msg.')
-  address TSO cmd                                             /* @AB */
-  cmd_rc = rc
-  x = OUTTRAP('OFF')
-  if (erashow = 'YES') then                                   /* @A5 */
-     call SHOWCMD                                             /* @A5 */
-  if (subword(msg.1,1,1)= 'cCH11009I') |,
-     (subword(msg.1,1,1)= 'ICH10006I') |,
-     (subword(msg.1,1,1)= 'ICH06011I') then
-     raclist = 'YES'
-  else
-     msg_var = 1 to msg.0
 RETURN
 /*--------------------------------------------------------------------*/
 /*  Display RACF command                                          @A5 */

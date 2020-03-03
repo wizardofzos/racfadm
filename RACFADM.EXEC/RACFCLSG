@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B4  200303  RACFA    Chg 'RC/Ret_code' to 'cmd_rc' after EXCMD    */
 /* @B3  200303  RACFA    Fixed RC and del TBDMOD, not needed          */
 /* @B2  200303  RACFA    Chk RC 'RLIST prms', if RC>0 then 'RLIST'    */
 /* @B1  200303  RACFA    Del WFLUPRM and get_setropts_options         */
@@ -232,7 +233,7 @@ ADDD:
      xtr = xtr "DATA('"data"')"
   call EXCMD "RDEF "RCLASS" ("PROFILE") OWN("OWNER")",
              "UACC("UACC")" aud xtr wrn
-  if (rc > 0) then do
+  if (cmd_rc > 0) then do                                     /* @B4 */
      CALL racfmsgs 'ERR01' /* Add DSD failed */               /* @AU */
      return
   end
@@ -246,7 +247,7 @@ ADDD:
      fopt = "FROM("FROM") FCLASS("FCLASS") "FTYPE""
      call EXCMD "PERMIT "PROFILE" CLASS("RCLASS")",
                  TYPE FOPT
-     if (rc > 0) then
+     if (cmd_rc > 0) then                                     /* @B4 */
         CALL racfmsgs 'ERR04' /* Permit Warn */               /* @AU */
   end
   if (type = ' ') then
@@ -293,7 +294,7 @@ CHGD:
   end
   call EXCMD "RALTER "RCLASS" ("PROFILE")",
              own uc aud xtr wrn
-  if (ret_code > 0) then
+  if (cmd_rc > 0) then                                        /* @B4 */
      call racfmsgs 'ERR07' /* Altdsd failed */                /* @AU */
   else do
       if (type = ' ') then
@@ -313,7 +314,7 @@ DELD:
   Sure_? = Confirm_request(msg)
   if (sure_? = 'YES') then do
      call EXCMD "RDELETE "RCLASS PROFILE
-     if (rc = 0) then do
+     if (cmd_rc = 0) then do                                  /* @B4 */
         if type = ' ' then
            type = 'DISCRETE'
         "TBDELETE" TBLA
@@ -392,7 +393,7 @@ ADDM:
   if (rc > 0) then return
   addmem = 'ADDMEM('id')'
   call EXCMD "RALTER "RCLASS PROFILE ADDMEM
-  if (rc = 0) then do
+  if (cmd_rc = 0) then do                                     /* @B4 */
      "TBMOD" tblb
      if (new = 'YES') then do
         id = 'NONE'
@@ -412,7 +413,7 @@ DELM:
   if (sure_? = 'YES') then do
      delmem = 'DELMEM('id')'
      call EXCMD "RALTER "RCLASS PROFILE DELMEM
-     if (rc = 0) then
+     if (cmd_rc = 0) then                                     /* @B4 */
         "TBDELETE" tblb
      else
         CALL racfmsgs "ERR14"   /* RDELETE failed */          /* @AU */
@@ -543,8 +544,8 @@ DISD:
         Select
            when (optb= 'A') then call Addp
            when (optb= 'C') then call Chgp
-           when (optb= 'R') then call Delp
            when (optb= 'L') then call Lisp                    /* @A2 */
+           when (optb= 'R') then call Delp
            when (optb= 'S') then call Disp
            otherwise nop
         End
@@ -556,8 +557,8 @@ DISD:
            Select
               when (optb= 'A') then call Addp
               when (optb= 'C') then call Chgp
-              when (optb= 'R') then call Delp
               when (optb= 'L') then call Lisp                 /* @A2 */
+              when (optb= 'R') then call Delp
               when (optb= 'S') then call Disp
               otherwise nop
            End
@@ -663,7 +664,7 @@ CHGP:
      type = ' '
   call EXCMD "PE "PROFILE" CLASS("RCLASS")",
              "ID("ID") ACC("ACC")" TYPE
-  if (rc = 0) then do
+  if (cmd_rc = 0) then do                                     /* @B4 */
      if (type = ' ') then
         type = 'DISCRETE'
      "TBMOD" tblb
@@ -710,7 +711,7 @@ ADDP:
   end
   call EXCMD "PERMIT "PROFILE" CLASS("RCLASS") ",
               idopt type fopt
-  if (rc = 0) then do
+  if (cmd_rc = 0) then do                                     /* @B4 */
      "TBMOD" tblb
      if (new = 'YES') then do
         id = 'NONE'
@@ -737,7 +738,7 @@ DELP:
   if (sure_? = 'YES') then do
      call EXCMD "PE "PROFILE" CLASS("RCLASS")",
                 "ID("ID") DELETE" TYPE
-     if (rc = 0) then
+     if (cmd_rc = 0) then                                     /* @B4 */
         "TBDELETE" tblb
      else
         call racfmsgs 'ERR06'     /* Permit Failed */         /* @AU */
