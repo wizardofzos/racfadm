@@ -8,7 +8,7 @@
 %Command ===>_ZCMD                                              +Scroll==>_SAMT+
 %
 +USER:   $USER    +
-+SELECT: %S+Show
++SELECT: %S+Show,%L+List
 %
 %S   Class
 %-------------------------------------------------------------------------------
@@ -27,5 +27,5 @@ _Z+ $Z                                                                         +
         &SROW = .CSRROW
         IF (&SROW ^= 0)
            &OPTA = S
-  VER (&OPTA,LIST,S)
+  VER (&OPTA,LIST,S,L)
 )END

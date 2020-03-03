@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMhDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @AM  200303  RACFA    Chk RC 'RL cls prms', if RC>0 then 'RL cls'  */
+/* @AL  200303  RACFA    Added line cmd 'L-List'                      */
 /* @AK  200226  RACFA    Fix @AI chg, chg ret_code to cmd_rc          */
 /* @AJ  200226  RACFA    Added 'CONTROL ERRORS RETURN'                */
 /* @AI  200226  RACFA    Added 'Return Code =' when displaying cmd    */
@@ -31,12 +33,12 @@ PANELM2 = "RACFMSG2"    /* Execute RACF Command (pop-up)   */ /* @AF */
 ADDRESS ISPEXEC                                               /* @A7 */
   Arg class
   "CONTROL ERRORS RETURN"                                     /* @AJ */
-  "VGET (ZSCREEN ERAADMN ERASHOW ERATRACE) ASIS"              /* @AC */
+  "VGET (ZSCREEN ERAADMN ERASHOW ERATRACE ERADISP) ASIS"      /* @AL */
   If (eratrace = 'YES') then Trace r                          /* @A5 */
   If (ERAADMN = "YES") then                                   /* @AC */
-      SELCMDS = "ÝS¨Show,ÝR¨Refresh"                          /* @AC */
+      SELCMDS = "ÝS¨Show,ÝL¨List,ÝR¨Refresh"                  /* @AL */
   else                                                        /* @AC */
-      SELCMDS = "ÝS¨Show"                                     /* @AC */
+      SELCMDS = "ÝS¨Show,ÝL¨List"                             /* @AL */
 
   rlv = SYSVAR('SYSLRACF')
   if (class = '') then DO                                     /* @A9 */
@@ -162,6 +164,7 @@ DISPLAY_TABLE:
         OTHERWISE NOP                                         /* @A8 */
      End
      Select
+        when (opta = 'L') then call lisp                      /* @AL */
         when (opta = 'S') then
              call RACFCLSG class '**' 'YES' /* call generic */
         when (opta = 'R') then call REFRESH
@@ -229,7 +232,46 @@ EXCMD:
      msg_var = 1 to msg.0                                     /* @A3 */
 RETURN
 /*--------------------------------------------------------------------*/
-/*  Display RACF command                                          @A6 */
+/*  List class                                                   @AL  */
+/*--------------------------------------------------------------------*/
+LISP:
+  WFDD    = "ERA"RANDOM(0,99999)
+  cmd     = "RL "CLASS" ALL"
+  X = OUTTRAP("WFREC.")
+  ADDRESS TSO cmd
+  cmd_rc = rc
+  X = OUTTRAP("OFF")
+  if (erashow = 'YES') then
+     call SHOWCMD
+  if (cmd_rc > 0) then do    /* Remove parms */               /* @AM */
+     cmd     = "RL "CLASS                                     /* @AM */
+     X = OUTTRAP("WFREC.")                                    /* @AM */
+     ADDRESS TSO cmd                                          /* @AM */
+     cmd_rc = rc                                              /* @AM */
+     X = OUTTRAP("OFF")                                       /* @AM */
+     if (erashow = 'YES') then                                /* @AM */
+        call SHOWCMD                                          /* @AM */
+  end                                                         /* @AM */
+  ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",
+              "LRECL(132) BLKSIZE(0) RECFM(F B)",
+              "UNIT(VIO) SPACE(1 5) CYLINDERS"
+  ADDRESS TSO "EXECIO * DISKW "WFDD" (STEM WFREC. FINIS"
+  "LMINIT DATAID(WFDATAID) DDNAME("WFDD")"
+  SELECT
+     WHEN (ERADISP = "VIEW") THEN
+          "VIEW DATAID("WFDATAID")"
+     WHEN (ERADISP = "EDIT") THEN
+          "EDIT DATAID("WFDATAID")"
+     OTHERWISE
+          "BROWSE DATAID("WFDATAID")"
+  END
+  ADDRESS TSO "FREE FI("WFDD")"
+  DROP WFREC. WFDD
+  if (cmd_rc > 0) then                                        /* @AC */
+     CALL racfmsgs "ERR10" /* Generic failure */              /* @AC */
+RETURN
+/*--------------------------------------------------------------------*/
+/*  Display RACF command                                         @A6  */
 /*--------------------------------------------------------------------*/
 SHOWCMD:                                                      /* @A6 */
   PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @A6 */

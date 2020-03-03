@@ -3,6 +3,10 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @B3  200303  RACFA    Fixed RC and del TBDMOD, not needed          */
+/* @B2  200303  RACFA    Chk RC 'RLIST prms', if RC>0 then 'RLIST'    */
+/* @B1  200303  RACFA    Del WFLUPRM and get_setropts_options         */
+/* @AZ  200303  RACFA    Fixed chking RC, del TBMOD, not needed       */
 /* @AY  200302  RACFA    Del TBTOP cmd, prior to TBSCAN for LOCATE    */
 /* @AW  200301  RACFA    Fixed displaying userids, was ret_code       */
 /* @AU  200301  RACFA    Del EMSG procedure, instead call racfmsgs    */
@@ -781,18 +785,10 @@ EXCMD:
      msg_var = 1 to msg.0
 RETURN
 /*--------------------------------------------------------------------*/
-/*  List class                                                        */
+/*  List class's profile                                              */
 /*--------------------------------------------------------------------*/
 LISD:                                                         /* @A1 */
   WFDD    = "ERA"RANDOM(0,99999)                              /* @A1 */
-  WFLUPRM = "CICS CSDATA DCE DFP EIM KERB LANGUAGE",          /* @A1 */
-            "LNOTES MFA NDS NETVIEW OMVS OPERPARM",           /* @A1 */
-            "OVM PROXY TSO WORKATTR"                          /* @A1 */
-  call get_setropts_options                                   /* @A6 */
-  if (rcvtsmfa = 'NO') then do                                /* @A6 */
-     mfa_pos = pos('MFA',wfluprm)                             /* @A6 */
-     wfluprm = delstr(wfluprm,mfa_pos,4)                      /* @A6 */
-  end                                                         /* @A6 */
   cmd = "RLIST "RCLASS PROFILE" AUTH"                         /* @AF */
   X = OUTTRAP("WFREC.")                                       /* @A1 */
   ADDRESS TSO cmd                                             /* @AF */
@@ -800,6 +796,15 @@ LISD:                                                         /* @A1 */
   X = OUTTRAP("OFF")                                          /* @A1 */
   if (erashow = 'YES') then                                   /* @AF */
      call SHOWCMD                                             /* @AF */
+  if (cmd_rc > 0) then do    /* Remove parms */               /* @B2 */
+     cmd = "RLIST "RCLASS PROFILE                             /* @B2 */
+     X = OUTTRAP("WFREC.")                                    /* @B2 */
+     ADDRESS TSO cmd                                          /* @B2 */
+     cmd_rc = rc                                              /* @B2 */
+     X = OUTTRAP("OFF")                                       /* @B2 */
+     if (erashow = 'YES') then                                /* @B2 */
+        call SHOWCMD                                          /* @B2 */
+  end                                                         /* @B2 */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A1 */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A1 */
               "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @A1 */
@@ -814,21 +819,10 @@ LISD:                                                         /* @A1 */
           "BROWSE DATAID("WFDATAID")"                         /* @AC */
   END                                                         /* @AC */
   ADDRESS TSO "FREE FI("WFDD")"                               /* @A1 */
-  DROP WFREC. WFDD WFLUPRM                                    /* @A1 */
-  if (rc = 0) then                                            /* @A1 */
-     "TBMOD" TBLA                                             /* @A1 */
-  else                                                        /* @A1 */
+  DROP WFREC. WFDD                                            /* @A1 */
+  if (cmd_rc > 0) then                                        /* @AZ */
      CALL racfmsgs "ERR10" /* Generic failure */              /* @AU */
 RETURN                                                        /* @A1 */
-/*--------------------------------------------------------------------*/
-/*  Get Multi Factor Authentication (MFA) option from RCVT            */
-/*--------------------------------------------------------------------*/
-GET_SETROPTS_OPTIONS:                                         /* @A6 */
-  cvt     = c2x(storage(10,4))      /* cvt address        */  /* @A6 */
-  cvtrac$ = d2x((x2d(cvt))+992)     /* cvt+3E0 = cvtrac $ */  /* @A6 */
-  cvtrac  = c2x(storage(cvtrac$,4)) /* cvtrac=access cntl */  /* @A6 */
-  rc      = setbool(rcvtsmfa,633,'02','NO','YES')  /* mfa */  /* @A6 */
-RETURN                                                        /* @A6 */
 /*--------------------------------------------------------------------*/
 /*  Set boolean value for mask                                        */
 /*--------------------------------------------------------------------*/
@@ -854,17 +848,18 @@ LISP:                                                         /* @A2 */
   X = OUTTRAP("WFREC.")                                       /* @A2 */
   ADDRESS TSO cmd                                             /* @AF */
   cmd_rc = rc                                                 /* @AR */
+  X = OUTTRAP("OFF")                                          /* @A2 */
   if (erashow = 'YES') then                                   /* @AF */
      call SHOWCMD                                             /* @AF */
-  if (cmd_rc = 4) then do                                     /* @A8 */
-     wfrec.1 = ' '                                            /* @A8 */
+  if (cmd_rc > 0) then do                                     /* @A8 */
+     X = OUTTRAP("WFREC.")                                    /* @A2 */
      CMD     = "LU "ID                                        /* @AF */
      ADDRESS TSO cmd                                          /* @AR */
      cmd_rc = rc                                              /* @AR */
+     X = OUTTRAP("OFF")                                       /* @A2 */
      if (erashow = 'YES') then                                /* @AF */
         call SHOWCMD                                          /* @AF */
   end                                                         /* @A8 */
-  X = OUTTRAP("OFF")                                          /* @A2 */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A2 */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A2 */
               "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @A2 */
@@ -880,9 +875,7 @@ LISP:                                                         /* @A2 */
   END                                                         /* @AC */
   ADDRESS TSO "FREE FI("WFDD")"                               /* @A2 */
   DROP WFREC. WFDD WFLGPRM                                    /* @A2 */
-  if (ret_code = 0) then                                      /* @A8 */
-     "TBMOD" TBLB                                             /* @A2 */
-  else                                                        /* @A2 */
+  if (cmd_rc > 0) then                                        /* @B3 */
      CALL racfmsgs "ERR13"   /* Generic failure */            /* @AU */
 RETURN                                                        /* @A2 */
 /*--------------------------------------------------------------------*/

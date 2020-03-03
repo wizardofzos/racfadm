@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @C9  200303  RACFA    Chk RC 'LG grp prms', if RC>0 then 'LU grp'  */
+/* @C8  200303  RACFA    Fixed chking RC after executing command      */
 /* @C7  200302  RACFA    Removed DO...END around code, not needed     */
 /* @C6  200302  RACFA    Chk RC 'LU ID PRMS', if RC>0 then 'LU ID'    */
 /* @C5  200301  RACFA    Check for 'NO ENTRIES MEET SEARCH CRITERIA'  */
@@ -451,7 +453,7 @@ LISD:
   END                                                         /* @B7 */
   ADDRESS TSO "FREE FI("WFDD")"                               /* @A2 */
   DROP WFREC. WFDD WFLUPRM                                    /* @A2 */
-  if (rc = 0) then
+  if (cmd_rc = 0) then                                        /* @C8 */
      "TBMOD" TBLA
   else
      CALL racfmsgs "ERR10" /* Generic failure */
@@ -494,6 +496,15 @@ LISP:
   X = OUTTRAP("OFF")                                          /* @AC */
   if (erashow = 'YES') then                                   /* @BB */
      call SHOWCMD                                             /* @BB */
+  if (cmd_rc > 0) then do /* Remove Parms */                  /* @C9 */
+     cmd     = "LG "ID                                        /* @C9 */
+     X = OUTTRAP("WFREC.")                                    /* @C9 */
+     ADDRESS TSO cmd                                          /* @C9 */
+     cmd_rc = rc                                              /* @C9 */
+     X = OUTTRAP("OFF")                                       /* @C9 */
+     if (erashow = 'YES') then                                /* @C9 */
+        call SHOWCMD                                          /* @C9 */
+  END                                                         /* @C9 */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @AC */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @AC */
               "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @AC */
@@ -508,8 +519,8 @@ LISP:
           "BROWSE DATAID("WFDATAID")"                         /* @B7 */
   END                                                         /* @B7 */
   ADDRESS TSO "FREE FI("WFDD")"                               /* @AC */
-  DROP WFREC. WFDD WFLUPRM                                    /* @AC */
-  if (rc = 0) then                                            /* @AC */
+  DROP WFREC. WFDD WFLGPRM                                    /* @AC */
+  if (cmd_rc = 0) then                                        /* @C8 */
      "TBMOD" TBLB                                             /* @AC */
   else                                                        /* @AC */
      CALL racfmsgs "ERR10" /* Generic failure */              /* @AC */

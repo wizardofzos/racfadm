@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A2  200303  RACFA    Added line cmd 'L-List' to class's profile   */
+/* @A1  200303  RACFA    Added line cmd 'L-List' to class             */
 /* @BZ  200302  RACFA    Fixed SORT cmd for class profiles            */
 /* @BY  200302  RACFA    Chk/honor 'Status Interval' for cls profiles */
 /* @BX  200302  RACFA    Add SORT/LOCATE/ONLY/RESET for class profiles*/
@@ -39,7 +41,7 @@ ADDRESS ISPEXEC                                               /* @A6 */
   Arg user
   selection = 0  /* something selected */
   "CONTROL ERRORS RETURN"                                     /* @AL */
-  "VGET (ZSCREEN ERATRACE ERASHOW ERASINT) ASIS"              /* @BY */
+  "VGET (ZSCREEN ERATRACE ERASHOW ERASINT ERADISP) ASIS"      /* @A1 */
   If (eratrace = 'YES') then Trace r                          /* @A4 */
   rlv = SYSVAR('SYSLRACF')
 
@@ -137,6 +139,7 @@ DISPLAY_TABLE_PERMIT:
         otherwise locvar=''
      End
      Select
+        when (opta = 'L') then call lisd                      /* @A2 */
         when (opta = 'S') then x = RACFAUTH(class profile user)
         otherwise nop
      End
@@ -286,6 +289,7 @@ DISPLAY_TABLE:
         otherwise NOP                                         /* @AB */
      END /* Select */                                         /* @AB */
      select
+        when (opta = 'L') then call lisp                      /* @A1 */
         when (opta = 'S') then do
              DISPCLS = CLASS                                  /* @AC */
              rc = get_permits(class,user) /*get permits*/
@@ -322,11 +326,83 @@ DISPLAY_TABLE:
   end  /* Do while (reta < 8) */
 RETURN 0
 /*--------------------------------------------------------------------*/
-/*  Error message                                                     */
+/*  List class                                                   @A1  */
 /*--------------------------------------------------------------------*/
-ERROR:
-  say 'Error RACFCLSS at line 'sigl
-EXIT
+LISP:                                                         /* @A1 */
+  WFDD    = "ERA"RANDOM(0,99999)                              /* @A1 */
+  cmd     = "RL "CLASS" ALL"                                  /* @A1 */
+  X = OUTTRAP("WFREC.")                                       /* @A1 */
+  ADDRESS TSO cmd                                             /* @A1 */
+  cmd_rc = rc                                                 /* @A1 */
+  X = OUTTRAP("OFF")                                          /* @A1 */
+  if (erashow = 'YES') then                                   /* @A1 */
+     call SHOWCMD                                             /* @A1 */
+  if (cmd_rc > 0) then do   /* Remove parms */                /* @A1 */
+     cmd     = "RL "CLASS                                     /* @A1 */
+     X = OUTTRAP("WFREC.")                                    /* @A1 */
+     ADDRESS TSO cmd                                          /* @A1 */
+     cmd_rc = rc                                              /* @A1 */
+     X = OUTTRAP("OFF")                                       /* @A1 */
+     if (erashow = 'YES') then                                /* @A1 */
+        call SHOWCMD                                          /* @A1 */
+  end                                                         /* @A1 */
+  ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A1 */
+              "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A1 */
+              "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @A1 */
+  ADDRESS TSO "EXECIO * DISKW "WFDD" (STEM WFREC. FINIS"      /* @A1 */
+  "LMINIT DATAID(WFDATAID) DDNAME("WFDD")"                    /* @A1 */
+  SELECT                                                      /* @A1 */
+     WHEN (ERADISP = "VIEW") THEN                             /* @A1 */
+          "VIEW DATAID("WFDATAID")"                           /* @A1 */
+     WHEN (ERADISP = "EDIT") THEN                             /* @A1 */
+          "EDIT DATAID("WFDATAID")"                           /* @A1 */
+     OTHERWISE                                                /* @A1 */
+          "BROWSE DATAID("WFDATAID")"                         /* @A1 */
+  END                                                         /* @A1 */
+  ADDRESS TSO "FREE FI("WFDD")"                               /* @A1 */
+  DROP WFREC. WFDD                                            /* @A1 */
+  if (cmd_rc > 0) then                                        /* @A1 */
+     CALL racfmsgs "ERR10" /* Generic failure */              /* @A1 */
+RETURN                                                        /* @A1 */
+/*--------------------------------------------------------------------*/
+/*  List class's profile                                         @A2  */
+/*--------------------------------------------------------------------*/
+LISD:                                                         /* @A2 */
+  WFDD = "ERA"RANDOM(0,99999)                                 /* @A2 */
+  cmd  = "RLIST "CLASS PROFILE" AUTH"                         /* @A2 */
+  X    = OUTTRAP("WFREC.")                                    /* @A2 */
+  ADDRESS TSO cmd                                             /* @A2 */
+  cmd_rc = rc                                                 /* @A2 */
+  X    = OUTTRAP("OFF")                                       /* @A2 */
+  if (erashow = 'YES') then                                   /* @A2 */
+     call SHOWCMD                                             /* @A2 */
+  if (cmd_rc > 0) then do    /* Remove parms */               /* @A2 */
+     cmd = "RLIST "RCLASS PROFILE                             /* @A2 */
+     X = OUTTRAP("WFREC.")                                    /* @A2 */
+     ADDRESS TSO cmd                                          /* @A2 */
+     cmd_rc = rc                                              /* @A2 */
+     X = OUTTRAP("OFF")                                       /* @A2 */
+     if (erashow = 'YES') then                                /* @A2 */
+        call SHOWCMD                                          /* @A2 */
+  end                                                         /* @A2 */
+  ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A2 */
+              "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A2 */
+              "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @A2 */
+  ADDRESS TSO "EXECIO * DISKW "WFDD" (STEM WFREC. FINIS"      /* @A2 */
+  "LMINIT DATAID(WFDATAID) DDNAME("WFDD")"                    /* @A2 */
+  SELECT                                                      /* @A2 */
+     WHEN (ERADISP = "VIEW") THEN                             /* @A2 */
+          "VIEW DATAID("WFDATAID")"                           /* @A2 */
+     WHEN (ERADISP = "EDIT") THEN                             /* @A2 */
+          "EDIT DATAID("WFDATAID")"                           /* @A2 */
+     OTHERWISE                                                /* @A2 */
+          "BROWSE DATAID("WFDATAID")"                         /* @A2 */
+  END                                                         /* @A2 */
+  ADDRESS TSO "FREE FI("WFDD")"                               /* @A2 */
+  DROP WFREC. WFDD                                            /* @A2 */
+  if (cmd_rc > 0) then                                        /* @A2 */
+     CALL racfmsgs "ERR10" /* Generic failure */              /* @A2 */
+RETURN                                                        /* @A2 */
 /*--------------------------------------------------------------------*/
 /*  Display RACF command                                          @A5 */
 /*--------------------------------------------------------------------*/
@@ -337,3 +413,9 @@ SHOWCMD:                                                      /* @A5 */
   "DISPLAY PANEL("PANELM2")"                                  /* @AG */
   "REMPOP"                                                    /* @AH */
 RETURN                                                        /* @A5 */
+/*--------------------------------------------------------------------*/
+/*  Error message                                                     */
+/*--------------------------------------------------------------------*/
+ERROR:
+  say 'Error RACFCLSS at line 'sigl
+EXIT

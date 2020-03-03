@@ -2,9 +2,19 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  03 Mar 2020 - V7R8
+     - User (Option 1)
+       * When executing 'SE'earch line command, allow typing 'L-List'
+         next to a class and a class's profile
+     - General Resources (Option 4)
+       * Added line command 'L-List' to list the class
+     - Other Items
+       * Cleaned up code for 'L-List' command in all modules, fixed
+         checking return codes, removing TBMOD when not necessary, etc.
+
   02 Mar 2020 - V7R7
      - User (Option 1)
-       * SEarch line command when displaying a classes profiles
+       * SEarch line command when displaying a class's profiles
          o Fixed SORT command, not honoring/working
      - User and Group (Option 1/2)
        * When executing line command 'L-List', if LU/LG command

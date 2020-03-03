@@ -3,6 +3,9 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @BD  200303  RACFA    Fixed chking RC and removed TBMOD, not needed*/
+/* @BC  200303  RACFA    Chk RC 'LD dsn prms', if RC>0 then 'LD dsn'  */
+/* @BB  200303  RACFA    Removed TBMOD in LISP procedure, not needed  */
 /* @BA  200302  RACFA    Del TBTOP cmd, prior to TBSCAN for LOCATE    */
 /* @B9  200301  RACFA    When grp/ids (RACFUSR5) don't display D-DSN  */
 /* @B8  200301  RACFA    Display msg when id is an asterisk (*)       */
@@ -681,6 +684,15 @@ LISD:                                                         /* @A1 */
   X = OUTTRAP("OFF")                                          /* @A1 */
   if (erashow = 'YES') then                                   /* @AI */
      call SHOWCMD                                             /* @AI */
+  if (cmd_rc > 0) then do   /* Remove parms */                /* @BC */
+     CMD = "LISTDSD DATASET('"DATASET"')"                     /* @BC */
+     X   = OUTTRAP("WFREC.")                                  /* @BC */
+     ADDRESS TSO cmd                                          /* @BC */
+     cmd_rc = rc                                              /* @BC */
+     X   = OUTTRAP("OFF")                                     /* @BC */
+     if (erashow = 'YES') then                                /* @BC */
+        call SHOWCMD                                          /* @BC */
+  end                                                         /* @BC */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A1 */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A1 */
               "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @A1 */
@@ -696,9 +708,7 @@ LISD:                                                         /* @A1 */
   END                                                         /* @AF */
   ADDRESS TSO "FREE FI("WFDD")"                               /* @A1 */
   DROP WFREC. WFDD WFLDPRM                                    /* @A1 */
-  if (rc = 0) then                                            /* @A1 */
-     "TBMOD" TBLA                                             /* @A1 */
-  else                                                        /* @A1 */
+  if (cmd_rc > 0) then                                        /* @BD */
      CALL racfmsgs "ERR10" /* Generic failure */              /* @B6 */
 RETURN                                                        /* @A1 */
 /*--------------------------------------------------------------------*/
@@ -711,17 +721,18 @@ LISP:                                                         /* @A5 */
   X = OUTTRAP("WFREC.")                                       /* @A5 */
   ADDRESS TSO cmd                                             /* @AI */
   cmd_rc = rc                                                 /* @AZ */
+  X = OUTTRAP("OFF")                                          /* @A5 */
   if erashow = 'YES' then                                     /* @AI */
      call SHOWCMD                                             /* @AI */
-  if (cmd_rc = 4) then do                                     /* @AB */
-     wfrec.1 = ' '                                            /* @AB */
+  if (cmd_rc > 0) then do   /* Remove parms */                /* @AB */
+     X = OUTTRAP("WFREC.")                                    /* @AI */
      CMD     = "LU "ID                                        /* @AI */
      ADDRESS TSO cmd                                          /* @AI */
      cmd_rc = rc                                              /* @AB */
      if (erashow = 'YES') then                                /* @AI */
         call SHOWCMD                                          /* @AI */
+     X = OUTTRAP("OFF")                                       /* @AI */
   end                                                         /* @AB */
-  X = OUTTRAP("OFF")                                          /* @A5 */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A5 */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A5 */
               "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @A5 */
@@ -737,9 +748,7 @@ LISP:                                                         /* @A5 */
   END                                                         /* @AF */
   ADDRESS TSO "FREE FI("WFDD")"                               /* @A5 */
   DROP WFREC. WFDD WFLGPRM                                    /* @A5 */
-  if (ret_code = 0) then                                      /* @AB */
-     "TBMOD" TBLB                                             /* @A5 */
-  else                                                        /* @A5 */
+  if (ret_code <> 0) then                                     /* @AB */
      CALL racfmsgs "ERR15" /* Generic failure */              /* @B6 */
 RETURN                                                        /* @A5 */
 /*--------------------------------------------------------------------*/

@@ -3,7 +3,9 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
-/* @B7  200302  RACFA    Chk RC 'LG GRP PRMS', if RC>0 then 'LG GRP' */
+/* @B9  200302  RACFA    Chk RC 'LU id prms', if RC>0 then 'LU id'    */
+/* @B8  200303  RACFA    Fixed chking RC after executing command      */
+/* @B7  200302  RACFA    Chk RC 'LG grp prms', if RC>0 then 'LG grp' */
 /* @B6  200302  RACFA    Del TBTOP cmd, prior to TBSCAN for LOCATE    */
 /* @B5  200301  RACFA    Del EMSG procedure, instead call RACFMSGS    */
 /* @B4  200228  RACFA    Do not display User=No, Access=Command       */
@@ -441,7 +443,6 @@ RETURN
 /*  List group                                                        */
 /*--------------------------------------------------------------------*/
 LISD:
-  action   = '*LISTED'
   WFDD     = "ERA"RANDOM(0,99999)                             /* @A2 */
   WFLGPRM  = "CSDATA DFP OMVS OVM TME"                        /* @A2 */
   cmd      = "LG "GROUP" "WFLGPRM                             /* @AN */
@@ -475,16 +476,13 @@ LISD:
   END                                                         /* @AK */
   ADDRESS TSO "FREE FI("WFDD")"                               /* @A2 */
   DROP WFREC. WFDD WFLGPRM                                    /* @A2 */
-  if (rc = 0) then
-     "TBMOD" TBLA
-  else
+  if (cmd_rc > 0) then                                        /* @B8 */
      CALL racfmsgs "ERR10" /* Generic failure */              /* @B5 */
 RETURN
 /*--------------------------------------------------------------------*/
 /*  List userid                                                       */
 /*--------------------------------------------------------------------*/
 LISP:
-  action  = '*Listed'                                         /* @A5 */
   WFDD    = "ERA"RANDOM(0,99999)                              /* @A5 */
   WFLUPRM = "CICS CSDATA DCE DFP EIM KERB LANGUAGE",          /* @A5 */
             "LNOTES MFA NDS NETVIEW OMVS OPERPARM",           /* @A5 */
@@ -501,6 +499,15 @@ LISP:
   X = OUTTRAP("OFF")                                          /* @A5 */
   if (erashow = 'YES') then                                   /* @AN */
      call SHOWCMD                                             /* @AN */
+  if (cmd_rc > 0) then DO    /* Remove parms */               /* @B9 */
+     cmd = "LU "ID                                            /* @B9 */
+     X = OUTTRAP("WFREC.")                                    /* @B9 */
+     ADDRESS TSO cmd                                          /* @B9 */
+     cmd_rc = rc                                              /* @B9 */
+     X = OUTTRAP("OFF")                                       /* @B9 */
+     if (erashow = 'YES') then                                /* @B9 */
+        call SHOWCMD                                          /* @B9 */
+  END                                                         /* @B9 */
   ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A5 */
               "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A5 */
               "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @A5 */
@@ -516,9 +523,7 @@ LISP:
   END                                                         /* @AK */
   ADDRESS TSO "FREE FI("WFDD")"                               /* @A5 */
   DROP WFREC. WFDD WFLUPRM                                    /* @A5 */
-  if (rc = 0) then
-     "TBMOD" TBLB
-  else
+  if (cmd_rc > 0) then                                        /* @B9 */
      CALL RACFMSGS "ERR10" /* Generic failure */              /* @B5 */
 RETURN
 /*--------------------------------------------------------------------*/

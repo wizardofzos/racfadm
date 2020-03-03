@@ -30,7 +30,7 @@ _Z+ $Z        #Z                +
         IF (&SROW ^= 0)
            &OPTA = S
   IF (&ERAADMN = YES)
-     VER (&OPTA,LIST,S,R)
+     VER (&OPTA,LIST,S,L,R)
   ELSE
-     VER (&OPTA,LIST,S)
+     VER (&OPTA,LIST,S,L)
 )END
