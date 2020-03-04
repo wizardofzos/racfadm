@@ -4,7 +4,7 @@
   + TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(GREEN)
   ~  TYPE(PS)
 )BODY EXPAND(\\)
-+\-\(%RACFADM - RACF Administration - V8R0+)\-\
++\-\(%RACFADM - RACF Administration - V8R2+)\-\
 %Option ===>_ZCMD                                                              +
 %
 %   0 ~Settings +Customize options
@@ -14,9 +14,9 @@
 %   4 ~General  +General resource _CLASS   +
 %   5 ~RACFprms +RACF parameters
 %   C ~Changes  +Version/updates
+%   I ~Issues   +Known issues
 %   T ~Tutorial +Help
 %   X ~Exit     +Terminate
-+
 +
 +
 +
@@ -83,7 +83,8 @@
       4,'CMD(%RACFCLSR &CLASS)'
       5,'CMD(%RACFPRMJ)'
       6,'CMD(%RACFAUTH)'          /* Hidden - Authorization */
-      C,'CMD(%RACFCHGS)'
+      C,'CMD(%RACFLOG $CHANGES)'
+      I,'CMD(%RACFLOG $ISSUES)'
       T,'PGM(ISPTUTOR) PARM(#RACMENU)'
       X,'EXIT'
     ' ',' '

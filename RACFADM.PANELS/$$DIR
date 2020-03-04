@@ -4,8 +4,9 @@
 
   Member      Subject                   Description
  --------  -------------  --------------------------------------------
- $CHANGES  Updates        Document all changes
- $DIR      Directory      Document members
+ $$DIR     Directory      Document members
+ $CHANGES  Updates        Document all changes and version
+ $ISSUES   Problems       Document all reported issues
  #RACCLSA  Tutorial       Add/Change class profile
  #RACCLSR  Tutorial       List classes (show, refresh)
  #RACCLSS  Tutorial       List classes (show)

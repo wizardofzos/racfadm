@@ -2,6 +2,14 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  04 Mar 2020 - V8R2
+     - Other Items
+       * Renamed/updated members: $$DIR, $ISSUES, etc.
+
+  03 Mar 2020 - V8R1
+     - Main Menu
+       * Added menu option 'I', Issues, display known/open issues
+
   03 Mar 2020 - V8R0
      - Other Items
        * General clean up of code in several modules

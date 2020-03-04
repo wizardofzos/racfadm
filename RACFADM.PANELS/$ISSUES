@@ -1,0 +1,72 @@
+*---------------------------------------------------------------------*
+*                           RACFADM - Issues
+*---------------------------------------------------------------------*
+  PMR        COMPONENT   STATUS   SUBMITTER  FIX RELEASE
+  200302-D   RACFUSR     Open     sbgolob
+
+  DESCRIPTION:
+    Create worked fine.  Delete also seemed to work fine.  Just left
+    over datasets like the ISPF profile and userid.BRODCAST
+
+  STATUS:
+    Problem identified.  Fix in progress (TRIDJK).
+*---------------------------------------------------------------------*
+  PMR        COMPONENT   STATUS   SUBMITTER  FIX RELEASE
+  200302-C   RACFGRP     Open     sbgolob
+
+  DESCRIPTION:
+   When you add a new group, it doesn't show up in the list of groups,
+   until you re-do the list.
+
+  Status:
+    ???
+*---------------------------------------------------------------------*
+  PMR        COMPONENT   STATUS   SUBMITTER  FIX RELEASE
+  200302-B   RACFUSR     Open     sbgolob
+
+  DESCRIPTION:
+    If you add a new and different userid under a circumstance when it
+    is an error to do so, it still gets added to the ISPF table of
+    userids, and it doesn't come off unless you redisplay the table.
+
+  STATUS:
+    ???
+*---------------------------------------------------------------------*
+  PMR        COMPONENT   STATUS   SUBMITTER  FIX RELEASE
+  200302-A   RACFDSN     Open     sbgolob
+
+  DESCRIPTION:
+    With dataset profiles that got added, and they didn't show up in
+    the table until you redisplayed it.  Most of the times though, the
+    new items DO show up, and most of the times deleted items don't
+    show up.
+
+  STATUS:
+    ???
+*---------------------------------------------------------------------*
+  PMR        COMPONENT   STATUS   SUBMITTER  FIX RELEASE
+  200301-B   RACFUSR     Open     sbgolob
+
+  DESCRIPTION:
+    With RACF command tracing on, and you do the "C"  on the id, and
+    change TSO from NO to YES, you get some strange pathing through
+    RACF commands, it seems to be looping through them, then you get
+    multiple windows, and then when you finally get out of the mess,
+    with enough PF3's, the job actually seems to have been done.
+
+  STATUS:
+    Problem identified.  Fix in progress (TRIDJK).
+*---------------------------------------------------------------------*
+  PMR        COMPONENT   STATUS   SUBMITTER  FIX RELEASE
+  200301-A   RACFUSR     Open     sbgolob
+
+  DESCRIPTION:
+    I tried to do a change on a userid with a TSO segment, to delete
+    the TSO Segment.  The dialog said that there was no more TSO
+    segment in the list, but it was still there, and you could LOGON
+    to it.  In other words, NO ACTUAL DELETION.  I don't think there
+    is a command issued to delete the TSO segment.
+
+  STATUS:
+    To delete a TSO Segment, issue the "ALTUSER user NOTSO" command.
+*---------------------------------------------------------------------*

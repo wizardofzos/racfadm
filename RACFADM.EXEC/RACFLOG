@@ -1,25 +1,32 @@
 /*%NOCOMMENT====================* REXX *==============================*/
-/*  PURPOSE:  RACFADM - Changes - Menu option C                       */
+/*  PURPOSE:  RACFADM - Changes/Issues - Menu Option C/I              */
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @A7  200303  RACFA    Def/use variable for edit macro              */
+/* @A6  200303  RACFA    Renamed edit macro to RACFDSPE, was RACFCHGE */
+/* @A5  200303  RACFA    Receive member as a parmater                 */
+/* @A4  200303  RACFA    Renamed mbr to RACFDSP, was RACFCHGS         */
 /* @A3  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
 /* @A2  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
 /* @A1  200220  RACFA    Added capability to browse/edit/view file    */
 /* @A0  200218  RACFA    Created REXX                                 */
 /*====================================================================*/
+EDITMACR = "RACFLOGE"                                         /* @A7 */
+
 ADDRESS ISPEXEC                                               /* @A3 */
+  PARSE ARG MEMBER                                            /* @A5 */
   "VGET (ERADISP ERATRACE) ASIS"                              /* @A2 */
   If (eratrace = 'YES') then Trace r                          /* @A2 */
 
   "QLIBDEF ISPPLIB TYPE(DATASET) ID(DSNAME)"
-  DSNAME = "'"STRIP(DSNAME,,"'")"($CHANGES)'"
+  DSNAME = "'"STRIP(DSNAME,,"'")"("MEMBER")'"                 /* @A5 */
 
   SELECT                                                      /* @A1 */
      WHEN (ERADISP = "VIEW") THEN                             /* @A1 */
-          "VIEW DATASET("DSNAME") MACRO(RACFCHGE)"
+          "VIEW DATASET("DSNAME") MACRO("EDITMACR")"          /* @A7 */
      WHEN (ERADISP = "EDIT") THEN                             /* @A1 */
-          "EDIT DATASET("DSNAME") MACRO(RACFCHGE)"            /* @A1 */
+          "EDIT DATASET("DSNAME") MACRO("EDITMACR")"          /* @A7 */
      OTHERWISE                                                /* @A1 */
           "BROWSE DATASET("DSNAME")"                          /* @A1 */
   END                                                         /* @A1 */
