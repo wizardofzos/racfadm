@@ -20,8 +20,12 @@ To begin using execute the RACFADM member found in the EXEC library.
 *                            Contributors                             *
 *---------------------------------------------------------------------*
 
+             Name                              Website
+  ---------------------------  ---------------------------------------
   Nico Rizzuto (Creator)       http://www.rizzuto.it
   Lionel B. Dyck               http://www.lbdsoftware.com/
-  Bruce Koss
+                               http://github.com/lbdyck
+                               http://www.cbttape.org/
   John Kalinich
   Bill Smith
+  Bruce Koss
