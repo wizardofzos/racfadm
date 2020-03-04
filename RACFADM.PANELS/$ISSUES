@@ -2,6 +2,20 @@
 *                           RACFADM - Issues
 *---------------------------------------------------------------------*
   PMR        COMPONENT   STATUS   SUBMITTER  FIX RELEASE
+  200304-A   RACFUSR     Testing  sbgolob    V8R3
+
+  DESCRIPTION:
+    Added attributes of SPECIAL and OPERATIONS to a userid which
+    didn't have any.  The YES did not show up on the userid menu when
+    it re-displayed, after the change.  In order to see the changes
+    reflected in the table, I had to completely redisplay the
+    userids.
+
+  STATUS:
+    Add code to check to see if attributes where added/removed, if so
+    update the ATT column to contain YES or NO
+*---------------------------------------------------------------------*
+  PMR        COMPONENT   STATUS   SUBMITTER  FIX RELEASE
   200302-D   RACFUSR     Open     sbgolob
 
   DESCRIPTION:

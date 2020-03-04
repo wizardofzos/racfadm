@@ -3,6 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @CE  200304  RACFA    Update ATT field on panel, when updated      */
+/* @CD  200304  RACFA    Del unnecessary double quotes                */
 /* @CC  200303  RACFA    Del 'ret_code' lines for PANEL01... While    */
 /* @CB  200303  RACFA    Chg 'ret_code = 0' to 'cmd_rc = rc'          */
 /* @CA  200303  RACFA    Chg 'RL class ALL' to 'RL class * ALL'       */
@@ -331,9 +333,9 @@ ADDD:
      if (ret_code = 0) then DO
          call EXCMD "ALTUSER ("USER")",
              "OWN("owner") DFLTGRP("defgrp")",
-             "NAME('"name"')" XTR ATTR"",
+             "NAME('"name"')" XTR ATTR,                       /* @CD */
              "TSO (ACCTNUM("tsoacct") PROC("tsoproc")",
-             " SIZE("tsosize") UNIT("tsounit") "
+             "SIZE("tsosize") UNIT("tsounit")"
      END
   END
   IF (cmd_rc > 0) then DO                                     /* @CA */
@@ -341,6 +343,10 @@ ADDD:
      return
   END
 
+  if (attr <> "") THEN                                        /* @CE */
+     ATTR2 = "YES"                                            /* @CE */
+  ELSE                                                        /* @CE */
+     ATTR2 = "NO"                                             /* @CE */
   "TBMOD" TBLA                                                /* @C7 */
   call resd /* Reset Password */                              /* @C7 */
   call disd /* Connect basic group */                         /* @C7 */

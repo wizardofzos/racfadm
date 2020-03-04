@@ -2,6 +2,11 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  04 Mar 2020 - V8R3
+     - User (Option 1)
+       * When changing a userids attributes, update the ATT field
+         accordingly, YES/NO (Issue no. 20040304-A)
+
   04 Mar 2020 - V8R2
      - Other Items
        * Renamed/updated members: $$DIR, $ISSUES, etc.
