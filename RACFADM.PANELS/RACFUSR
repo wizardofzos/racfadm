@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @CG  200305  RACFA    Added 'RESUME' prim. cmd, alias to RESET     */
 /* @CF  200305  TRIDJK   Fix DELETE msgs for ISPPROF and TSOLIB       */
 /* @CE  200304  RACFA    Update ATT field on panel, when updated      */
 /* @CD  200304  RACFA    Del unnecessary double quotes                */
@@ -207,7 +208,8 @@ PROFL:
                 end                                           /* @BE */
              end                                              /* @BE */
          END                                                  /* @LB */
-         WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO            /* @AS */
+         WHEN (ABBREV("RESUME",ZCMD,1) = 1),                  /* @CG */
+            | (ABBREV("RESET",ZCMD,1) = 1) THEN DO            /* @CG */
               sort = 'USER,C,A'                               /* @BJ */
               xtdtop   = 1                                    /* @AS */
               "TBEND" tbla                                    /* @BE */

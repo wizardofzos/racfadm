@@ -21,7 +21,7 @@
 %  C  !Change      +Change user attributes (admin)
 %  A  !Add         +Define a new user (admin)
 %  R  !Remove      +Remove user from RACF (admin)
-%  RS !Reset       +Resume user and initialize the password (admin)
+%  RS !Resume      +Resume user and initialize the password (admin)
 %  RV !Revoke      +Revoke the user (admin)
 )PROC
   &ZUP     = #RACUSR2

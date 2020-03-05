@@ -3,7 +3,11 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
-/* @AI  200301  RACFA    Added back "x = OUTTRAP('trash.')"           */
+/* @AM  200305  RACFA    Del comments and ERROR subroutine            */
+/* @AL  200305  RACFA    Del OUTTRAP('TRASH.') and DISPLAY_MSG proc.  */
+/* @AK  200305  TRIDJK   Add quotes to userid on DELETE/DEFINE ALIAS  */
+/* @AJ  200305  TRIDJK   NOP the ERROR: CHGD: DISPLAY_MSG: sections   */
+/* @AI  200305  TRIDJK   Comment out "x = OUTTRAP('trash.')"          */
 /* @AH  200228  RACFA    Removed ARG() statements, use PARSE ARG      */
 /* @AG  200228  RACFA    Allow turning disp. REXX cmds 'Settings (0)' */
 /* @AF  200228  RACFA    Allow turning tracing on from 'Settings (0)' */
@@ -38,54 +42,43 @@ ADDRESS ISPEXEC                                               /* @AF */
   IF (ERAEGN = "YES") THEN                                    /* @AE */
      ASTERIC = "**"                                           /* @AE */
 
-  signal off error
   parse arg era_cmd user tsoproc tsoacct defgrp owner joblib  /* @AH */
-
-  x = OUTTRAP('trash.')                                       /* @AI */
-  signal on error
   interpret 'signal ' era_cmd
 /*--------------------------------------------------------------------*/
 /*  Add/change userid datasets                                        */
 /*--------------------------------------------------------------------*/
-ADDD:
 CHGD:
+RETURN RC                                                     /* @AJ */
+ADDD:                                                         /* @AJ */
   cmd = "ADDSD  ('"user"."ASTERIC"') UACC(READ)",             /* @AG */
         "OWNER("owner")"                                      /* @AG */
   call exccmd                                                 /* @AG */
-/*-------------------------------------------------------------------*/
-/*- Authorize sys1.brodcast update for alias creation -              */
-/*    "PERMIT 'SYS1.BRODCAST' GEN ACC(UPDATE) ID("USERID()")"        */
-/*- Authorize volume allocation for TSO libraries                    */
-/*    "PERMIT $ALLOC."erauvol" CLASS(USRDASD)"                       */
-/*                  "ACC(UPDATE) ID("USERID()")"                     */
-/*    "SETROPTS RACLIST(USRDASD) REFRESH"                            */
-/*- Authorize MASTER catalog for alias creation                      */
-/*    "PERMIT '"eramcat"' GEN ACC(ALTER) ID("USERID()")"             */
-/*-------------------------------------------------------------------*/
+  IF (cmd_rc > 0) then                                        /* @AM */
+     return cmd_rc                                            /* @AM */
 
   /*- Authorize Library allocation                -*/
   cmd = "PERMIT '"user"."ASTERIC"' GEN ACC(ALTER)",           /* @AG */
                  "ID("USERID()")"                             /* @AG */
   call exccmd                                                 /* @AG */
+  IF (cmd_rc > 0) then                                        /* @AM */
+     return cmd_rc                                            /* @AM */
+
   cmd = "SETROPTS REFRESH GENERIC(DATASET)"                   /* @AG */
   call exccmd                                                 /* @AG */
+  IF (cmd_rc > 0) then                                        /* @AM */
+     return cmd_rc                                            /* @AM */
 
-  /*- Define user alias for datasets -*/
-  signal off error
+  /*- Delete user alias for datasets -*/
   cmd = "DEL '"user"' ALIAS PURGE"                            /* @AG */
   call exccmd                                                 /* @AG */
-  signal on error
+
   Eractlg = Strip(eractlg,b,"'")                              /* @AC */
-  cmd = "DEF ALIAS (NAME("user") RELATE('"eractlg"'))"        /* @AC */
+  cmd = "DEF ALIAS (NAME('"user"') RELATE('"eractlg"'))"      /* @AK */
   call exccmd                                                 /* @AG */
+  IF (cmd_rc > 0) then                                        /* @AM */
+     return cmd_rc                                            /* @AM */
 
   /*- Allocate ISPF profile          -*/
-  signal off error
-/*-------------------------------------------------------------------*/
-/* "ALLOC FILE(DD1) DATASET('"user"."eraispp"') ",                   */
-/*   "UNIT("eraunit") VOLUME("erauvol") NEW SPACE(1,1) TRACKS ",     */
-/*   "BLKSIZE(6400) LRECL(80) RECFM(F B) CATALOG DIR(15)"            */
-/*-------------------------------------------------------------------*/
   cmd = "ALLOC FILE(DD1) DATASET('"user"."eraispp"')",        /* @AG */
               "NEW SPACE(5,5) CYLINDERS",                     /* @AG */
               "BLKSIZE(0) LRECL(80) RECFM(F B)",              /* @AG */
@@ -105,16 +98,24 @@ CHGD:
      call exccmd                                              /* @AG */
   end
 
-  signal on error
   /*- Authorize logon and account to default group  -*/
   cmd = "PE "tsoacct" CLASS(ACCTNUM) ACC(READ) ID("defgrp")"  /* @AG */
   call exccmd                                                 /* @AG */
+  IF (cmd_rc > 0) then                                        /* @AM */
+     return cmd_rc                                            /* @AM */
   cmd = "PE "tsoproc" CLASS(TSOPROC) ACC(READ) ID("defgrp")"  /* @AG */
   call exccmd                                                 /* @AG */
+  IF (cmd_rc > 0) then                                        /* @AM */
+     return cmd_rc                                            /* @AM */
+
   cmd = "SETROPTS RACLIST(ACCTNUM) REFRESH"                   /* @AG */
   call exccmd                                                 /* @AG */
+  IF (cmd_rc > 0) then                                        /* @AM */
+     return cmd_rc                                            /* @AM */
   cmd = "SETROPTS RACLIST(TSOPROC) REFRESH"                   /* @AG */
   call exccmd                                                 /* @AG */
+  IF (cmd_rc > 0) then                                        /* @AM */
+     return cmd_rc                                            /* @AM */
 
   call Delete_Admin_permits
 RETURN RC
@@ -122,26 +123,20 @@ RETURN RC
 /*  Delete userid dataset profile                                     */
 /*--------------------------------------------------------------------*/
 DELD:
-  signal off error
   cmd = "DELDSD  ('"user"."ASTERIC"')"                        /* @AG */
   call exccmd                                                 /* @AG */
-  cmd = "DELETE '"user"."eraulib"'"                           /* @AG */
-  call exccmd                                                 /* @AG */
+  IF (cmd_rc > 0) then                                        /* @AM */
+     return cmd_rc                                            /* @AM */
+
+  if joblib='YES' then do                                     /* @AJ */
+     cmd = "DELETE '"user"."eraulib"'"                        /* @AJ */
+     call exccmd                                              /* @AJ */
+  end                                                         /* @AJ */
   cmd = "DELETE '"user"."eraispp"'"                           /* @AG */
   call exccmd                                                 /* @AG */
-  cmd = "DELETE ("user") ALIAS"                               /* @AG */
+  cmd = "DELETE ('"user"') ALIAS"                             /* @AK */
   call exccmd                                                 /* @AG */
-  signal on error
-RETURN RC
-/*--------------------------------------------------------------------*/
-/*  Delete userid dataset profile                                     */
-/*--------------------------------------------------------------------*/
-ERROR:
-  call Display_msg
-  cmd = "DELDSD  ('"user"."ASTERIC"')"                        /* @AG */
-  call exccmd                                                 /* @AG */
-  call Delete_Admin_permits
-RETURN 8
+RETURN cmd_rc                                                 /* @AM */
 /*--------------------------------------------------------------------*/
 /*  Delete temporary autorizations for RACF administrator             */
 /*--------------------------------------------------------------------*/
@@ -149,15 +144,12 @@ DELETE_ADMIN_PERMITS:
   cmd = "PERMIT '"user"."ASTERIC"' GEN DELETE",               /* @AG */
                  "ID("USERID()")"                             /* @AG */
   call exccmd                                                 /* @AG */
-/*-------------------------------------------------------------------*/
-/*  "PERMIT 'SYS1.BRODCAST' GEN DELETE ID("USERID()")"               */
-/*  "PERMIT '"eramcat"'     GEN DELETE ID("USERID()")"               */
-/*  "PERMIT $ALLOC."erauvol" CLASS(USRDASD) DELETE ID("USERID()")"   */
-/*  "SETROPTS RACLIST(USRDASD) REFRESH"                              */
-/*-------------------------------------------------------------------*/
+  IF (cmd_rc > 0) then                                        /* @AM */
+     return cmd_rc                                            /* @AM */
+
   cmd = "SETROPTS REFRESH GENERIC(DATASET)"                   /* @AG */
   call exccmd                                                 /* @AG */
-RETURN
+RETURN cmd_rc
 /*--------------------------------------------------------------------*/
 /*  Enhanced Generic Name (EGN) = Yes or No                           */
 /*--------------------------------------------------------------------*/
@@ -178,7 +170,7 @@ GETEGN:
   interpret "if (x= '"value"'x) then "variable"="status2
 RETURN 0000
 /*--------------------------------------------------------------------*/
-/*  Display RACF command                                          @BB */
+/*  Execute RACF command                                          @BB */
 /*--------------------------------------------------------------------*/
 EXCCMD:                                                       /* @AG */
 ADDRESS TSO                                                   /* @AG */
@@ -198,20 +190,3 @@ ADDRESS ISPEXEC                                               /* @AG */
   "DISPLAY PANEL("PANELM2")"                                  /* @BL */
   "REMPOP"                                                    /* @BB */
 RETURN                                                        /* @BB */
-/*--------------------------------------------------------------------*/
-/*  Display message                                                   */
-/*--------------------------------------------------------------------*/
-DISPLAY_MSG:
-ADDRESS ISPEXEC                                               /* @A7 */
-  trash_msg = trash.0
-  "VGET (ZSCREEN) ASIS"
-  tblmsg = 'RCFER'ZSCREEN /* make table unique */
-  "TBCREATE" tblmsg "KEYS(MSG) REPLACE NOWRITE"
-  do trash_count=1 to trash_msg
-     msg= trash.trash_count
-     "TBMOD" tblmsg
-  end
-  "TBTOP  " tblmsg
-  "TBDISPL" tblmsg "PANEL("PANEL29")"                         /* @A9 */
-  "TBEND  " tblmsg
-RETURN
