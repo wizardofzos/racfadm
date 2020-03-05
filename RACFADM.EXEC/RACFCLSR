@@ -1,0 +1,286 @@
+/*%NOCOMMENT====================* REXX *==============================*/
+/*  PURPOSE:  RACFADM - General resources - List classes (Menu Opt 4) */
+/*--------------------------------------------------------------------*/
+/* FLG  YYMhDD  USERID   DESCRIPTION                                  */
+/* ---  ------  -------  -------------------------------------------- */
+/* @AO  200303  RACFA    Chg 'RC/Ret_code' to 'cmd_rc' after EXCMD    */
+/* @AN  200303  RACFA    Chg 'RL class ALL' to 'RL class * ALL'       */
+/* @AM  200303  RACFA    Chk RC 'RL cls prms', if RC>0 then 'RL cls'  */
+/* @AL  200303  RACFA    Added line cmd 'L-List'                      */
+/* @AK  200226  RACFA    Fix @AI chg, chg ret_code to cmd_rc          */
+/* @AJ  200226  RACFA    Added 'CONTROL ERRORS RETURN'                */
+/* @AI  200226  RACFA    Added 'Return Code =' when displaying cmd    */
+/* @AH  200226  RACFA    Removed double quotes before/after cmd       */
+/* @AG  200224  RACFA    Standardize quotes, chg single to double     */
+/* @AF  200224  RACFA    Place panels at top of REXX in variables     */
+/* @AE  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
+/* @AD  200223  RACFA    Added primary command SORT                   */
+/* @AC  200223  RACFA    Use dynamic area to display SELECT commands  */
+/* @AB  200222  RACFA    Removed translating OPTA/B, not needed       */
+/* @AA  200222  RACFA    Allow placing cursor on row and press ENTER  */
+/* @A9  200221  RACFA    Added primary commands 'ONLY' and 'RESET'    */
+/* @A8  200221  RACFA    Allow abbreviating the 'LOCATE' command      */
+/* @A7  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
+/* @A6  200220  RACFA    Fixed displaying all RACF commands           */
+/* @A5  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
+/* @A4  200218  RACFA    Condense VGETs into one line                 */
+/* @A3  200120  RACFA    Removed 'say msg.msg_var' in EXCMD procedure */
+/* @A2  200119  RACFA    Standardized/reduced lines of code           */
+/* @A1  200119  RACFA    Placed comment boxes above procedures        */
+/* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
+/*====================================================================*/
+PANEL27 = "RACFCLSR"    /* List classes (show, refresh)    */ /* @AF */
+PANELM2 = "RACFMSG2"    /* Execute RACF Command (pop-up)   */ /* @AF */
+
+ADDRESS ISPEXEC                                               /* @A7 */
+  Arg class
+  "CONTROL ERRORS RETURN"                                     /* @AJ */
+  "VGET (ZSCREEN ERAADMN ERASHOW ERATRACE ERADISP) ASIS"      /* @AL */
+  If (eratrace = 'YES') then Trace r                          /* @A5 */
+  If (ERAADMN = "YES") then                                   /* @AC */
+      SELCMDS = "ÝS¨Show,ÝL¨List,ÝR¨Refresh"                  /* @AL */
+  else                                                        /* @AC */
+      SELCMDS = "ÝS¨Show,ÝL¨List"                             /* @AL */
+
+  rlv = SYSVAR('SYSLRACF')
+  if (class = '') then DO                                     /* @A9 */
+     call Select_class
+     rc = display_table()                                     /* @A9 */
+     "TBEND" tbla                                             /* @A9 */
+  END                                                         /* @A9 */
+  else
+     call RACFCLSG class '**' 'YES' /*generic prof routine*/
+EXIT
+/*--------------------------------------------------------------------*/
+/*  Select class                                                      */
+/*--------------------------------------------------------------------*/
+SELECT_CLASS:
+  seconds = time('S')
+  tbla= 'TB'ZSCREEN||SECONDS  /* table name unique */
+  "TBCREATE" TBLA "KEYS(CLASS)",
+                  "NAMES(ACTION) REPLACE NOWRITE"
+  call get_act_class
+RETURN
+/*--------------------------------------------------------------------*/
+/*  Display profile permits                                           */
+/*--------------------------------------------------------------------*/
+GET_ACT_CLASS:
+  Scan = 'OFF'
+  cmd  = "SETROPTS LIST"                                      /* @A6 */
+  x = OUTTRAP('var.')
+  address TSO cmd                                             /* @A6 */
+  cmd_rc = rc                                                 /* @AI */
+  x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @A6 */
+     call SHOWCMD                                             /* @A6 */
+  Do i = 1 to var.0         /* Scan output */
+     temp = var.i
+     if (rlv > '1081') then  /* RACF 1.9 add blank */
+        temp= ' 'temp
+     Select
+        when (substr(temp,2,16) = 'ACTIVE CLASSES =') then do
+             scan   = 'ON'
+             record = substr(temp,18,80)
+             nwords = words(record)
+             do t = 1 to nwords
+                class = subword(record,t,1)
+                if (class <> 'USER'),
+                 & (class <> 'DATASET'),
+                 & (class <> 'GROUP') then
+                   "TBMOD" tbla
+             end
+        end
+        when (substr(temp,2,25) = 'GENERIC',
+             'PROFILE CLASSES =') then leave
+        otherwise
+          if (scan = 'ON') then do
+             record = var.i
+             nwords = words(record)
+             do t = 1 to nwords
+                class = subword(record,t,1)
+                if (class <> 'USER'),
+                 & (class <> 'DATASET'),
+                 & (class <> 'GROUP') then
+                   "TBMOD" tbla
+             end
+        end
+     End  /* end_select */
+  end /* do i */
+RETURN
+/*--------------------------------------------------------------------*/
+/*  Profiles table display section                                    */
+/*--------------------------------------------------------------------*/
+DISPLAY_TABLE:
+  opta = ' '
+  sort = 'CLASS,C,A'                                          /* @AD */
+  "TBSORT " tbla "FIELDS("sort")"                             /* @AD */
+  "TBTOP  " tbla
+  "TBDISPL" tbla "PANEL("PANEL27")"                           /* @AF */
+  reta = rc
+  do while (reta < 8)   /* tablea */
+     action = ''
+     "CONTROL DISPLAY SAVE"
+     xtdtop = ztdtop                                          /* @A9 */
+     lclass = ''                                              /* @A9 */
+     PARSE VAR ZCMD ZCMD PARM SEQ                             /* @AD */
+     IF (SROW <> "") & (SROW <> 0) THEN                       /* @AA */
+        IF (SROW > 0) THEN DO                                 /* @AA */
+           "TBTOP " TBLA                                      /* @AA */
+           "TBSKIP" TBLA "NUMBER("SROW")"                     /* @AA */
+        END                                                   /* @AA */
+     Select
+        WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO              /* @AD */
+             xtdtop   = 1                                     /* @AD */
+             if (seq = 'A') | (seq = 'D') then                /* @AD */
+                nop                                           /* @AD */
+             else                                             /* @AD */
+                seq = 'A'                                     /* @AD */
+             SELECT                                           /* @AD */
+                when (ABBREV("CLASS",PARM,1) = 1) then        /* @AD */
+                     sort = 'CLASS,C,'seq                     /* @AD */
+                otherwise NOP                                 /* @AD */
+             END                                              /* @AD */
+        END                                                   /* @AD */
+        WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @A8 */
+             lclass = parm                                    /* @A8 */
+        WHEN (ABBREV("ONLY",ZCMD,1) = 1) THEN DO              /* @A9 */
+             find_str = translate(parm)                       /* @A9 */
+             'tbtop ' tbla                                    /* @A9 */
+             'tbskip' tbla                                    /* @A9 */
+             do forever                                       /* @A9 */
+                str = translate(class action)                 /* @A9 */
+                if (pos(find_str,str) > 0) then nop           /* @A9 */
+                else 'tbdelete' tbla                          /* @A9 */
+                'tbskip' tbla                                 /* @A9 */
+                if (rc > 0) then do                           /* @A9 */
+                   'tbtop' tbla                               /* @A9 */
+                   leave                                      /* @A9 */
+                end                                           /* @A9 */
+             end                                              /* @A9 */
+        END                                                   /* @A9 */
+        WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO             /* @A9 */
+             call select_class                                /* @A9 */
+             sort = 'CLASS,C,A'                               /* @AD */
+             xtdtop   = 1                                     /* @A9 */
+        END                                                   /* @A9 */
+        OTHERWISE NOP                                         /* @A8 */
+     End
+     Select
+        when (opta = 'L') then call lisp                      /* @AL */
+        when (opta = 'S') then   /* call generic */
+             call RACFCLSG class '**' 'YES'
+        when (opta = 'R') then call REFRESH
+        otherwise nop
+     End
+     Do while (reta = 4)   /* process multi selection */
+        "CONTROL DISPLAY RESTORE"
+        "TBDISPL" tbla
+        reta = rc
+        "CONTROL DISPLAY SAVE"
+        Select
+           when (opta = 'L') then call lisp                   /* @AL */
+           when (opta = 'S') then /* gen prof. routine */
+                call RACFCLSG class '**' 'YES'
+           when (opta = 'R') then call REFRESH
+           otherwise nop
+        End
+     end
+     opta = ' '
+     "TBSORT" tbla "FIELDS("sort")"
+     "TBTOP " tbla
+     if (lclass <> '') then do
+        class = lclass
+        "TBSARG" TBLA "NEXT NAMECOND(CLASS,GE)"
+        "TBSCAN" TBLA "NOREAD"
+     end
+     else
+        "TBSKIP" tbla "NUMBER("XTDTOP")"
+     "CONTROL DISPLAY RESTORE"
+     "TBDISPL" tbla "PANEL("PANEL27")"                        /* @AF */
+     reta = rc
+  end  /* Do while (reta < 8) */
+RETURN 0
+/*--------------------------------------------------------------------*/
+/*  Refresh class                                                     */
+/*--------------------------------------------------------------------*/
+REFRESH:
+  msg    = 'You are about to refresh class 'class
+  Sure_? = RACFMSGC(msg)
+  if (sure_? = 'YES') then do
+     call EXCMD "SETR RACLIST("class") REFRESH"
+     if (cmd_rc <> 0) then                                    /* @AO */
+        call racfmsgs "ERR10" /* CMD FAILED */
+     else do
+        action = '*REFRESHED'
+        "TBMOD" tbla
+     end
+  end
+RETURN
+/*--------------------------------------------------------------------*/
+/*  Exec command                                                      */
+/*--------------------------------------------------------------------*/
+EXCMD:
+  signal off error
+  arg cmd
+  x = OUTTRAP('msg.')
+  address TSO cmd                                             /* @AH */
+  cmd_rc = rc
+  x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @A6 */
+     call SHOWCMD                                             /* @A6 */
+  if (subword(msg.1,1,1)= 'ICH11009I') |,
+     (subword(msg.1,1,1)= 'ICH10006I') |,
+     (subword(msg.1,1,1)= 'ICH06011I') then
+     raclist = 'YES'
+  else
+     msg_var = 1 to msg.0                                     /* @A3 */
+RETURN
+/*--------------------------------------------------------------------*/
+/*  List class                                                   @AL  */
+/*--------------------------------------------------------------------*/
+LISP:
+  WFDD    = "ERA"RANDOM(0,99999)
+  cmd     = "RL "CLASS" * ALL"                                /* @AN */
+  X = OUTTRAP("WFREC.")
+  ADDRESS TSO cmd
+  cmd_rc = rc
+  X = OUTTRAP("OFF")
+  if (erashow = 'YES') then
+     call SHOWCMD
+  if (cmd_rc > 0) then do    /* Remove parms */               /* @AM */
+     cmd     = "RL "CLASS" *"                                 /* @AN */
+     X = OUTTRAP("WFREC.")                                    /* @AM */
+     ADDRESS TSO cmd                                          /* @AM */
+     cmd_rc = rc                                              /* @AM */
+     X = OUTTRAP("OFF")                                       /* @AM */
+     if (erashow = 'YES') then                                /* @AM */
+        call SHOWCMD                                          /* @AM */
+  end                                                         /* @AM */
+  ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",
+              "LRECL(132) BLKSIZE(0) RECFM(F B)",
+              "UNIT(VIO) SPACE(1 5) CYLINDERS"
+  ADDRESS TSO "EXECIO * DISKW "WFDD" (STEM WFREC. FINIS"
+  "LMINIT DATAID(WFDATAID) DDNAME("WFDD")"
+  SELECT
+     WHEN (ERADISP = "VIEW") THEN
+          "VIEW DATAID("WFDATAID")"
+     WHEN (ERADISP = "EDIT") THEN
+          "EDIT DATAID("WFDATAID")"
+     OTHERWISE
+          "BROWSE DATAID("WFDATAID")"
+  END
+  ADDRESS TSO "FREE FI("WFDD")"
+  DROP WFREC. WFDD
+  if (cmd_rc > 0) then                                        /* @AC */
+     CALL racfmsgs "ERR10" /* Generic failure */              /* @AC */
+RETURN
+/*--------------------------------------------------------------------*/
+/*  Display RACF command                                         @A6  */
+/*--------------------------------------------------------------------*/
+SHOWCMD:                                                      /* @A6 */
+  PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @A6 */
+  MSG4 = "Return code = "cmd_rc                               /* @AI */
+  "ADDPOP ROW(6) COLUMN(4)"                                   /* @AG */
+  "DISPLAY PANEL("PANELM2")"                                  /* @AF */
+  "REMPOP"                                                    /* @AG */
+RETURN                                                        /* @A6 */

@@ -1,0 +1,32 @@
+)ATTR DEFAULT(%+_)
+  _ TYPE(INPUT) INTENS(HIGH) CAPS(ON) JUST(LEFT) HILITE(USCORE)
+  ! TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(TURQ)
+  + TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(GREEN)
+)BODY EXPAND(\\)
+%Tutorial+\-\(%RACFADM - Settings - 2 of 3+)\-\%Tutorial
+%Command ===>_ZCMD                                                             +
+%
++General:
+!  RACF commands   +Enter%YES+to view each RACF command before it is
++                  +issued,%NO+to hide all RACF commands (default)
++
+!  REXX trace      +Enter%YES+to trace the execution of the REXX exec,
++                  %NO+to work without trace (default)
++
++Adding TSO userid:
+!  Master catalog  +Specify the MVS master catalog
++
+!  TSO User catalog+Specify the TSO user catalog in which all new TSO user
++                  +aliases are to be defined
++
+!  TSO ISPPROF     +Specify the name of the TSO profile
++
+!  TSO JOBLIB      +Specify an initial job library to be allocated
++                  +for new TSO users
++
++
++ \ \ (press%ENTER+to continue) \ \
+)PROC
+  &ZUP     = #RACPRM1
+  &ZCONT   = #RACPRM3
+)END

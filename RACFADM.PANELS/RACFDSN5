@@ -1,0 +1,43 @@
+)ATTR DEFAULT(%+_)
+  _ TYPE(INPUT)   INTENS(HIGH) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  $ TYPE(OUTPUT)  INTENS(LOW)  JUST(LEFT) COLOR(TURQ)
+  # TYPE(OUTPUT)  INTENS(LOW)  JUST(LEFT) COLOR(GREEN)
+  { TYPE(TEXT)    INTENS(LOW)  SKIP(ON)   COLOR(BLUE)
+  + TYPE(TEXT)    INTENS(LOW)  SKIP(ON)   COLOR(GREEN)
+  ¬ AREA(DYNAMIC) EXTEND(OFF)
+  ¨ TYPE(DATAOUT) INTENS(LOW)  COLOR(GREEN)
+  Ý TYPE(DATAOUT) INTENS(HIGH)
+)BODY EXPAND(\\)
++\-\(%RACFADM - Dataset Profiles+)\-\
+%Command ===>_ZCMD                                              +Scroll==>_SAMT+
+%
++PROFILE:$DATASET                                        +$TYPE
++UACC:   $UACC    { (Default access)
++OWNER:  $OWNER   { (Owner of profile)
++WARNING:$WARN    { (Warn or fail access, YES/NO)
++AUDIT:  $AUDIT
++                                           +
++SELECT: ¬SELCMDS5                                                             ¬
++
+%S   Group/ID   Access
+%-------------------------------------------------------------------------------
+)MODEL
+_Z+ $Z         #Z
+)INIT
+  .ZVARS   ='(OPTB ID ACC)'
+  .HELP    = #RACMENU
+  &ZCMD    = ' '
+  IF (&SAMT = ' ')
+      &SAMT = &ZSCED
+)PROC
+  &SROW = &Z
+  IF (&ZCMD = &Z)
+     IF (&ZTDSELS = 0)
+        &SROW = .CSRROW
+        IF (&SROW ^= 0)
+           &OPTB = S
+  IF (&ERAADMN = YES)
+     VER (&OPTB,LIST,S,L,C,A,R)
+  ELSE
+     VER (&OPTB,LIST,S,L)
+)END

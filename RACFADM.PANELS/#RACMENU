@@ -1,0 +1,42 @@
+)ATTR DEFAULT(%+_)
+  _ TYPE(INPUT) INTENS(HIGH) CAPS(ON) JUST(LEFT) HILITE(USCORE)
+  ! TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(TURQ)
+  + TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(GREEN)
+  ~  TYPE(PS)
+)BODY EXPAND(\\)
+%Tutorial+\-\(%RACFADM - RACF Administration+)\-\%Tutorial
+%Command ===>_ZCMD
+%
+%RACF Administration+makes many security tasks simple.  It lists user,
++group, data set, and general resource profiles by means of a user-friendly,
++menu-driven interface; it provides interactive modification of most fields.
++
+%Among its features are:+connecting groups to a user, adding permissions,
++user authorization searching across classes, and displaying the group from
++which an authorization is granted.
++
+%Written in customizable Rexx,+RACFADM includes an exec to automate creation
++of aliases or data sets when creating a new TSO user and can browse all RACF
++system options from a single, scrollable display.
++
++The following topics are presented in sequence, or may be selected by number:
++
++  %0 ~Settings           %3 ~Dataset Profiles     %6 ~DSN Access Authority
++  %1 ~User Profiles      %4 ~General Resource     %7 ~Res Access Authority
++  %2 ~Group Profiles     %5 ~RACF Parameters      %8 ~Publications
+)PROC
+&ZSEL = TRANS(&ZCMD  0,#RACPRM1  1,#RACUSR2  2,#RACGRP8  3,#RACDSN2
+                     4,#RACCLSR  5,#RACPRMJ  6,#RACDSNA  7,#RACCLSA
+                     8,#RACPUBL  *,'?')
+&ZUP  = #RACMENU
+)PNTS
+  FIELD(ZPS00001) VAR(ZCMD) VAL('0')
+  FIELD(ZPS00002) VAR(ZCMD) VAL('3')
+  FIELD(ZPS00003) VAR(ZCMD) VAL('6')
+  FIELD(ZPS00004) VAR(ZCMD) VAL('1')
+  FIELD(ZPS00005) VAR(ZCMD) VAL('4')
+  FIELD(ZPS00006) VAR(ZCMD) VAL('7')
+  FIELD(ZPS00007) VAR(ZCMD) VAL('2')
+  FIELD(ZPS00008) VAR(ZCMD) VAL('5')
+  FIELD(ZPS00009) VAR(ZCMD) VAL('8')
+)END

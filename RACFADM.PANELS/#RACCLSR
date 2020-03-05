@@ -1,0 +1,21 @@
+)ATTR DEFAULT(%+_)
+  _ TYPE(INPUT) INTENS(HIGH) CAPS(ON) JUST(LEFT) HILITE(USCORE)
+  ! TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(TURQ)
+  + TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(GREEN)
+)BODY EXPAND(\\)
+%Tutorial+\-\(%RACFADM - General Resource+)\-\%Tutorial
+%Command ===>_ZCMD                                                             +
+%
++Primary Commands
+%  Sort column A/D +Sort a column, in ascending or descending order
+%  Only text       +Only display rows with text string
+%  Locate text     +Locate text in the sorted column
+%  Reset           +Redisplay all rows and sort first column
++
++Line Commands
+%  L  !List        +Issue RLIST command
+%  S  !Show        +Select a class from the list of active classes
+%  R  !Refresh     +Issue a RACLIST refresh on the class
+)PROC
+  &ZUP     = #RACCLSR
+)END

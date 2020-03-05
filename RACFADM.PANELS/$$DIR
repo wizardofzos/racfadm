@@ -1,0 +1,74 @@
+*---------------------------------------------------------------------*
+*                          RACFADM - Panels                           *
+*---------------------------------------------------------------------*
+
+  Member      Subject                   Description
+ --------  -------------  --------------------------------------------
+ $$DIR     Directory      Document members
+ $CHANGES  Updates        Document all changes and version
+ $ISSUES   Problems       Document all reported issues
+ #RACCLSA  Tutorial       Add/Change class profile
+ #RACCLSR  Tutorial       List classes (show, refresh)
+ #RACCLSS  Tutorial       List classes (show)
+ #RACCLS8  Tutorial       List classes and profiles
+ #RACCLS9  Tutorial       List profiles and descriptions
+ #RACDSNA  Tutorial       Add/change dataset profile
+ #RACDSN2  Tutorial       Dataset profile
+ #RACGRP8  Tutorial       Group profile
+ #RACMENU  Tutorial       Main menu, menu option T
+ #RACPRMJ  Tutorial       JES2 parameters
+ #RACPRM1  Tutorial       Settings - Customize options (1 of 3)
+ #RACPRM2  Tutorial       Settings - Customize options (2 of 3)
+ #RACPRM3  Tutorial       Settings - Customize options (3 of 3)
+ #RACPUBL  Tutorial       RACF publications
+ #RACUSR2  Tutorial       User profile
+ RACFAUT1  Authorization  Enter profile/class/user
+ RACFAUT2  Authorization  List group/ids and access
+ RACFCLSB  Class          List members
+ RACFCLSC  Class          Add class
+ RACFCLSD  Class          List class profiles
+ RACFCLSR  Class          List classes (show, refresh), menu option 4
+ RACFCLSS  Class          List classes (show)
+ RACFCLS1  Class          Set filter
+ RACFCLS2  Class          List profiles and descriptions
+ RACFCLS3  Class          Add class
+ RACFCLS4  Class          Change class
+ RACFCLS5  Class          List group/ids and access
+ RACFCLS6  Class          Change access
+ RACFCLS7  Class          Add access
+ RACFCLS8  Class          List classes and profiles
+ RACFDSN1  Dataset        Set filter, menu option 3
+ RACFDSN2  Dataset        List profiles and types
+ RACFDSN3  Dataset        Add profile
+ RACFDSN4  Dataset        Change profile
+ RACFDSN5  Dataset        Show groups and access
+ RACFDSN6  Dataset        Change access
+ RACFDSN7  Dataset        Add access
+ RACFGRP1  Group          Set filter, menu option 2
+ RACFGRP2  Group          Add group
+ RACFGRP4  Group          Alter profile
+ RACFGRP5  Group          List userids and access
+ RACFGRP6  Group          Change connection
+ RACFGRP7  Group          Add connection
+ RACFGRP8  Group          List groups and descriptions
+ RACFMENU  Menu           Main menu
+ RACFMSG1  Message        'Confirm Request' (pop-up panel)
+ RACFMSG2  Message        'Execute RACF Command' (pop-up panel)
+ RACFPRMJ  Parameter      RACF parameters, menu option 5
+ RACFPRMU  Parameter      Settings, customize options, menu option 0
+ RACFUSRT  User           Add, change and delete a TSO userid
+ RACFUSR1  User           Set filter, menu option 1
+ RACFUSR2  User           List userids (admin/user)
+ RACFUSR3  User           Show groups and access
+ RACFUSR4  User           Connect profile
+ RACFUSR5  User           Change user
+ RACFUSR6  User           Add user
+ RACFUSR7  User           Change connection
+ RACFUSR8  User           Alter TSO segment
+
+ Notes:
+   - Class is 'General Resources'
+   - (admin) = Administrator
+     * Line cmds: Show, Search, List, Chg, Add, Remove, Reset, Revoke
+   - (user)  = General user
+     * Line cmds: Show, Search, List

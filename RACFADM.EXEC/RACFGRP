@@ -1,0 +1,716 @@
+/*%NOCOMMENT====================* REXX *==============================*/
+/*  PURPOSE:  RACFADM - Group profiles - Menu option 2                */
+/*--------------------------------------------------------------------*/
+/* FLG  YYMMDD  USERID   DESCRIPTION                                  */
+/* ---  ------  -------  -------------------------------------------- */
+/* @BB  200303  RACFA    Del 'ret_code = rc', not referenced          */
+/* @BA  200303  RACFA    Chg 'RL class ALL' to 'RL class * ALL'       */
+/* @B9  200302  RACFA    Chk RC 'LU id prms', if RC>0 then 'LU id'    */
+/* @B8  200303  RACFA    Fixed chking RC after executing command      */
+/* @B7  200302  RACFA    Chk RC 'LG grp prms', if RC>0 then 'LG grp' */
+/* @B6  200302  RACFA    Del TBTOP cmd, prior to TBSCAN for LOCATE    */
+/* @B5  200301  RACFA    Del EMSG procedure, instead call RACFMSGS    */
+/* @B4  200228  RACFA    Do not display User=No, Access=Command       */
+/* @B3  200228  RACFA    Check for 'NO ENTRIES MEET SEARCH CRITERIA'  */
+/* @B2  200226  RACFA    Fix @AZ chg, chg ret_code to cmd_rc          */
+/* @B1  200226  RACFA    Added 'CONTROL ERRORS RETURN'                */
+/* @AZ  200226  RACFA    Added 'Return Code =' when displaying cmd    */
+/* @AY  200226  RACFA    Removed double quotes before/after cmd       */
+/* @AX  200224  RACFA    Standardize quotes, chg single to double     */
+/* @AW  200224  RACFA    Place panels at top of REXX in variables     */
+/* @AV  200223  RACFA    Del 'address TSO "PROFILE MSGID"', not needed*/
+/* @AU  200223  RACFA    Simplified SORT, removed FLD/DFL_SORT vars   */
+/* @AT  200222  RACFA    Allowing abbreviating the column in SORT cmd */
+/* @AS  200222  RACFA    Removed translating OPTA/B, not needed       */
+/* @AR  200222  RACFA    Allow placing cursor on row and press ENTER  */
+/* @AQ  200221  RACFA    Removed "G = '(G)'", not referenced          */
+/* @AP  200221  LBD      Add ONLY primary command                     */
+/* @AO  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
+/* @AN  200220  RACFA    Fixed displaying all RACF commands           */
+/* @AM  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
+/* @AL  200220  RACFA    Removed initializing ERASINT variable        */
+/* @AK  200220  RACFA    Added capability to browse/edit/view file    */
+/* @AJ  200218  RACFA    Use dynamic area to display SELECT commands  */
+/* @AI  200218  RACFA    Added 'Status Interval' option               */
+/* @AH  200216  RACFA    Chg color to turq/green, was white/turq      */
+/* @AG  200207  RACFA    Fix color of sort col, when F3, diff. id     */
+/* @AF  200207  RACFA    Fix SORT, place at top of table              */
+/* @AE  200207  RACFA    Fix RESET, was not placing at top of table   */
+/* @AD  200207  RACFA    Fix LOCATE, not working when sort descending */
+/* @AC  200206  TRIDJK   Allow A/D in SORT command                    */
+/* @AB  200123  RACFA    Retrieve default filter, Option 0 - Settings */
+/* @AA  200122  RACFA    Del TBTOP placed in by change @A3            */
+/* @A9  200122  TRIDJK   Test/del MFA option from 'LU userid' command */
+/* @A8  200120  RACFA    Removed 'say msg.msg_var' in EXCMD procedure */
+/* @A7  200119  RACFA    Standardized/reduced lines of code           */
+/* @A6  200119  RACFA    Added comment box above procedures           */
+/* @A5  200118  RACFA    Added line command 'L', list userid          */
+/* @A4  200116  RACFA    Changed colors, White/Turq, was Turq/Blue    */
+/* @A3  200115  RACFA    Add SORT/LOCATE/RESET commands               */
+/* @A2  200113  RACFA    Add alloc/exec/free, instead of RACFLIST     */
+/* @A1  200110  RACFA    Invoke RACFLIST when displaying a userid     */
+/* @A0  011229  NICORIZ  Created REXX, V2.1, www.rizzuto.it           */
+/*====================================================================*/
+PANEL01 = "RACFGRP1"    /* Set filter, menu option 2       */ /* @AW */
+PANEL02 = "RACFGRP2"    /* Add group                       */ /* @AW */
+PANEL04 = "RACFGRP4"    /* Alter profile                   */ /* @AW */
+PANEL05 = "RACFGRP5"    /* List userids and access         */ /* @AW */
+PANEL06 = "RACFGRP6"    /* Change connection               */ /* @AW */
+PANEL07 = "RACFGRP7"    /* Add connection                  */ /* @AW */
+PANEL08 = "RACFGRP8"    /* List groups and descriptions    */ /* @AW */
+PANELM1 = "RACFMSG1"    /* Confirm Request (pop-up)        */ /* @AW */
+PANELM2 = "RACFMSG2"    /* Execute RACF Command (pop-up)   */ /* @AW */
+
+ADDRESS ISPEXEC                                               /* @AO */
+  Rclass = 'GROUP'
+  lparm  = ''                            /* Locate parm */    /* @A3 */
+  Arg Rfilter
+  If (Rfilter = '') Then Do                                   /* @AB */
+     "VGET (ERAFLTR) ASIS"                                    /* @AB */
+     Rfilter = ERAFLTR                                        /* @AB */
+  end                                                         /* @AB */
+  "CONTROL ERRORS RETURN"                                     /* @B1 */
+  "VGET (ZSCREEN ERASHOW ERATRACE ERASINT",                   /* @AI */
+        "ERAADMN ERADISP) ASIS"                               /* @AK */
+  If (eratrace = 'YES') then Trace r                          /* @AM */
+  If (ERAADMN = "YES") then                                   /* @B2 */
+      SELCMDS = "ÝS¨Show,ÝL¨List,ÝC¨Change,ÝA¨Add,ÝR¨Remove"  /* @AJ */
+  else
+      SELCMDS = "ÝS¨Show,ÝL¨list"                             /* @AJ */
+  rlv    = SYSVAR('SYSLRACF')
+  called = SYSVAR('SYSNEST')
+  If (called = 'YES') then "CONTROL NONDISPL ENTER"
+  "DISPLAY PANEL("PANEL01")" /* get profile filter */         /* @AW */
+  Do while (rc = 0)
+     call Profl
+     If (called <> 'YES') then do
+        "DISPLAY PANEL("PANEL01")"                            /* @AW */
+     end
+  end
+EXIT
+/*--------------------------------------------------------------------*/
+/*  Show all profiles for a filter                                    */
+/*--------------------------------------------------------------------*/
+PROFL:
+  call create_table                                           /* @AP */
+  if (group = 'INVALID') | (group = 'NO') then do             /* @B3 */
+     "TBEND" tbla
+     if (cmd_rc > 0) then DO                                  /* @C5 */
+        call racfmsgs 'ERR16'                                 /* @B3 */
+        RETURN                                                /* @C5 */
+     END                                                      /* @C5 */
+     return
+  end
+  /* profiles table display section */
+  opta = ' '
+  sort = 'GROUP,C,A'                                          /* @AU */
+  CLRGROU = "TURQ";  CLRDATA = "GREEN"   /* Col. colors */    /* @AH */
+  "TBSORT " tbla "FIELDS("sort")"                             /* @AU */
+  "TBTOP  " tbla
+  "TBDISPL" tbla "PANEL("PANEL08")"                           /* @AW */
+  reta = rc
+  do while (reta < 8)   /* tablea panel */
+     "CONTROL DISPLAY SAVE"
+     xtdtop = ztdtop
+     lparm = ""                                               /* @A3 */
+     PARSE VAR ZCMD ZCMD PARM seq                             /* @AC */
+     IF (SROW <> "") & (SROW <> 0) THEN                       /* @AR */
+        IF (SROW > 0) THEN DO                                 /* @AR */
+           "TBTOP " TBLA                                      /* @AR */
+           "TBSKIP" TBLA "NUMBER("SROW")"                     /* @AR */
+        END                                                   /* @AR */
+     Select
+        WHEN (ABBREV("SORT",ZCMD,1) = 1) THEN DO              /* @AF */
+             xtdtop   = 1                                     /* @AE */
+             if (seq = 'A') | (seq = 'D') then                /* @AF */
+                nop                                           /* @AF */
+             else                                             /* @AF */
+                seq = 'A'                                     /* @AF */
+             SELECT                                           /* @A3 */
+                when (ABBREV("GROUP",PARM,1) = 1) then        /* @AT */
+                     sort = 'GROUP,C,'seq                     /* @AU */
+                when (ABBREV("DESCRIPTION",PARM,1) = 1) then  /* @AT */
+                     sort = 'DATA,C,'seq                      /* @AU */
+                otherwise NOP                                 /* @A3 */
+             END                                              /* @A3 */
+        END                                                   /* @AF */
+        WHEN (ABBREV("LOCATE",ZCMD,1) = 1) THEN               /* @A3 */
+             lparm = parm                                     /* @A3 */
+        WHEN (ABBREV("ONLY",ZCMD,1) = 1) THEN DO              /* @AP */
+             find_str = translate(parm)                       /* @AP */
+             'tbtop ' tbla                                    /* @AP */
+             'tbskip' tbla                                    /* @AP */
+             do forever                                       /* @AP */
+                str = translate(group data)                   /* @AP */
+                if (pos(find_str,str) > 0) then nop           /* @AP */
+                else 'tbdelete' tbla                          /* @AP */
+                'tbskip' tbla                                 /* @AP */
+                if (rc > 0) then do                           /* @AP */
+                   'tbtop' tbla                               /* @AP */
+                   leave                                      /* @AP */
+                end                                           /* @AP */
+             end                                              /* @AP */
+        END                                                   /* @AP */
+        WHEN (ABBREV("RESET",ZCMD,1) = 1) THEN DO             /* @AE */
+             sort = 'GROUP,C,A'                               /* @AU */
+             xtdtop   = 1                                     /* @AE */
+             call create_table                                /* @AP */
+        END                                                   /* @AE */
+        otherwise lparm = ''
+     End  /* Select */
+     ZCMD = ""; PARM = ""                                     /* @A3 */
+     Select
+        when (opta = 'A') then call Addd
+        when (opta = 'C') then call Chgd
+        when (opta = 'L') then call Lisd
+        when (opta = 'R') then call Deld
+        when (opta = 'S') then call Disd
+        otherwise nop
+     End /* Select */
+     Do while (reta = 4)   /* process multi selection */
+        "CONTROL DISPLAY RESTORE"
+        "TBDISPL" tbla
+        reta = rc
+        "CONTROL DISPLAY SAVE"
+        IF (SROW <> "") & (SROW <> 0) THEN                    /* @AR */
+           IF (SROW > 0) THEN DO                              /* @AR */
+              "TBTOP " TBLA                                   /* @AR */
+              "TBSKIP" TBLA "NUMBER("SROW")"                  /* @AR */
+           END                                                /* @AR */
+        Select
+           when (opta = 'A') then call Addd
+           when (opta = 'C') then call Chgd
+           when (opta = 'S') then call Disd
+           when (opta = 'R') then call Deld
+           when (opta = 'L') then call Lisd
+           otherwise nop
+        End
+     end  /* Do while (reta < 4) */
+     PARSE VAR SORT LOCARG "," .                              /* @AU */
+     CLRGROU = "GREEN"; CLRDATA = "GREEN"                     /* @AH */
+     INTERPRET "CLR"SUBSTR(LOCARG,1,4)" = 'TURQ'"             /* @AH */
+     "TBSORT" tbla "FIELDS("sort")"
+     "TBTOP " tbla
+     if (lparm <> '') then do
+        ASTERICK = "*"                                        /* @A3 */
+        INTERPRET LOCARG" = lparm||ASTERICK"                  /* @A3 */
+        PARSE VAR SORT . "," . "," SEQ                        /* @AU */
+        IF (SEQ = "D") THEN                                   /* @AD */
+           CONDLIST = "LE"                                    /* @AD */
+        ELSE                                                  /* @AD */
+           CONDLIST = "GE"                                    /* @AD */
+        "TBSCAN "tbla,                                        /* @A3 */
+                "ARGLIST("LOCARG") CONDLIST("CONDLIST")"      /* @AD */
+     end
+     else
+        "TBSKIP" tbla "NUMBER("XTDTOP")"
+     opta = ' '
+     "CONTROL DISPLAY RESTORE"
+     "TBDISPL" tbla "PANEL("PANEL08")"                        /* @AW */
+     reta = rc
+  end  /* Do while (reta < 8) */
+RETURN
+/*--------------------------------------------------------------------*/
+/*  Add new profile                                                   */
+/*--------------------------------------------------------------------*/
+ADDD:
+  new = 'NO'
+  if (group = 'NONE') then
+     new ='YES'
+  else
+     CALL Getd
+  "DISPLAY PANEL("PANEL02")"                                  /* @AW */
+  if (rc > 0) then
+     return
+  xtr = ' '
+  if (data <> ' ') then
+     xtr = xtr "DATA('"data"')"
+  call EXCMD "AG ("group") OWNER("owner")",
+             "SUPGROUP("supgrp")" xtr
+  if (cmd_rc > 0) then do                                     /* @BA */
+     CALL racfmsgs 'ERR01' /* Add DSD failed */               /* @B5 */
+     return
+  end
+  "TBMOD" TBLA
+  if (new = 'YES') then do
+     group = 'NONE'
+     "TBDELETE"  TBLA
+  end
+RETURN
+/*--------------------------------------------------------------------*/
+/*  Add new profile                                                   */
+/*--------------------------------------------------------------------*/
+CHGD:
+  if (group = 'NONE') then
+     return
+  CALL Getd
+  "DISPLAY PANEL("PANEL04")"                                  /* @AW */
+  if (rc > 0) then return
+  xtr = ' '
+  if (data <> ' ') then do
+     if data = 'NONE' then
+        data = ' '
+     xtr = xtr "DATA('"DATA"')"
+  end
+  call EXCMD "ALG ("group") OWNER("OWNER")",
+             "SUPGROUP("SUPGRP")" xtr
+  if (cmd_rc > 0) then                                        /* @BA */
+     call racfmsgs 'ERR07' /* Altgroup failed */              /* @B5 */
+  else
+     "TBMOD" tbla
+RETURN
+/*--------------------------------------------------------------------*/
+/*  Delete profile                                                    */
+/*--------------------------------------------------------------------*/
+DELD:
+  if (group = 'NONE') then
+     return
+  msg    = 'You are about to delete 'group
+  Sure_? = Confirm_delete(msg)
+  if (sure_? = 'YES') then do
+     call EXCMD "DG ("group")"
+     if (cmd_rc = 0) then                                     /* @BA */
+        "TBDELETE" TBLA
+     else
+       CALL racfmsgs "ERR02" /* RDELETE failed */             /* @B5 */
+  end
+RETURN
+/*--------------------------------------------------------------------*/
+/*  Display profile permits                                           */
+/*--------------------------------------------------------------------*/
+DISD:
+  if (group = 'NONE') then
+     return
+  Do until (RB = 'NO')   /* allow rebuild option to loop */
+     tblb = 'TB'ZSCREEN||SECONDS   /* table name unique */
+     "TBCREATE" TBLB "KEYS(ID) NAMES(ACC)",
+                     "REPLACE NOWRITE"
+     flags = 'OFF'
+     audit = ' '
+     owner = ' '
+     uacc  = ' '
+     data  = ' '
+     cmd   = "LG "group                                       /* @AN */
+     x = OUTTRAP('VAR.')
+     address TSO cmd                                          /* @AN */
+     cmd_rc = rc                                              /* @AZ */
+     x = OUTTRAP('OFF')
+     if (erashow = 'YES') then                                /* @AN */
+        call SHOWCMD                                          /* @AN */
+     Do i = 1 to var.0          /* Scan output */
+        temp = var.i
+        if (rlv > '1081') then  /* RACF 1.9 add blank */
+           temp = ' 'temp
+        l = LENGTH(temp)
+        if (uacc = ' ') then
+           if (substr(temp,6,14) = 'SUPERIOR GROUP') then do
+              temp   = var.i
+              uacc   = substr(temp,20,8)
+              supgrp = substr(temp,20,8)
+              owner  = substr(temp,39,8)
+           end
+        if (data = ' ') then
+           if (substr(temp,6,17) = 'INSTALLATION DATA') then do
+              temp = var.i
+              data =  substr(temp,23,45)
+              i    = i + 1
+              temp = var.i
+              if (substr(temp,5,8) <> 'NO MODEL') &,
+                 (substr(temp,5,5) <> 'MODEL') then
+                 data = data || strip(substr(temp,23,45),'t')
+            end
+        if (flags = 'ON') then do
+           if (l = 1) | (l = 2) then
+              flags = 'OUT'     /* end access list */
+           if (l > 8) then
+              if (substr(temp,1,60) = ' ') then
+                 flags = 'OUT'  /* end access list */
+        end
+        if (flags = 'ON') then do
+           if (substr(temp,2,10) = 'No Command') then iterate /* @B4 */
+           if (substr(temp,2,10) = 'NO ENTRIES') then do
+              id  = 'NONE'       /* empty access list */
+              acc = 'DEFINED'
+           end
+           else do
+              id  = subword(temp,1,1)
+              acc = subword(temp,2,1)
+           end
+           if (substr(temp,8,2) <> ' ') then
+              "TBMOD" tblb
+        end
+        if (subword(temp,1,1) = 'USER(S)=') then do
+           flags = 'ON'   /* start access list */
+        end
+     end /* loop scan output */
+     /* Permit table display section */
+     rb   = 'NO'
+     optb = ' '
+     drop rownum
+     "TBQUERY" tblb "ROWNUM("rownum")"
+     if (rownum = 0) then do
+        id = 'NONE'
+        "TBMOD" tblb
+     end
+     "TBSORT " tblb "FIELDS(ID)"
+     "TBTOP  " tblb
+     "TBDISPL" tblb "PANEL("PANEL05")"                        /* @AW */
+     retb = rc
+     Do while (retb < 8)        /* tableb panel */
+        "CONTROL DISPLAY SAVE"
+        IF (SROW <> "") & (SROW <> 0) THEN                    /* @AR */
+           IF (SROW > 0) THEN DO                              /* @AR */
+              "TBTOP " TBLB                                   /* @AR */
+              "TBSKIP" TBLB "NUMBER("SROW")"                  /* @AR */
+           END                                                /* @AR */
+        Select
+           when (optb = 'A')  then call Addp
+           when (optb = 'C')  then call Chgp
+           when (optb = 'L')  then call Lisp                  /* @A5 */
+           when (optb = 'R')  then call Delp
+           when (optb = 'S')  then call RACFUSR id
+           when (optb = 'SE') then call RACFCLSS id
+           otherwise nop
+        End
+        Do while (retb = 4)   /* process multi-section */
+           "CONTROL DISPLAY RESTORE"
+           "TBDISPL" tblb
+           retb = rc
+           "CONTROL DISPLAY SAVE"
+           Select
+              when (optb = 'A')  then call Addp
+              when (optb = 'C')  then call Chgp
+              when (optb = 'L')  then call Lisp               /* @A5 */
+              when (optb = 'R')  then call Delp
+              when (optb = 'S')  then call RACFUSR id
+              when (optb = 'SE') then call RACFCLSS id
+              otherwise nop
+           End
+        end /* While retb= 4 */
+        optb = ' '
+        "CONTROL DISPLAY RESTORE"
+        "TBSORT" tblb "FIELDS(ID)"
+        "TBTOP " tblb
+        "TBSKIP" tblb "NUMBER("ZTDTOP")"
+        if (rb = "YES") then
+           retb = 12         /* rebuild table required */
+        else do
+           "TBDISPL" tblb "PANEL("PANEL05")"                  /* @AW */
+           retb = rc
+        end
+     end /* While retb < 8 */
+     "TBEND" tblb
+  end /* Do until */
+RETURN
+/*--------------------------------------------------------------------*/
+/*  Get LG info to initialize add or change option                    */
+/*--------------------------------------------------------------------*/
+GETD:
+  owner  = ' '
+  data   = ' '
+  supgrp = ' '
+  cmd    = "LG "group                                         /* @AN */
+  x = OUTTRAP('details.')
+  address TSO cmd                                             /* @AN */
+  cmd_rc = rc                                                 /* @AZ */
+  x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @AN */
+     call SHOWCMD                                             /* @AN */
+  parse var details.2 'SUPERIOR GROUP=' supgrp 'OWNER=' owner
+  parse var details.3 'INSTALLATION DATA=' data_1st_line
+  data_2nd_line = details.4
+  if (subword(data_2nd_line,2,1) = 'MODEL') |,
+     (subword(data_2nd_line,1,1) = 'MODEL') then
+     data = data_1st_line
+  else
+     data = data_1st_line||strip(substr(data_2nd_line,23,45),'t')
+RETURN
+/*--------------------------------------------------------------------*/
+/*  Change permit option                                              */
+/*--------------------------------------------------------------------*/
+CHGP:
+  If (id = 'NONE') then
+     return
+  "DISPLAY PANEL("PANEL06")"                                  /* @AW */
+  if (rc > 0) then
+     return
+  call EXCMD "CONNECT ("id") GROUP("group") AUTH("acc")"
+  if (cmd_rc = 0) then                                        /* @BA */
+     "TBMOD" tblb
+  else
+     Call racfmsgs 'ERR03' /* Permit failed */                /* @B5 */
+RETURN
+/*--------------------------------------------------------------------*/
+/*  List group                                                        */
+/*--------------------------------------------------------------------*/
+LISD:
+  WFDD     = "ERA"RANDOM(0,99999)                             /* @A2 */
+  WFLGPRM  = "CSDATA DFP OMVS OVM TME"                        /* @A2 */
+  cmd      = "LG "GROUP" "WFLGPRM                             /* @AN */
+  X = OUTTRAP("WFREC.")                                       /* @A2 */
+  ADDRESS TSO cmd                                             /* @AN */
+  cmd_rc   = rc                                               /* @AZ */
+  X = OUTTRAP("OFF")                                          /* @A2 */
+  if (erashow = 'YES') then                                   /* @AN */
+     call SHOWCMD                                             /* @AN */
+  if (cmd_rc > 0) then DO    /* Remove parms */               /* @B7 */
+     cmd = "LG "GROUP                                         /* @B7 */
+     X = OUTTRAP("WFREC.")                                    /* @B7 */
+     ADDRESS TSO cmd                                          /* @B7 */
+     cmd_rc   = rc                                            /* @B7 */
+     X = OUTTRAP("OFF")                                       /* @B7 */
+     if (erashow = 'YES') then                                /* @B7 */
+        call SHOWCMD                                          /* @B7 */
+  END                                                         /* @B7 */
+  ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A2 */
+              "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A2 */
+              "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @A2 */
+  ADDRESS TSO "EXECIO * DISKW "WFDD" (STEM WFREC. FINIS"      /* @A2 */
+  "LMINIT DATAID(WFDATAID) DDNAME("WFDD")"                    /* @A2 */
+  SELECT                                                      /* @AK */
+     WHEN (ERADISP = "VIEW") THEN                             /* @AK */
+          "VIEW DATAID("WFDATAID")"                           /* @AK */
+     WHEN (ERADISP = "EDIT") THEN                             /* @AK */
+          "EDIT DATAID("WFDATAID")"                           /* @AK */
+     OTHERWISE                                                /* @AK */
+          "BROWSE DATAID("WFDATAID")"                         /* @AK */
+  END                                                         /* @AK */
+  ADDRESS TSO "FREE FI("WFDD")"                               /* @A2 */
+  DROP WFREC. WFDD WFLGPRM                                    /* @A2 */
+  if (cmd_rc > 0) then                                        /* @B8 */
+     CALL racfmsgs "ERR10" /* Generic failure */              /* @B5 */
+RETURN
+/*--------------------------------------------------------------------*/
+/*  List userid                                                       */
+/*--------------------------------------------------------------------*/
+LISP:
+  WFDD    = "ERA"RANDOM(0,99999)                              /* @A5 */
+  WFLUPRM = "CICS CSDATA DCE DFP EIM KERB LANGUAGE",          /* @A5 */
+            "LNOTES MFA NDS NETVIEW OMVS OPERPARM",           /* @A5 */
+            "OVM PROXY TSO WORKATTR"                          /* @A5 */
+  call get_setropts_options                                   /* @A9 */
+  if (rcvtsmfa = 'NO') then do                                /* @A9 */
+     mfa_pos = pos('MFA',wfluprm)                             /* @A9 */
+     wfluprm = delstr(wfluprm,mfa_pos,4)                      /* @A9 */
+  end                                                         /* @A9 */
+  cmd = "LU "ID WFLUPRM                                       /* @AN */
+  X = OUTTRAP("WFREC.")                                       /* @A5 */
+  ADDRESS TSO cmd                                             /* @AN */
+  cmd_rc = rc                                                 /* @AZ */
+  X = OUTTRAP("OFF")                                          /* @A5 */
+  if (erashow = 'YES') then                                   /* @AN */
+     call SHOWCMD                                             /* @AN */
+  if (cmd_rc > 0) then DO    /* Remove parms */               /* @B9 */
+     cmd = "LU "ID                                            /* @B9 */
+     X = OUTTRAP("WFREC.")                                    /* @B9 */
+     ADDRESS TSO cmd                                          /* @B9 */
+     cmd_rc = rc                                              /* @B9 */
+     X = OUTTRAP("OFF")                                       /* @B9 */
+     if (erashow = 'YES') then                                /* @B9 */
+        call SHOWCMD                                          /* @B9 */
+  END                                                         /* @B9 */
+  ADDRESS TSO "ALLOC F("WFDD") NEW REUSE",                    /* @A5 */
+              "LRECL(132) BLKSIZE(0) RECFM(F B)",             /* @A5 */
+              "UNIT(VIO) SPACE(1 5) CYLINDERS"                /* @A5 */
+  ADDRESS TSO "EXECIO * DISKW "WFDD" (STEM WFREC. FINIS"      /* @A5 */
+  "LMINIT DATAID(WFDATAID) DDNAME("WFDD")"                    /* @A5 */
+  SELECT                                                      /* @AK */
+     WHEN (ERADISP = "VIEW") THEN                             /* @AK */
+          "VIEW DATAID("WFDATAID")"                           /* @AK */
+     WHEN (ERADISP = "EDIT") THEN                             /* @AK */
+          "EDIT DATAID("WFDATAID")"                           /* @AK */
+     OTHERWISE                                                /* @AK */
+          "BROWSE DATAID("WFDATAID")"                         /* @AK */
+  END                                                         /* @AK */
+  ADDRESS TSO "FREE FI("WFDD")"                               /* @A5 */
+  DROP WFREC. WFDD WFLUPRM                                    /* @A5 */
+  if (cmd_rc > 0) then                                        /* @B9 */
+     CALL RACFMSGS "ERR10" /* Generic failure */              /* @B5 */
+RETURN
+/*--------------------------------------------------------------------*/
+/*  Get Multi Factor Authentication (MFA) option from RCVT            */
+/*--------------------------------------------------------------------*/
+GET_SETROPTS_OPTIONS:                                         /* @A9 */
+  cvt     = c2x(storage(10,4))      /* cvt address        */  /* @A9 */
+  cvtrac$ = d2x((x2d(cvt))+992)     /* cvt+3E0 = cvtrac $ */  /* @A9 */
+  cvtrac  = c2x(storage(cvtrac$,4)) /* cvtrac=access cntl */  /* @A9 */
+  rc      = setbool(rcvtsmfa,633,'02','NO','YES') /* mfa  */  /* @A9 */
+RETURN                                                        /* @A9 */
+/*--------------------------------------------------------------------*/
+/*  Set boolean value for mask                                        */
+/*--------------------------------------------------------------------*/
+SETBOOL:
+  variable = arg(1)                                           /* @A9 */
+  offset   = arg(2)                                           /* @A9 */
+  value    = arg(3)                                           /* @A9 */
+  status1  = arg(4)                                           /* @A9 */
+  status2  = arg(5)                                           /* @A9 */
+  interpret "rcvtsta$= d2x((x2d("cvtrac"))+"offset")"         /* @A9 */
+  x        = storage(rcvtsta$,1)                              /* @A9 */
+  interpret variable '= 'status1                              /* @A9 */
+  interpret "x=bitand(x,'"value"'x)" /*remove bad bits*/      /* @A9 */
+  interpret "if (x= '"value"'x) then "variable"="status2      /* @A9 */
+RETURN 0                                                      /* @A9 */
+/*--------------------------------------------------------------------*/
+/*  Add permit option                                                 */
+/*--------------------------------------------------------------------*/
+ADDP:
+  new = 'NO'
+  if (id = 'NONE') then
+     new = 'YES'
+  from = ' '
+  "DISPLAY PANEL("PANEL07")"                                  /* @AW */
+  if (rc > 0) then
+     return
+  idopt = ' '
+  if (id <> ' ') then
+     idopt = 'ID('ID') ACCESS('ACC')'
+  fopt = ' '
+  call EXCMD "CONNECT ("id") GROUP("group") AUTH("acc")"
+  if (cmd_rc = 0) then do                                     /* @BA */
+     "TBMOD" tblb
+     if (new = 'YES') then do
+        id = 'NONE'
+        "TBDELETE" tblb
+     end
+  end
+  else do
+     if (from <> ' ') then
+        call racfmsgs 'ERR04' /* Permit Warning/Failed */     /* @B5 */
+     else
+        call racfmsgs 'ERR05' /* Permit Failed */             /* @B5 */
+  end
+RETURN
+/*--------------------------------------------------------------------*/
+/*   Delete permit option                                             */
+/*--------------------------------------------------------------------*/
+DELP:
+  if (id = 'NONE') then
+     return
+  msg    = 'You are about to delete access for 'ID
+  Sure_? = Confirm_delete(msg)
+  if (sure_? = 'YES') then do
+     call EXCMD "REMOVE "id" GROUP("group")"
+     if (cmd_rc = 0) then                                     /* @BA */
+        "TBDELETE" tblb
+     else
+        call racfmsgs 'ERR06' /* Permit Failed */             /* @B5 */
+  end
+RETURN
+/*--------------------------------------------------------------------*/
+/*  Confirm delete                                                    */
+/*--------------------------------------------------------------------*/
+CONFIRM_DELETE:
+  signal off error
+  arg message
+  answer  = 'NO'
+  zwinttl = 'CONFIRM REQUEST'
+  Do until (ckey = 'PF03') | (ckey = 'ENTER')
+    "CONTROL NOCMD"                                           /* @AX */
+    "ADDPOP"                                                  /* @AX */
+    "DISPLAY PANEL("PANELM1")"                                /* @AW */
+    "REMPOP"                                                  /* @AX */
+  end
+  Select
+     when (ckey = 'PF03')  then answer = 'NO'
+     when (ckey = 'ENTER') then answer = 'YES'
+     otherwise nop
+  End
+  zwinttl = ' '
+RETURN answer
+/*--------------------------------------------------------------------*/
+/*  Exec command                                                      */
+/*--------------------------------------------------------------------*/
+EXCMD:
+  signal off error
+  arg cmd
+  x = OUTTRAP('msg.')
+  address TSO cmd                                             /* @AY */
+  cmd_rc = rc
+  x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @AN */
+     call SHOWCMD                                             /* @AN */
+  if (subword(msg.1,1,1)= 'ICH11009I') |,
+     (subword(msg.1,1,1)= 'ICH10006I') |,
+     (subword(msg.1,1,1)= 'ICH06011I') then raclist = 'YES'
+  else
+     msg_var = 1 to msg.0
+RETURN
+/*--------------------------------------------------------------------*/
+/*  Display RACF command                                          @AN */
+/*--------------------------------------------------------------------*/
+SHOWCMD:                                                      /* @AN */
+  PARSE VAR CMD MSG1 60 MSG2 121 MSG3                         /* @AN */
+  MSG4 = "Return code = "cmd_rc                               /* @AZ */
+  "ADDPOP ROW(6) COLUMN(4)"                                   /* @AX */
+  "DISPLAY PANEL("PANELM2")"                                  /* @AW */
+  "REMPOP"                                                    /* @AX */
+RETURN                                                        /* @AN */
+/*--------------------------------------------------------------------*/
+/*  Create table                                                  @AP */
+/*--------------------------------------------------------------------*/
+CREATE_TABLE:                                                 /* @AP */
+  seconds = TIME('S')
+  tbla    = 'TA'ZSCREEN||SECONDS  /* table name unique */
+  "TBCREATE" tbla "KEYS(GROUP) NAMES(DATA) REPLACE NOWRITE"
+  cmd = "SEARCH FILTER("RFILTER") CLASS("rclass")"            /* @AN */
+  x = OUTTRAP('var.')
+  address TSO cmd                                             /* @AN */
+  cmd_rc = rc                                                 /* @AZ */
+  x = OUTTRAP('OFF')
+  if (erashow = 'YES') then                                   /* @AN */
+     call SHOWCMD                                             /* @AN */
+  Do i = 1 to var.0
+     temp  = var.i
+     group = SUBWORD(temp,1,1)
+     msgr  = SUBWORD(temp,1,1)
+     Select
+        when (msgr = 'ICH31005I') then
+             group = 'NONE'       /* No groups  */
+        when (msgr = 'ICH31009I') then do
+             group = 'INVALID'    /* Bad filter */
+             call racfmsgs 'ERR08'                            /* @B5 */
+        end
+        when (msgr = 'ICH31012I') then do
+             group = 'INVALID'    /* Bad filter */
+             call racfmsgs 'ERR08'                            /* @B5 */
+        end
+        when (msgr = 'ICH31014I') then do
+             group = 'INVALID'    /* Bad filter */
+             call racfmsgs 'ERR08'                            /* @B5 */
+        end
+        when (msgr = 'ICH31016I') then do
+             group = 'INVALID'    /* Bad filter */
+             call racfmsgs 'ERR08'                            /* @B5 */
+        end
+        when (msgr = 'ICH31017I') then do
+             group = 'INVALID'    /* Bad filter */
+             call racfmsgs 'ERR08'                            /* @B5 */
+        end
+        when (msgr = 'ICH31018I') then do
+             group = 'INVALID'    /* Bad filter */
+             call racfmsgs 'ERR08'                            /* @B5 */
+        end
+        when (msgr = 'IKJ56716I') then do
+             group = 'INVALID'    /* Bad filter */
+             call racfmsgs 'ERR08'                            /* @B5 */
+        end
+        when (substr(msgr,1,6) = 'ICH310') then
+             call racfmsgs 'ERR09'                            /* @B5 */
+        otherwise nop
+     End  /* Select */
+     /*---------------------------------------------*/
+     /* Display number of records retrieved        -*/
+     /*---------------------------------------------*/
+     IF (ERASINT <> 0) THEN DO     /* Status interval */      /* @AI */
+        IF (I//ERASINT = 0) THEN DO                           /* @AI */
+           n1 = i; n2 = var.0
+           "control display lock"
+           "display msg(RACF013)"
+        END                                                   /* @AI */
+     END                                                      /* @AI */
+     /* Get further information */
+     Call GETD
+     "TBMOD" tbla
+  end /* Do i=1 to var.0 */
+RETURN                                                        /* @AP */

@@ -1,0 +1,16 @@
+/*%NOCOMMENT====================* REXX *==============================*/
+/*  PURPOSE:  RACFADM - User settings - Menu option 0                 */
+/*--------------------------------------------------------------------*/
+/* FLG  YYMMDD  USERID   DESCRIPTION                                  */
+/* ---  ------  -------  -------------------------------------------- */
+/* @A3  200224  RACFA    Place panels at top of REXX in variables     */
+/* @A2  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
+/* @A1  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
+/* @A0  200123  RACFA    Created REXX                                 */
+/*====================================================================*/
+PANEL30 = "RACFPRMU"    /* Settings, menu option 0         */ /* @A3 */
+
+ADDRESS ISPEXEC                                               /* @A2 */
+  "VGET (ERATRACE) ASIS"                                      /* @A1 */
+  If (eratrace = 'YES') then Trace r                          /* @A1 */
+  "Display Panel("PANEL30")"                                  /* @A3 */

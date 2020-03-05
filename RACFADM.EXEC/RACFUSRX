@@ -1,0 +1,55 @@
+/*%NOCOMMENT====================* REXX *==============================*/
+/*  PURPOSE:  RACFADM - Userid profiles - Cross Ref. Rpt (line cmd XR)*/
+/*--------------------------------------------------------------------*/
+/* FLG  YYMMDD  USERID   DESCRIPTION                                  */
+/* ---  ------  -------  -------------------------------------------- */
+/* @A3  200301  RACFA    Standardize messaging                        */
+/* @A2  200221  RACFA    Make 'ADDRESS ISPEXEC' defualt, reduce code  */
+/* @A1  200220  RACFA    Added ERATRACE=YES, then TRACE R             */
+/* @A0  200123  TRIDJK   Created REXX program                         */
+/*====================================================================*/
+ADDRESS ISPEXEC                                               /* @A2 */
+  "VGET (ERATRACE) ASIS"                                      /* @A1 */
+  If (eratrace = 'YES') then Trace r                          /* @A1 */
+  /*--------------------------------------------*/
+  /*  Call IRRUT100 for cross reference report  */
+  /*--------------------------------------------*/
+  Parse Arg user
+
+Address TSO
+  x = outtrap('delete.','*')
+  'delete irrut100.'result
+  x = outtrap('off')
+  'alloc f(sysprint) new reuse unit(sysallda)',
+         'space(1,1) tracks'
+  'alloc f(sysut1)   new reuse unit(sysallda)',
+         'space(1,1) tracks'
+  'alloc f(sysin)    new reuse unit(sysallda)',
+         'lrecl(80) blksize(0) recfm(f b)',
+         'space(1,1) tracks'
+  'newstack'
+  queue user
+  queue
+  'Execio * diskw sysin (finis'
+  "call *(irrut100)"
+  'Execio * diskr sysprint (finis stem sysp.'
+
+  /*---------------------*/
+  /*  Browse the report  */
+  /*---------------------*/
+Address ISPExec
+  'lminit dataid(id) ddname(sysprint) enq(exclu)'
+  if (rc ^= 0) then do
+     racfsmsg = 'Allocation error'                            /* @A3 */
+     racflmsg = 'LMINIT failed for SYSPRINT'                  /* @A3 */
+     'setmsg msg(racf001)'                                    /* @A3 */
+     exit
+  end
+  'Browse dataid('id')'
+  'lmfree dataid('id')'
+
+Address TSO
+  'delstack'
+  'free  f(sysut1 sysprint sysin)'
+  'alloc f(sysin) ds(*) reuse'
+RETURN

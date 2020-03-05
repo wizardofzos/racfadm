@@ -1,0 +1,35 @@
+)ATTR DEFAULT(%+_)
+  _ TYPE(INPUT)  INTENS(HIGH) CAPS(ON)   JUST(LEFT)   HILITE(USCORE)
+  $ TYPE(OUTPUT) INTENS(LOW)  JUST(LEFT) COLOR(TURQ)
+  { TYPE(TEXT)   INTENS(LOW)  SKIP(ON)   COLOR(BLUE)
+  + TYPE(TEXT)   INTENS(LOW)  SKIP(ON)   COLOR(GREEN)
+)BODY EXPAND(\\)
++\-\(%RACFADM - Group Profiles+)\-\
+%Command ===>_ZCMD
+%
++Change RACF%GROUP+connection: %CONNECT+command
++
++
++PROFILE %===>$GROUP   { (Group name)
++USER    %===>$ID      { (User ID)
++
++Change the field below:
++
++ACC     %===>_ACC     { (Access level, USE/JOIN)
++
++
++
++
++
++
++
++
++
++
++\ \Press%ENTER+to process or%END+to exit\ \
+)INIT
+  .CURSOR = ACC
+  .HELP   = #RACMENU
+)PROC
+  VER (&ACC,LIST,NB,JOIN,USE)
+)END

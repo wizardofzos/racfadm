@@ -1,0 +1,6 @@
+RACF011  '&racfsmsg               ' .ALARM=NO .HELP=*
+'&racflmsg'
+RACF012  '                        ' .WINDOW=NORESP
+'Processing class &class : record &n1 of &n2'                              '   +
+RACF013  '                        ' .WINDOW=NORESP
+'Retrieving record &n1 of &n2'                                            '    +

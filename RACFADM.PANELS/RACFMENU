@@ -1,0 +1,102 @@
+)ATTR DEFAULT(%+_)
+  _ TYPE(INPUT)  INTENS(HIGH) CAPS(ON) JUST(LEFT)   HILITE(USCORE)
+  ! TYPE(OUTPUT) INTENS(HIGH) SKIP(ON) COLOR(TURQ)
+  + TYPE(TEXT)   INTENS(LOW)  SKIP(ON) COLOR(GREEN)
+  ~  TYPE(PS)
+)BODY EXPAND(\\)
++\-\(%RACFADM - RACF Administration - V8R3+)\-\
+%Option ===>_ZCMD                                                              +
+%
+%   0 ~Settings +Customize options
+%   1 ~User     +User profiles
+%   2 ~Group    +Group profiles
+%   3 ~Dataset  +Dataset profiles
+%   4 ~General  +General resource _CLASS   +
+%   5 ~RACFprms +RACF parameters
+%   C ~Changes  +Version/updates
+%   I ~Issues   +Known issues
+%   T ~Tutorial +Help
+%   X ~Exit     +Terminate
++
++
++
++
++ ---------------------------------------------------------------------------
++   RACF:!RACFVER     +Dbase:!RACFDSN
++   z/OS:!ZOSVER      +Plex: !ZSYSPLEX    +Lpar:!ZSYSID
++   Date:!ZDATE       +Jdate:!ZJDATE      +Time:!ZTIME
++   User:!ZUSER       +Group:!RACFGRP     +Name:!RACFNAM
++ ---------------------------------------------------------------------------
+)INIT
+  .CURSOR = ZCMD
+  .HELP   = #RACMENU
+
+  VGET (ERAADMN ERASINT ERADISP ERACONF ERASHOW ERATRACE) PROFILE
+  IF (&ERAADMN  = &Z)        /*- Set default settings -*/
+      &ERAADMN  = 'NO'       /* Administrator   = NO   */
+  IF (&ERASINT  = &Z)
+      &ERASINT  = '100'      /* Status interval = 100  */
+  IF (&ERADISP  = &Z)
+      &ERADISP  = 'VIEW'     /* Display files   = VIEW */
+  IF (&ERACONF  = &Z)
+      &ERACONF  = 'YES'      /* Confirm panel   = YES  */
+  IF (&ERASHOW  = &Z)
+      &ERASHOW  = 'NO'       /* RACF commands   = NO   */
+  IF (&ERATRACE = &Z)
+      &ERATRACE = 'NO'       /* REXX trace      = NO   */
+  VPUT (ERAADMN ERASINT ERADISP ERACONF ERASHOW ERATRACE) PROFILE
+
+  &RACFVER = &Z              /*- Obtain RACF/Sys Info -*/
+  &RACFDSN = &Z
+  &RACFGRP = &Z
+  &RACFNAM = &Z
+  &ZOSVER  = &ZOS390RL
+  *REXX (RACFVER RACFDSN ZOSVER RACFGRP RACFNAM)
+    cvt       = c2x(storage(10,4))
+    cvtrac$   = d2x((x2d(cvt))+992)
+    cvtrac    = c2x(storage(cvtrac$,4))
+    rcvtstat$ = d2x((x2d(cvtrac))+616)
+    x         = storage(rcvtstat$,4)
+    RACFVER   = 'V'substr(x,1,1)'R'substr(x,2,2)'M'substr(x,4,1)
+    rcvtsta$  = d2x((x2d(cvtrac))+56)
+    RACFDSN   = storage(rcvtsta$,44)
+    parse var zosver . "z/OS" ZOSVER .
+    ascb   = c2x(storage(224,4))       /* PSAAOLD  (My ASCB)          */
+    asxb$  = d2x((x2d(ascb))+108)      /* ASCB + 108                  */
+    asxb   = c2x(storage(asxb$,4))     /* ASCBASXB (My ASXB)          */
+    acee$  = d2x((x2d(asxb))+200)      /* ASXB + 200                  */
+    acee   = c2x(storage(acee$,4))     /* ASXBSENV (My ACEE)          */
+    group$ = d2x((x2d(acee))+30)       /* ACEE + 30                   */
+    name$  = d2x((x2d(acee))+100)      /* ACEE + 100                  */
+    name$  = c2x(storage(name$,4))     /* ACEEUNAM Ptr                */
+    name$  = d2x((x2d(name$))+1)       /* ACEEUNAM Ptr +1             */
+    RACFGRP  = storage(group$,8)       /* ACEEGRPN (RACF group name)  */
+    RACFNAM  = storage(name$,20)       /* ACEEUNAM (RACF user name)   */
+  *ENDREXX
+)PROC
+  VER (&CLASS,NAME)
+  &ZSEL=TRANS(TRUNC(&ZCMD,'.')
+      0,'CMD(%RACFPRMU)'
+      1,'CMD(%RACFUSR)'
+      2,'CMD(%RACFGRP)'
+      3,'CMD(%RACFDSN)'
+      4,'CMD(%RACFCLSR &CLASS)'
+      5,'CMD(%RACFPRMJ)'
+      6,'CMD(%RACFAUTH)'          /* Hidden - Authorization */
+      C,'CMD(%RACFLOG $CHANGES)'
+      I,'CMD(%RACFLOG $ISSUES)'
+      T,'PGM(ISPTUTOR) PARM(#RACMENU)'
+      X,'EXIT'
+    ' ',' '
+      *,'?')
+)PNTS
+  FIELD(ZPS00001) VAR(ZCMD) VAL('0')
+  FIELD(ZPS00002) VAR(ZCMD) VAL('1')
+  FIELD(ZPS00003) VAR(ZCMD) VAL('2')
+  FIELD(ZPS00004) VAR(ZCMD) VAL('3')
+  FIELD(ZPS00005) VAR(ZCMD) VAL('4')
+  FIELD(ZPS00006) VAR(ZCMD) VAL('5')
+  FIELD(ZPS00007) VAR(ZCMD) VAL('C')
+  FIELD(ZPS00008) VAR(ZCMD) VAL('T')
+  FIELD(ZPS00009) VAR(ZCMD) VAL('X')
+)END

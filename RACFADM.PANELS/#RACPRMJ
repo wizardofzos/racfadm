@@ -1,0 +1,30 @@
+)ATTR DEFAULT(%+_)
+  _ TYPE(INPUT) INTENS(HIGH) CAPS(ON) JUST(LEFT) HILITE(USCORE)
+  ! TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(TURQ)
+  + TYPE(TEXT)  INTENS(LOW)  SKIP(ON) COLOR(GREEN)
+)BODY EXPAND(\\)
+%Tutorial+\-\(%RACFADM - RACF Parameters+)\-\%Tutorial
+%Command ===>_ZCMD                                                             +
+%
++System parameters:  Access Control CVT (CVTRAC)
++
++Current status of RACF parameters
++                                                                   More:
++-------------------------------------------------------------------------------
++ RACF version ..................... V7R79M1
++ RACF data base ................... SYS1.RACFPRM1
++------------------------------------------------------------------------------
++ JES early verify ................. NO
++ JES batch all .................... NO
++ JES Xbm all ...................... NO
++ JES NJE userid ................... ????????
++ JES undefined userid .............
++ Password interval ................ 60
++ Password history ................. 0
++ Password attempts ................ 0
++ Password warning ................. 0
++ Password rules ...................
++ Password minimum length .......... 8
+)PROC
+  &ZUP     = #RACPRMJ
+)END
