@@ -11,19 +11,19 @@
     reflected in the table, I had to completely redisplay the
     userids.
 
-  STATUS:
+  RESOLUTION:
     Add code to check to see if attributes where added/removed, if so
-    update the ATT column to contain YES or NO
+    update the ATT column to contain YES or NO.
 *---------------------------------------------------------------------*
   PMR        COMPONENT   STATUS   SUBMITTER  FIX RELEASE
-  200302-D   RACFUSR     Open     sbgolob
+  200302-D   RACFUSR     Closed   sbgolob    V8R4
 
   DESCRIPTION:
     Create worked fine.  Delete also seemed to work fine.  Just left
     over datasets like the ISPF profile and userid.BRODCAST
 
-  STATUS:
-    Problem identified.  Fix in progress (TRIDJK).
+  RESOLUTION:
+    Added quotes to user in DELETE/DEFINE ALIAS commands in RACFUSRT.
 *---------------------------------------------------------------------*
   PMR        COMPONENT   STATUS   SUBMITTER  FIX RELEASE
   200302-C   RACFGRP     Open     sbgolob
@@ -32,7 +32,7 @@
    When you add a new group, it doesn't show up in the list of groups,
    until you re-do the list.
 
-  Status:
+  RESOLUTION:
     ???
 *---------------------------------------------------------------------*
   PMR        COMPONENT   STATUS   SUBMITTER  FIX RELEASE
@@ -43,11 +43,11 @@
     is an error to do so, it still gets added to the ISPF table of
     userids, and it doesn't come off unless you redisplay the table.
 
-  STATUS:
+  RESOLUTION:
     ???
 *---------------------------------------------------------------------*
   PMR        COMPONENT   STATUS   SUBMITTER  FIX RELEASE
-  200302-A   RACFDSN     Open     sbgolob
+  200302-A   RACFDSN     Testing  sbgolob
 
   DESCRIPTION:
     With dataset profiles that got added, and they didn't show up in
@@ -55,11 +55,11 @@
     new items DO show up, and most of the times deleted items don't
     show up.
 
-  STATUS:
-    ???
+  RESOLUTION:
+    TBDELETE if cmd_rc = 0 on DELDSD command
 *---------------------------------------------------------------------*
   PMR        COMPONENT   STATUS   SUBMITTER  FIX RELEASE
-  200301-B   RACFUSR     Open     sbgolob
+  200301-B   RACFUSR     Closed   sbgolob    V8R4
 
   DESCRIPTION:
     With RACF command tracing on, and you do the "C"  on the id, and
@@ -68,8 +68,8 @@
     multiple windows, and then when you finally get out of the mess,
     with enough PF3's, the job actually seems to have been done.
 
-  STATUS:
-    Problem identified.  Fix in progress (TRIDJK).
+  RESOLUTION:
+    NOP'd the CHGD, ERROR, and DISPLAY_MSG sections in RACFUSRT.
 *---------------------------------------------------------------------*
   PMR        COMPONENT   STATUS   SUBMITTER  FIX RELEASE
   200301-A   RACFUSR     Open     sbgolob
@@ -81,6 +81,8 @@
     to it.  In other words, NO ACTUAL DELETION.  I don't think there
     is a command issued to delete the TSO segment.
 
-  STATUS:
-    To delete a TSO Segment, issue the "ALTUSER user NOTSO" command.
+  RESOLUTION:
+    Dialog should not delete the TSO segment based on the TSO = 'NO'
+    panel field value.  To delete a TSO Segment, issue the
+    "ALTUSER user NOTSO" command.
 *---------------------------------------------------------------------*

@@ -2,6 +2,22 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  04 Mar 2020 - V8R4
+     - User (Option 1)
+       * Cleaned up code, deleted comments, outtrap, error and
+         display_msg subroutines (RACFUSRT)
+       * Fixed delete/define alias by adding single quotes around
+         the userid (RACFUSRT)
+       * Fix messages displayed when deleting ISPPROF and TSOLIB
+       * Added primary command 'Resume', alias to RESET, updated
+         tutorial
+     - Dataset (Option 3)
+       * When deleting a dataset profile and RC>0 then display
+         the correct message and return
+     - Issues (Option I)
+       * Changed 'Status:' to 'Resolution'
+       * Updated the status and resolution to several issues
+
   04 Mar 2020 - V8R3
      - User (Option 1)
        * When changing a userids attributes, update the ATT field

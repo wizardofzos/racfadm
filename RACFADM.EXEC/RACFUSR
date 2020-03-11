@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @CF  200305  TRIDJK   Fix DELETE msgs for ISPPROF and TSOLIB       */
 /* @CE  200304  RACFA    Update ATT field on panel, when updated      */
 /* @CD  200304  RACFA    Del unnecessary double quotes                */
 /* @CC  200303  RACFA    Del 'ret_code' lines for PANEL01... While    */
@@ -106,7 +107,7 @@ ADDRESS ISPEXEC                                               /* @BC */
   Rclass = 'USER'
   lparm  =''                              /* Locate parm */   /* @A5 */
   "CONTROL ERRORS RETURN"                                     /* @B1 */
-  "VGET (ZSCREEN ERASHOW ERATRACE",                           /* @C1 */
+  "VGET (ZSCREEN ERASHOW ERATRACE ERAISPP",                   /* @CF */
         "ERAULIB ERAADMN ERASINT ERADISP) ASIS"               /* @B7 */
   If (eratrace = 'YES') then Trace r                          /* @BA */
   If (ERAADMN = "YES") then do                                /* @B2 */
@@ -600,7 +601,10 @@ DELD:
   Sure_? = RACFMSGC(msg)
   if (sure_? = 'YES') then do
      if (tsouser = 'YES') then do
-        msg    = user'.'eraulib 'will be deleted'
+        msg    = user'.'eraispp                               /* @CF */
+        if eraulib <> '' then                                 /* @CF */
+        msg    = msg || ' and 'user'.'eraulib                 /* @CF */
+        msg    = msg || ' will be deleted'                    /* @CF */
         Sure_? = RACFMSGC(msg)
         if (sure_? = 'YES') then
            ret_code = RACFUSRT('DELD' user tsoproc,           /* @C4 */
