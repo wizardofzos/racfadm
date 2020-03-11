@@ -14,16 +14,16 @@
 +OWNER     %===>_OWNER   { (Owner of profile)
 +DFLTGRP   %===>_DEFGRP  { (Default group)
 +NAME      %===>_NAME                                      { (Last, first name)
-+ATTRIBUTES%===>_ATTR
-+TSO       %===>_Z  {      (YES/NO)
 +
++ATTRIBUTES%===>+SPECIAL     _ATS+ {(YES/NO)
++                OPERATIONS  _ATO+ {(YES/NO)
++                AUDITOR     _ATA+ {(YES/NO)
++
++TSO       %===>_Z  {      (YES/NO)
 +
 %                Installation Data (no quotes)
 %                --------------------------------------------------------------
 +DATA      %===>_DATA
-+
-+
-+
 +
 +
 +\ \Press%ENTER+to process or%END+to exit\ \
@@ -37,4 +37,7 @@
   VER (&DEFGRP,NB,NAME)
   VER (&NAME,NB)
   VER (&TSOUSER,LIST,YES,NO)
+  VER (&ATS,LIST,YES,NO)
+  VER (&ATO,LIST,YES,NO)
+  VER (&ATA,LIST,YES,NO)
 )END
