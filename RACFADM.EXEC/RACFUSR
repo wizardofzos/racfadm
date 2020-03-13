@@ -3,7 +3,8 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
-/* @HK  200311  ZDOHK    Fix Atributes for user change                */
+/* @CH  200312  RACFA    Renamed attribute variables                  */
+/* @CG  200311  ZDOHK    Fix Atributes for user change                */
 /* @CF  200305  TRIDJK   Fix DELETE msgs for ISPPROF and TSOLIB       */
 /* @CE  200304  RACFA    Update ATT field on panel, when updated      */
 /* @CD  200304  RACFA    Del unnecessary double quotes                */
@@ -569,15 +570,20 @@ CHGD:
         data = ' '
      xtr = xtr "DATA('"DATA"')"
   end
-  if ats="YES" then                                           /* @HK */
-  attr = 'SPECIAL'                                            /* @HK */
-  else attr = 'NOSPECIAL'                                     /* @HK */
-  if ato="YES" then                                           /* @HK */
-  attr = attr' OPERATIONS'                                    /* @HK */
-  else attr = attr' NOOPERATIONS'                             /* @HK */
-  if ata="YES" then                                           /* @HK */
-  attr = attr' AUDITOR'                                       /* @HK */
-  else attr = attr' NOAUDITOR'                                /* @HK */
+
+  if (attrspec = "Y") then                                    /* @CH */
+     attr = 'SPECIAL'                                         /* @CG */
+  else                                                        /* @CG */
+     attr = 'NOSPECIAL'                                       /* @CG */
+  if (attroper = "Y") then                                    /* @CH */
+     attr = attr' OPERATIONS'                                 /* @CG */
+  else                                                        /* @CG */
+     attr = attr' NOOPERATIONS'                               /* @CG */
+  if (attraudi = "Y") then                                    /* @CH */
+     attr = attr' AUDITOR'                                    /* @CG */
+  else                                                        /* @CG */
+     attr = attr' NOAUDITOR'                                  /* @CG */
+
   if (tsouser = 'YES') then do
       if (new_tsouser = 'YES') then
          ret_code = RACFUSRT('CHGD' user tsoproc,             /* @C4 */
@@ -728,12 +734,13 @@ GETD:
   datepass = ' '
   intpass  = ' '
   revoked  = 'NO'                                             /* @BP */
-  attr     =''
-  tsouser  =''
-  ats      = 'NO'                                             /* @HK */
-  ato      = 'NO'                                             /* @HK */
-  ata      = 'NO'                                             /* @HK */
+  tsouser  = ''
+  attr     = ''
+  attrspec = 'N'      /* Special:    Y=Yes, N=No */           /* @CH */
+  attroper = 'N'      /* Operations: Y=Yes, N=No */           /* @CH */
+  attraudi = 'N'      /* Auditor:    Y=Yes, N=No */           /* @CH */
   cmd      = "LU "USER" TSO"                                  /* @BB */
+
   x        = OUTTRAP('details.')
   address TSO cmd                                             /* @BB */
   cmd_rc = rc                                                 /* @BS */
@@ -768,9 +775,10 @@ GETD:
   parse var details.3 'ATTRIBUTES='attribute1                 /* @AB */
   parse var details.4 'ATTRIBUTES='attribute2                 /* @AB */
   attr = STRIP(attribute1) STRIP(attribute2)                  /* @AB */
-  if POS('SPECIAL',attr) > 0 then ATS="YES"                   /* @HK */
-  if POS('OPERATIONS',attr) > 0 then ATO="YES"                /* @HK */
-  if POS('AUDITOR',attr) > 0 then ATA="YES"                   /* @HK */
+  if (POS('SPECIAL',attr) > 0)    then ATTRSPEC = "Y"         /* @CH */
+  if (POS('OPERATIONS',attr) > 0) then ATTROPER = "Y"         /* @CH */
+  if (POS('AUDITOR',attr) > 0)    then ATTRAUDI = "Y"         /* @CH */
+
   rev  = POS('REVOKED',attr)
   if (rev <> 0) then do                                       /* @BX */
      revoked = 'YES'                                          /* @BX */
@@ -957,7 +965,7 @@ CREATE_TABLE:                                                 /* @BE */
   tbla    = 'TA'ZSCREEN||SECONDS  /* table name unique */
   "TBCREATE" tbla ,
        "KEYS(USER) NAMES(ACTION NAME OWNER DEFGRP DATELGN",
-                        "REVOKED ATTR TSOUSER ATS ATO ATA DATA ATTR2)",
+                        "REVOKED ATTR TSOUSER DATA ATTR2)",
                         "REPLACE NOWRITE"
   cmd = "SEARCH FILTER("RFILTER") CLASS("rclass")"            /* @BB */
   x = OUTTRAP('var.')

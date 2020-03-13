@@ -14,21 +14,23 @@
 +OWNER     %===>_OWNER   { (Owner of profile)
 +DFLTGRP   %===>_DEFGRP  { (Default group)
 +NAME      %===>_NAME                                      { (Last, first name)
++TSO       %===>_Z{        (Y=Yes, N=No)
 +
-+ATTRIBUTES%===>+SPECIAL     _ATS+ {(YES/NO)
-+                OPERATIONS  _ATO+ {(YES/NO)
-+                AUDITOR     _ATA+ {(YES/NO)
++ATTRIBUTES%===>+SPECIAL   _Z{ (Y=Yes, N=No)
++                OPERATIONS_Z{ (Y=Yes, N=No)
++                AUDITOR   _Z{ (Y=Yes, N=No)
 +
-+TSO       %===>_Z  {      (YES/NO)
 +
 %                Installation Data (no quotes)
 %                --------------------------------------------------------------
 +DATA      %===>_DATA
 +
 +
++
 +\ \Press%ENTER+to process or%END+to exit\ \
 )INIT
-  .ZVARS  = '(TSOUSER)'
+  &TSOUSER  = TRANS (&TSOUSER YES,Y NO,N *,'?')
+  .ZVARS  = '(TSOUSER ATTRSPEC ATTROPER ATTRAUDI)'
   .CURSOR = OWNER
   .HELP   = #RACMENU
 )PROC
@@ -36,8 +38,9 @@
   VER (&OWNER,NB,NAME)
   VER (&DEFGRP,NB,NAME)
   VER (&NAME,NB)
-  VER (&TSOUSER,LIST,YES,NO)
-  VER (&ATS,LIST,YES,NO)
-  VER (&ATO,LIST,YES,NO)
-  VER (&ATA,LIST,YES,NO)
+  VER (&TSOUSER,NB,LIST,Y,N)
+  VER (&ATTRSPEC,NB,LIST,Y,N)
+  VER (&ATTROPER,NB,LIST,Y,N)
+  VER (&ATTRAUDI,NB,LIST,Y,N)
+  &TSOUSER = TRANS (&TSOUSER Y,YES N,NO *,'?')
 )END

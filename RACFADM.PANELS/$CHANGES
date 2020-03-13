@@ -2,6 +2,11 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  12 Mar 2020 - V8R5
+     - User (Option 1)
+       * Fixed issue, PMR 200311-A, when changing a userid's attributes:
+           Special, Operations and Auditor (Y=Yes, N=No)
+
   04 Mar 2020 - V8R4
      - User (Option 1)
        * Cleaned up code, deleted comments, outtrap, error and
