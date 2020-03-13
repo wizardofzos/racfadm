@@ -2,6 +2,11 @@
 *                          RACFADM - Changes                           *
 *----------------------------------------------------------------------*
 
+  13 Mar 2020 - V8R6
+     - User (Option 1)
+       * When changing a userid, update 'ATT' column (YES/NO),
+         PMR 200311-A
+
   12 Mar 2020 - V8R5
      - User (Option 1)
        * Fixed issue, PMR 200311-A, when changing a userid's attributes:

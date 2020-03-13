@@ -3,6 +3,7 @@
 /*--------------------------------------------------------------------*/
 /* FLG  YYMMDD  USERID   DESCRIPTION                                  */
 /* ---  ------  -------  -------------------------------------------- */
+/* @CI  200313  RACFA    After 'C'hanging userid, upd attribute vars  */
 /* @CH  200312  RACFA    Renamed attribute variables                  */
 /* @CG  200311  ZDOHK    Fix Atributes for user change                */
 /* @CF  200305  TRIDJK   Fix DELETE msgs for ISPPROF and TSOLIB       */
@@ -602,10 +603,34 @@ CHGD:
           call racfmsgs 'ERR07' /* Altdsd failed */
      when (ret_code <> 0) then
           call racfmsgs 'ERR11' /* Defalias failed */
-     otherwise
+     otherwise DO                                             /* @CI */
+          call chkattr                                        /* @CI */
           "TBMOD" tbla
+     END                                                      /* @CI */
   End
 RETURN
+/*--------------------------------------------------------------------*/
+/*  Obtain userid attributes                                     @CI  */
+/*--------------------------------------------------------------------*/
+CHKATTR:                                                      /* @CI */
+  cmd      = "LU "USER" TSO"                                  /* @CI */
+  x        = OUTTRAP('details.')                              /* @CI */
+  address TSO cmd                                             /* @CI */
+  cmd_rc = rc                                                 /* @CI */
+  x        = OUTTRAP('OFF')                                   /* @CI */
+  if (erashow = 'YES') then                                   /* @CI */
+     call SHOWCMD                                             /* @CI */
+  parse var details.3 'ATTRIBUTES='attribute1                 /* @CI */
+  parse var details.4 'ATTRIBUTES='attribute2                 /* @CI */
+  attr = STRIP(attribute1) STRIP(attribute2)                  /* @CI */
+  none  = POS('NONE',attr)                                    /* @CI */
+  if (none <> 0) then                                         /* @CI */
+     attr = delstr(attr,none,4)  /* Del 'NONE'    */          /* @CI */
+  attr2 = 'NO'                                                /* @CI */
+  if (none = 0) then do                                       /* @CI */
+     attr2 = 'YES'                                            /* @CI */
+  end                                                         /* @CI */
+RETURN                                                        /* @CI */
 /*--------------------------------------------------------------------*/
 /*  Delete profile                                                    */
 /*--------------------------------------------------------------------*/
